@@ -70,7 +70,7 @@ const Explorer: NextPage<Props> = ({ transactons }) => {
               const { text, color } = convertStatus(transaction.deliverStatus)
               const resTxHash = omitText(transaction.responseTransactionHash)
               return (
-                <Table.Row key={transaction.queryId}>
+                <Table.Row key={transaction.requestTransactionHash}>
                   <Table.Cell>
                     <Link isExternal href={getExploerUrl(transaction.chainId) + transaction.requestTransactionHash}>
                       {omitText(transaction.requestTransactionHash)}
@@ -96,6 +96,7 @@ const Explorer: NextPage<Props> = ({ transactons }) => {
               )
             })}
           </Table.Body>
+          <Table.Pagination noMargin align='center' rowsPerPage={5} />
         </Table>
       ) : (
         <div></div>

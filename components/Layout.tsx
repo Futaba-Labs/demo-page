@@ -14,7 +14,17 @@ const Header = () => {
   return (
     <Navbar variant={'sticky'} isBordered>
       <Navbar.Brand>
-        <Image width={300} src='https://i.ibb.co/nP58sy7/lohoho.png' alt='Default Image' objectFit='scale-down' />
+        <Image
+          height={75}
+          width={220}
+          src={
+            isDark
+              ? 'https://i.ibb.co/fk94vtd/futaba-banner-white.png'
+              : 'https://i.ibb.co/P53WXCk/futaba-banner-black.png'
+          }
+          alt='Default Image'
+          objectFit='scale-down'
+        />
       </Navbar.Brand>
       <Navbar.Content hideIn='xs'>
         <ConnectButton />

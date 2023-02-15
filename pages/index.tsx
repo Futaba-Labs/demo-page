@@ -122,8 +122,34 @@ const Home: NextPage = () => {
     }
   }
 
+  const handleUpdate = (payload: any) => {
+    fetchTransactions()
+  }
+
+  const subscribeTransactions = async () => {
+    // TODO it does not work
+    if (supabase && signer) {
+      console.log('subscribe')
+      const sender = await signer.getAddress()
+      const channel = supabase
+        .channel('table-db-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE', // "INSERT" | "UPDATE" | "DELETE" のように特定イベントだけの購読も可能
+            schema: 'public',
+            table: 'transactions',
+            filter: `sender=eq.${sender}`,
+          },
+          handleUpdate,
+        )
+        .subscribe()
+    }
+  }
+
   useEffect(() => {
     fetchTransactions()
+    subscribeTransactions()
   }, [signer])
 
   return (
