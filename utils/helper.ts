@@ -1,5 +1,7 @@
-import { Wallet, ethers } from "ethers"
+import { BigNumber, Wallet, ethers } from "ethers"
 import { ERC20ABI } from "./constants"
+import { ToastOptions, toast } from "react-toastify"
+import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
 
 export const getTokenDecimals = async (chain: string, token: string) => {
   const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
@@ -18,7 +20,23 @@ export const getTokenDecimals = async (chain: string, token: string) => {
     console.log(error)
   }
 
-  return { decimals: result, chainId }
+  return { decimals: result, chainId, chainName: chain }
+}
+
+export const getLatestBlockNumber = async (chain: string) => {
+  const { provider } = getProviderAndEndpoint(chain)
+  const blockNumber = await provider.getBlockNumber()
+  return blockNumber
+}
+
+export const getBalanceSlot = (token: string) => {
+  return keccak256(concat([
+    // Mappings' keys in Solidity must all be word-aligned (32 bytes)
+    hexZeroPad(token, 32),
+
+    // Similarly with the slot-index into the Solidity variable layout
+    hexZeroPad(BigNumber.from(0).toHexString(), 32),
+  ]));
 }
 
 const getProviderAndEndpoint = (chain: string) => {
@@ -31,5 +49,27 @@ const getProviderAndEndpoint = (chain: string) => {
       return { chainId: 80001, provider: new ethers.providers.WebSocketProvider(`wss://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TESTNET_API_KEY}`, "maticmum"), endpoint: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TESTNET_API_KEY}` }
     default:
       return { chainId: 5, provider: new ethers.providers.WebSocketProvider(`wss://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ETHEREUM_GOERLI_API_KEY}`, "goerli"), endpoint: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ETHEREUM_GOERLI_API_KEY}` }
+  }
+}
+
+export const showToast = (message: string, type: string, isDark: boolean = false) => {
+  const theme = isDark ? "dark" : "light"
+  const toastOpt: ToastOptions = {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme,
+  }
+  switch (type) {
+    case "success":
+      toast.success(message, toastOpt)
+      break
+    case "error":
+      toast.error(message, toastOpt)
+      break
   }
 }

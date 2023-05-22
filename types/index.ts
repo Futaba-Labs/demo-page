@@ -1,8 +1,8 @@
-export interface Transaction {
-  requestTransactionHash: string
-  responseTransactionHash?: string
-  queryId?: string
-  deliverStatus: number
+export interface QueryData {
+  transactionHash: string
+  executedHash?: string
+  id: string
+  status: number
   sender: string
-  chainId: number
+  from: number
 }

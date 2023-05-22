@@ -1,15 +1,15 @@
 import { Badge, Link, SimpleColors, Table } from '@nextui-org/react'
 import { NextPage } from 'next/types'
-import { Transaction } from 'types'
+import { QueryData as QueryData } from 'types'
 
 interface Props {
-  transactons: Transaction[]
+  queryData: QueryData[]
 }
 interface BadgeParam {
   text: string
   color: SimpleColors
 }
-const Explorer: NextPage<Props> = ({ transactons }) => {
+const Explorer: NextPage<Props> = ({ queryData: queries }) => {
   const omitText = (text?: string) => {
     return text ? text.substring(0, 10) + '...' : ''
   }
@@ -19,10 +19,8 @@ const Explorer: NextPage<Props> = ({ transactons }) => {
       case 0:
         return { text: 'Request Pending...', color: 'default' }
       case 1:
-        return { text: 'Relaying...', color: 'secondary' }
-      case 2:
         return { text: 'Delivered', color: 'success' }
-      case 3:
+      case 2:
         return { text: 'Failed', color: 'error' }
       default:
         return { text: 'Request Pending', color: 'default' }
@@ -50,7 +48,7 @@ const Explorer: NextPage<Props> = ({ transactons }) => {
   }
   return (
     <>
-      {transactons.length > 0 ? (
+      {queries.length > 0 ? (
         <Table
           aria-label='Example table with static content'
           css={{
@@ -66,32 +64,42 @@ const Explorer: NextPage<Props> = ({ transactons }) => {
             <Table.Column>Chain Id</Table.Column>
           </Table.Header>
           <Table.Body>
-            {transactons.map((transaction) => {
-              const { text, color } = convertStatus(transaction.deliverStatus)
-              const resTxHash = omitText(transaction.responseTransactionHash)
+            {queries.map((query) => {
+              const { text, color } = convertStatus(query.status)
+              const resTxHash = omitText(query.executedHash)
               return (
-                <Table.Row key={transaction.requestTransactionHash}>
+                <Table.Row key={query.transactionHash}>
                   <Table.Cell>
-                    <Link isExternal href={getExploerUrl(transaction.chainId) + transaction.requestTransactionHash}>
-                      {omitText(transaction.requestTransactionHash)}
+                    <Link
+                      isExternal
+                      href={getExploerUrl(query.from) + query.transactionHash}
+                      target='_blank'
+                      color={'success'}
+                    >
+                      {omitText(query.transactionHash)}
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
                     {resTxHash !== '' ? (
-                      <Link isExternal href={getExploerUrl(transaction.chainId) + transaction.responseTransactionHash}>
+                      <Link
+                        isExternal
+                        href={getExploerUrl(query.from) + query.executedHash}
+                        target='_blank'
+                        color={'success'}
+                      >
                         {resTxHash}
                       </Link>
                     ) : (
                       <div></div>
                     )}
                   </Table.Cell>
-                  <Table.Cell>{omitText(transaction.queryId)}</Table.Cell>
+                  <Table.Cell>{omitText(query.id)}</Table.Cell>
                   <Table.Cell>
                     <Badge color={color} size='lg'>
                       {text}
                     </Badge>
                   </Table.Cell>
-                  <Table.Cell>{converChain(transaction.chainId)}</Table.Cell>
+                  <Table.Cell>{converChain(query.from)}</Table.Cell>
                 </Table.Row>
               )
             })}

@@ -4,12 +4,19 @@ import { createTheme, NextUIProvider } from '@nextui-org/react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import '@rainbow-me/rainbowkit/styles.css'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme as rainbowDarkTheme } from '@rainbow-me/rainbowkit'
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme as rainbowDarkTheme,
+  lightTheme as rainbowLightTheme,
+} from '@rainbow-me/rainbowkit'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { mainnet, polygon, optimism, arbitrum, polygonMumbai } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import Layout from 'components/Layout'
+import { useTheme as useNextTheme } from 'next-themes'
+import { Navbar, Switch, useTheme } from '@nextui-org/react'
 
 const lightTheme = createTheme({
   type: 'light',
@@ -46,7 +53,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     >
       <NextUIProvider>
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains} theme={rainbowDarkTheme()} coolMode>
+          <RainbowKitProvider
+            chains={chains}
+            theme={{
+              lightMode: rainbowLightTheme({
+                accentColor: '#17C964',
+              }),
+              darkMode: rainbowDarkTheme({
+                accentColor: '#17C964',
+              }),
+            }}
+            coolMode
+          >
             <Layout {...pageProps}>
               <Component {...pageProps} />
             </Layout>

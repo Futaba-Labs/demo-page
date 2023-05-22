@@ -2,16 +2,19 @@ import type { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { Button, Col, Container, Grid, Row, Spacer, Text } from '@nextui-org/react'
+import { Button, Col, Container, Grid, Link, Row, Spacer, Text, useTheme } from '@nextui-org/react'
 import InputPage from 'components/InputForm'
-import { getTokenDecimals } from 'utils/helper'
-import { ethers } from 'ethers'
+import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
+import { BigNumber, ethers } from 'ethers'
 import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import { useNetwork, useContract, useSigner } from 'wagmi'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import { useEffect, useState } from 'react'
-import { Transaction } from 'types'
+import { QueryData } from 'types'
 import Explorer from 'components/Explorer'
+import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+
+const relay = new GelatoRelay()
 
 export interface QueryForm {
   chain: string
@@ -24,10 +27,18 @@ interface QueryParam {
   decimals: number[]
 }
 
+interface QueryRequest {
+  dstChainId: number
+  height: number
+  slot: string
+  to: string
+}
+
 const Home: NextPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<QueryData[]>([])
   const { register, control, setValue, handleSubmit } = useForm()
   const supabase = useSupabase()
+  const { isDark, type } = useTheme()
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -45,7 +56,8 @@ const Home: NextPage = () => {
   })
 
   const sendQuery = async () => {
-    let query: QueryParam = { chainIds: [], tokenAddresses: [], decimals: [] }
+    let queries: QueryRequest[] = []
+    const decimals: number[] = []
     const results = []
     for (const f of control._formValues['queries']) {
       results.push(getTokenDecimals(f['chain'], f['tokenAddress']))
@@ -56,39 +68,31 @@ const Home: NextPage = () => {
       const item = items[i]
       const tokenAddress = control._formValues['queries'][i]['tokenAddress']
       if (item.decimals === 0) {
-        alert('failed')
+        showToast('Invalid Token', 'error', isDark)
         break
       }
-      query.chainIds.push(item.chainId)
-      query.tokenAddresses.push(tokenAddress)
-      query.decimals.push(item.decimals)
+      const blockHeight = await getLatestBlockNumber(item.chainName)
+      queries.push({
+        dstChainId: item.chainId,
+        height: blockHeight,
+        slot: getBalanceSlot(tokenAddress),
+        to: tokenAddress,
+      })
+      decimals.push(item.decimals)
     }
-
-    console.log(query)
 
     try {
       if (testQuery && signer) {
-        const tx = await testQuery.requestQuery(
-          query.chainIds,
-          testQuery.address,
-          query.tokenAddresses,
-          query.decimals,
-          { gasLimit: 2000000 },
+        const fee = await relay.getEstimatedFee(
+          80001,
+          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          BigNumber.from('1000000'),
+          true,
         )
-        if (supabase) {
-          const sender = await signer.getAddress()
-          const { error } = await supabase
-            .from('transactions')
-            .insert({ request_transaction_hash: tx.hash, sender, chain_id: chain?.id })
-          console.log(error)
-          if (!error && chain !== undefined) {
-            setTransactions([
-              { requestTransactionHash: tx.hash, sender, chainId: chain.id, deliverStatus: 0 },
-              ...transactions,
-            ])
-          }
-        }
+        console.log(queries)
+        const tx = await testQuery.sendQuery(queries, decimals, { gasLimit: 1000000, value: fee.mul(120).div(100) })
         await tx.wait()
+        showToast('Query Sent', 'success', isDark)
       }
     } catch (error) {
       console.log(error)
@@ -99,20 +103,21 @@ const Home: NextPage = () => {
     if (supabase && signer) {
       const sender = await signer.getAddress()
       const { data, error } = await supabase
-        .from('transactions')
+        .from('QueryData')
         .select()
         .eq('sender', sender)
-        .order('created_at', { ascending: false })
-      const transactionData: Transaction[] = []
+        .order('createdAt', { ascending: false })
+      console.log(error)
+      const transactionData: QueryData[] = []
       if (data) {
         for (const d of data) {
-          const transaction: Transaction = {
-            requestTransactionHash: d['request_transaction_hash'],
-            responseTransactionHash: d['response_transaction_hash'],
-            queryId: d['query_id'],
-            deliverStatus: d['deliver_status'],
+          const transaction: QueryData = {
+            transactionHash: d['transactionHash'],
+            executedHash: d['executedHash'],
+            id: d['id'],
+            status: d['status'],
             sender: d['sender'],
-            chainId: d['chain_id'],
+            from: d['from'],
           }
           transactionData.push(transaction)
         }
@@ -138,7 +143,7 @@ const Home: NextPage = () => {
           {
             event: 'UPDATE', // "INSERT" | "UPDATE" | "DELETE" のように特定イベントだけの購読も可能
             schema: 'public',
-            table: 'transactions',
+            table: 'QueryData',
             filter: `sender=eq.${sender}`,
           },
           handleUpdate,
@@ -162,11 +167,29 @@ const Home: NextPage = () => {
           On this page you can experience Futaba's query.
         </Text>
         <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          Enter the chain and token address and a new token will be minted for that total amount.
-        </Text>
-        <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
           Let's try it 🚀
         </Text>
+        <Text css={{ padding: '1px' }}>
+          Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.
+        </Text>
+        <Text css={{ padding: '1px' }}>
+          Step2: Select the chain and token address you want to query. You can add multiple queries. (Do not enter a
+          token with a balance of 0)
+          <br />
+          <span>
+            If you do not have a token, please mint it{' '}
+            <Link
+              isExternal
+              color='success'
+              href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
+              target='_blank'
+            >
+              here
+            </Link>
+          </span>
+        </Text>
+        <Text css={{ padding: '1px' }}>Step3: Click the "Send Query" button to send the query.</Text>
+        <Text css={{ padding: '1px' }}>Step4: You can check the query result on the "Transactions".</Text>
       </Container>
       <Container>
         {fields.map((field, i) => (
@@ -196,7 +219,7 @@ const Home: NextPage = () => {
               flat
               auto
               color={'success'}
-              disabled={fields.length === 0}
+              disabled={fields.length === 0 || signer == undefined}
             >
               Send Query
             </Button>
@@ -208,7 +231,7 @@ const Home: NextPage = () => {
         <Text weight={'medium'} size={32}>
           Transactions
         </Text>
-        <Explorer transactons={transactions} />
+        <Explorer queryData={transactions} />
       </Container>
     </>
   )

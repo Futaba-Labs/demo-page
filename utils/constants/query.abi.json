@@ -5,6 +5,16 @@
         "internalType": "address",
         "name": "_gateway",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_lightClient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -30,74 +40,10 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "supply",
-        "type": "uint256"
-      }
-    ],
-    "name": "QueryResult",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "fToken",
-    "outputs": [
-      {
-        "internalType": "contract IFutabaToken",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "gateway",
     "outputs": [
       {
-        "internalType": "contract IGateway",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      }
-    ],
-    "name": "getCall",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getGateway",
-    "outputs": [
-      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -108,7 +54,7 @@
   },
   {
     "inputs": [],
-    "name": "getToken",
+    "name": "ligthClient",
     "outputs": [
       {
         "internalType": "address",
@@ -135,6 +81,11 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "queryId",
+        "type": "bytes32"
+      },
+      {
         "internalType": "bytes[]",
         "name": "results",
         "type": "bytes[]"
@@ -152,12 +103,17 @@
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "call",
-            "type": "bytes"
+            "internalType": "uint256",
+            "name": "height",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "slot",
+            "type": "bytes32"
           }
         ],
-        "internalType": "struct IGateway.Query[]",
+        "internalType": "struct QueryType.QueryRequest[]",
         "name": "queries",
         "type": "tuple[]"
       },
@@ -182,19 +138,31 @@
   {
     "inputs": [
       {
-        "internalType": "uint32[]",
-        "name": "dstChainId",
-        "type": "uint32[]"
-      },
-      {
-        "internalType": "address",
-        "name": "callBack",
-        "type": "address"
-      },
-      {
-        "internalType": "address[]",
-        "name": "tokens",
-        "type": "address[]"
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "dstChainId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "height",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "slot",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct QueryType.QueryRequest[]",
+        "name": "queries",
+        "type": "tuple[]"
       },
       {
         "internalType": "uint256[]",
@@ -202,9 +170,9 @@
         "type": "uint256[]"
       }
     ],
-    "name": "requestQuery",
+    "name": "sendQuery",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -224,6 +192,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_lightClient",
+        "type": "address"
+      }
+    ],
+    "name": "setLightClient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_token",
         "type": "address"
       }
@@ -231,6 +212,19 @@
     "name": "setToken",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "token",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

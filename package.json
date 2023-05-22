@@ -11,9 +11,11 @@
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json}'"
   },
   "dependencies": {
+    "@gelatonetwork/relay-sdk": "^4.0.0",
     "next": "13.1.6",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-toastify": "^9.1.3"
   },
   "devDependencies": {
     "@nextui-org/react": "^1.0.0-beta.12",
