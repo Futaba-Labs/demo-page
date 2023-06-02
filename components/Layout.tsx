@@ -1,3 +1,4 @@
+'use client'
 import { NextPage } from 'next/types'
 import { useTheme as useNextTheme } from 'next-themes'
 import { Navbar, Switch, useTheme } from '@nextui-org/react'
@@ -12,28 +13,42 @@ interface LayoutProps {
 
 const Header = () => {
   const { setTheme } = useNextTheme()
-  const { isDark, type } = useTheme()
+  const { isDark } = useTheme()
   return (
     <>
-      <Navbar variant={'sticky'} isBordered>
+      <Navbar variant='floating' shouldHideOnScroll>
         <Navbar.Brand>
           <Image
             height={75}
             width={220}
-            src={
-              isDark
-                ? 'https://i.ibb.co/fk94vtd/futaba-banner-white.png'
-                : 'https://i.ibb.co/P53WXCk/futaba-banner-black.png'
-            }
+            src={isDark ? '/images/futaba_banner_white.png' : '/images/futaba_banner_black.png'}
             alt='Default Image'
             objectFit='scale-down'
           />
         </Navbar.Brand>
-        <Navbar.Content hideIn='xs'>
+        <Navbar.Content hideIn='xs' activeColor='success' gap={'$12'} enableCursorHighlight>
+          <Navbar.Link href='/'>Home</Navbar.Link>
+          <Navbar.Link href='/explorer'>Explorer</Navbar.Link>
+          <Navbar.Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' target='block' isExternal>
+            Docs
+          </Navbar.Link>
+        </Navbar.Content>
+        <Navbar.Content>
           <ConnectButton />
           <Switch checked={isDark} onChange={(e) => setTheme(e.target.checked ? 'dark' : 'light')} color='success' />
         </Navbar.Content>
       </Navbar>
+    </>
+  )
+}
+
+const Layout: NextPage = ({ children }: LayoutProps) => {
+  const { isDark } = useTheme()
+
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
       <ToastContainer
         position='bottom-right'
         autoClose={5000}
@@ -46,15 +61,6 @@ const Header = () => {
         pauseOnHover
         theme={isDark ? 'dark' : 'light'}
       />
-    </>
-  )
-}
-
-const Layout: NextPage = ({ children }: LayoutProps) => {
-  return (
-    <>
-      <Header />
-      <main>{children}</main>
     </>
   )
 }

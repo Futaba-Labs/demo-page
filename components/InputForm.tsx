@@ -31,7 +31,7 @@ const InputPage: NextPage<Props> = ({ label, setChain, registerToken, index, onC
             </Dropdown.Button>
             <Dropdown.Menu
               aria-label='Single selection actions'
-              color='primary'
+              color='success'
               disallowEmptySelection
               selectionMode='single'
               selectedKeys={selected}

@@ -1,7 +1,5 @@
 import type { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import { Button, Col, Container, Grid, Link, Row, Spacer, Text, useTheme } from '@nextui-org/react'
 import InputPage from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
@@ -10,9 +8,9 @@ import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import { useNetwork, useContract, useSigner } from 'wagmi'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import { useEffect, useState } from 'react'
-import { QueryData } from 'types'
-import Explorer from 'components/Explorer'
+import Transaction from 'components/Transaction'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+import { useTransaction } from 'hooks/useTransaction'
 
 const relay = new GelatoRelay()
 
@@ -35,10 +33,9 @@ interface QueryRequest {
 }
 
 const Home: NextPage = () => {
-  const [transactions, setTransactions] = useState<QueryData[]>([])
   const { register, control, setValue, handleSubmit } = useForm()
-  const supabase = useSupabase()
   const { isDark, type } = useTheme()
+  const { transactions, fetchTransactionsBySender } = useTransaction()
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -96,65 +93,19 @@ const Home: NextPage = () => {
       }
     } catch (error) {
       console.log(error)
+      showToast('Transaction Failed', 'error', isDark)
     }
   }
 
-  const fetchTransactions = async () => {
-    if (supabase && signer) {
+  const fetchTxns = async () => {
+    if (signer) {
       const sender = await signer.getAddress()
-      const { data, error } = await supabase
-        .from('QueryData')
-        .select()
-        .eq('sender', sender)
-        .order('createdAt', { ascending: false })
-      console.log(error)
-      const transactionData: QueryData[] = []
-      if (data) {
-        for (const d of data) {
-          const transaction: QueryData = {
-            transactionHash: d['transactionHash'],
-            executedHash: d['executedHash'],
-            id: d['id'],
-            status: d['status'],
-            sender: d['sender'],
-            from: d['from'],
-          }
-          transactionData.push(transaction)
-        }
-        setTransactions(transactionData)
-        console.log(transactionData)
-      }
-    }
-  }
-
-  const handleUpdate = (payload: any) => {
-    fetchTransactions()
-  }
-
-  const subscribeTransactions = async () => {
-    // TODO it does not work
-    if (supabase && signer) {
-      console.log('subscribe')
-      const sender = await signer.getAddress()
-      const channel = supabase
-        .channel('table-db-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE', // "INSERT" | "UPDATE" | "DELETE" のように特定イベントだけの購読も可能
-            schema: 'public',
-            table: 'QueryData',
-            filter: `sender=eq.${sender}`,
-          },
-          handleUpdate,
-        )
-        .subscribe()
+      fetchTransactionsBySender(sender)
     }
   }
 
   useEffect(() => {
-    fetchTransactions()
-    subscribeTransactions()
+    fetchTxns()
   }, [signer])
 
   return (
@@ -173,8 +124,7 @@ const Home: NextPage = () => {
           Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.
         </Text>
         <Text css={{ padding: '1px' }}>
-          Step2: Select the chain and token address you want to query. You can add multiple queries. (Do not enter a
-          token with a balance of 0)
+          Step2: Select the chain and token address you want to query. You can add multiple queries.
           <br />
           <span>
             If you do not have a token, please mint it{' '}
@@ -229,9 +179,9 @@ const Home: NextPage = () => {
       <Container>
         <div style={{ padding: '24px' }}></div>
         <Text weight={'medium'} size={32}>
-          Transactions
+          Your Transactions
         </Text>
-        <Explorer queryData={transactions} />
+        <Transaction queryData={transactions} rowsPerPage={5} />
       </Container>
     </>
   )

@@ -1,3 +1,4 @@
+'use client'
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { createTheme, NextUIProvider } from '@nextui-org/react'
@@ -11,7 +12,7 @@ import {
   lightTheme as rainbowLightTheme,
 } from '@rainbow-me/rainbowkit'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { mainnet, polygon, optimism, arbitrum, polygonMumbai } from 'wagmi/chains'
+import { mainnet, polygon, optimism, arbitrum, polygonMumbai, optimismGoerli } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import Layout from 'components/Layout'
