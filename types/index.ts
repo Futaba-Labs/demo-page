@@ -4,5 +4,6 @@ export interface QueryData {
   id: string
   status: number
   sender: string
-  from: number
+  from: number,
+  createdAt: Date
 }

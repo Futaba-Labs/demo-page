@@ -1,7 +1,6 @@
 import { Badge, Link, Row, SimpleColors, Table, Col } from '@nextui-org/react'
 import { NextPage } from 'next/types'
 import { QueryData as QueryData } from 'types'
-import { Image } from '@nextui-org/react'
 
 interface Props {
   queryData: QueryData[]
@@ -77,7 +76,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
           </Table.Header>
           <Table.Body>
             {queries.map((query) => {
-              const { text, color } = convertStatus(query.status)
+              const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash)
               return (
                 <Table.Row key={query.transactionHash}>
@@ -109,7 +108,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
                   <Table.Cell>{omitText(query.id)}</Table.Cell>
                   <Table.Cell>
                     <Badge color={color} size='lg'>
-                      {text}
+                      {status}
                     </Badge>
                   </Table.Cell>
                 </Table.Row>

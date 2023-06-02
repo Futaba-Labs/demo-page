@@ -20,6 +20,7 @@ export const useTransaction = () => {
             status: d['status'],
             sender: d['sender'],
             from: d['from'],
+            createdAt: d['createdAt'],
           }
           transactionData.push(transaction)
         }
@@ -46,6 +47,7 @@ export const useTransaction = () => {
             status: d['status'],
             sender: d['sender'],
             from: d['from'],
+            createdAt: d['createdAt'],
           }
           transactionData.push(transaction)
         }
