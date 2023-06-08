@@ -1,4 +1,4 @@
-import { Badge, Link, Row, SimpleColors, Table, Col } from '@nextui-org/react'
+import { Badge, Link, SimpleColors, Table } from '@nextui-org/react'
 import { NextPage } from 'next/types'
 import { QueryData as QueryData } from 'types'
 

@@ -1,16 +1,15 @@
-import type { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Button, Col, Container, Grid, Link, Row, Spacer, Text, useTheme } from '@nextui-org/react'
+import { Button, Col, Container, Link, Row, Text, useTheme } from '@nextui-org/react'
+import { BigNumber } from 'ethers'
+import { useNetwork, useContract, useSigner } from 'wagmi'
+import { useEffect } from 'react'
+import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import InputPage from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
-import { BigNumber, ethers } from 'ethers'
 import { DEPLOYMENTS, TESTABI } from 'utils/constants'
-import { useNetwork, useContract, useSigner } from 'wagmi'
-import { useSupabase } from 'hooks/useSupabaseClient'
-import { useEffect, useState } from 'react'
 import Transaction from 'components/Transaction'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useTransaction } from 'hooks/useTransaction'
+import type { NextPage } from 'next'
 
 const relay = new GelatoRelay()
 
@@ -53,7 +52,7 @@ const Home: NextPage = () => {
   })
 
   const sendQuery = async () => {
-    let queries: QueryRequest[] = []
+    const queries: QueryRequest[] = []
     const decimals: number[] = []
     const results = []
     for (const f of control._formValues['queries']) {
@@ -69,10 +68,12 @@ const Home: NextPage = () => {
         break
       }
       const blockHeight = await getLatestBlockNumber(item.chainName)
+      if (!signer) break
+      const sender = await signer.getAddress()
       queries.push({
         dstChainId: item.chainId,
         height: blockHeight,
-        slot: getBalanceSlot(tokenAddress),
+        slot: getBalanceSlot(sender),
         to: tokenAddress,
       })
       decimals.push(item.decimals)
@@ -115,10 +116,10 @@ const Home: NextPage = () => {
           Futaba Demo Page
         </Text>
         <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          On this page you can experience Futaba's query.
+          {"On this page you can experience Futaba's query."}
         </Text>
         <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          Let's try it 🚀
+          {" Let's try it 🚀"}
         </Text>
         <Text css={{ padding: '1px' }}>
           Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.
@@ -138,8 +139,8 @@ const Home: NextPage = () => {
             </Link>
           </span>
         </Text>
-        <Text css={{ padding: '1px' }}>Step3: Click the "Send Query" button to send the query.</Text>
-        <Text css={{ padding: '1px' }}>Step4: You can check the query result on the "Transactions".</Text>
+        <Text css={{ padding: '1px' }}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
+        <Text css={{ padding: '1px' }}>{'Step4: You can check the query result on the "Transactions".'}</Text>
       </Container>
       <Container>
         {fields.map((field, i) => (

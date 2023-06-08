@@ -1,4 +1,4 @@
-import { Button, Card, Col, Container, Dropdown, Input, Row, Spacer } from '@nextui-org/react'
+import { Button, Col, Dropdown, Input, Row, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'

@@ -1,7 +1,7 @@
 import { Container, Text } from '@nextui-org/react'
+import { NextPage } from 'next'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
-import { NextPage } from 'next'
 
 const Explorer: NextPage = () => {
   const { transactions } = useTransaction()
