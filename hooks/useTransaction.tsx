@@ -4,6 +4,7 @@ import { useSupabase } from './useSupabaseClient'
 
 export const useTransaction = () => {
   const [transactions, setTransactions] = useState<QueryData[]>([])
+  const [allTransactions, setAllTransactions] = useState<QueryData[]>([])
   const supabase = useSupabase()
 
   const fetchAllTransactions = async () => {
@@ -24,7 +25,7 @@ export const useTransaction = () => {
           }
           transactionData.push(transaction)
         }
-        setTransactions(transactionData)
+        setAllTransactions(transactionData)
       }
     }
   }
@@ -79,5 +80,5 @@ export const useTransaction = () => {
     subscribeTransactions()
   }, [supabase])
 
-  return { transactions, fetchAllTransactions, fetchTransactionsBySender }
+  return { transactions, allTransactions, fetchAllTransactions, fetchTransactionsBySender }
 }

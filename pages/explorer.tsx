@@ -4,14 +4,14 @@ import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 
 const Explorer: NextPage = () => {
-  const { transactions } = useTransaction()
+  const { allTransactions } = useTransaction()
   return (
     <>
       <Container>
         <Text weight={'medium'} size={32}>
           Transactions
         </Text>
-        <Transaction queryData={transactions} rowsPerPage={15} />
+        <Transaction queryData={allTransactions} rowsPerPage={15} />
       </Container>
     </>
   )

@@ -99,6 +99,7 @@ const Home: NextPage = () => {
   }
 
   const fetchTxns = async () => {
+    console.log('signer:' + signer)
     if (signer) {
       const sender = await signer.getAddress()
       fetchTransactionsBySender(sender)
