@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
   const { isDark } = useTheme()
-  const { transactions, fetchTransactionsBySender } = useTransaction()
+  const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
   const addRecentTransaction = useAddRecentTransaction()
 
@@ -110,7 +110,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     fetchTxns()
-  }, [supabase])
+  }, [supabase, allTransactions])
 
   useEffect(() => {
     if (data) {
@@ -126,8 +126,6 @@ const Home: NextPage = () => {
     }
     setLoading(false)
   }, [data])
-
-  useEffect(() => setLoading(false), [isError])
 
   return (
     <>

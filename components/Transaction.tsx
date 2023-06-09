@@ -57,6 +57,34 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
         return 'https://mumbai.polygonscan.com/tx/'
     }
   }
+
+  const calculateTimeDifference = (craetedAt: Date) => {
+    const now = new Date()
+    const timeZoneOffset = now.getTimezoneOffset()
+    const adjustedTime = new Date(now.getTime() + timeZoneOffset * 60 * 1000)
+    const differenceInMilliseconds = Math.abs(adjustedTime.getTime() - craetedAt.getTime())
+    const differenceInSeconds = Math.floor(differenceInMilliseconds / 1000)
+    const differenceInMinutes = Math.floor(differenceInSeconds / 60)
+    const differenceInHours = Math.floor(differenceInMinutes / 60)
+    const differenceInDays = Math.floor(differenceInHours / 24)
+    const differenceInYears = Math.floor(differenceInDays / 365)
+
+    if (differenceInMinutes < 1) {
+      return 'just now'
+    } else if (differenceInMinutes < 60) {
+      return `${differenceInMinutes} mins ago`
+    } else if (differenceInHours < 24) {
+      const remainingMinutes = differenceInMinutes % 60
+      return `${differenceInHours} hours ${remainingMinutes} mins ago`
+    } else if (differenceInDays < 365) {
+      const remainingHours = differenceInHours % 24
+      return `${differenceInDays} days ${remainingHours} hours ago`
+    } else {
+      const remainingDays = differenceInDays % 365
+      return `${differenceInYears} years ${remainingDays} days ago`
+    }
+  }
+
   return (
     <>
       {queries.length > 0 ? (
@@ -71,6 +99,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
             <Table.Column>Src Chain</Table.Column>
             <Table.Column>Request Transaction</Table.Column>
             <Table.Column>Resopnse Transaction</Table.Column>
+            <Table.Column>Age</Table.Column>
             <Table.Column>Query Id</Table.Column>
             <Table.Column>Deliver Status</Table.Column>
           </Table.Header>
@@ -95,6 +124,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
                       <div></div>
                     )}
                   </Table.Cell>
+                  <Table.Cell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</Table.Cell>
                   <Table.Cell>{omitText(query.id)}</Table.Cell>
                   <Table.Cell>
                     <Badge color={color} size='lg'>
