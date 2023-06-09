@@ -20,7 +20,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
       case 0:
         return { text: 'Request Pending...', color: 'default' }
       case 1:
-        return { text: 'Delivered', color: 'success' }
+        return { text: 'Delivered', color: 'primary' }
       case 3:
         return { text: 'Failed', color: 'error' }
       default:
@@ -82,23 +82,13 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
                 <Table.Row key={query.transactionHash}>
                   <Table.Cell>{converChain(query.from)}</Table.Cell>
                   <Table.Cell>
-                    <Link
-                      isExternal
-                      href={getExploerUrl(query.from) + query.transactionHash}
-                      target='_blank'
-                      color={'success'}
-                    >
+                    <Link isExternal href={getExploerUrl(query.from) + query.transactionHash} target='_blank'>
                       {omitText(query.transactionHash)}
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
                     {resTxHash !== '' ? (
-                      <Link
-                        isExternal
-                        href={getExploerUrl(query.from) + query.executedHash}
-                        target='_blank'
-                        color={'success'}
-                      >
+                      <Link isExternal href={getExploerUrl(query.from) + query.executedHash} target='_blank'>
                         {resTxHash}
                       </Link>
                     ) : (

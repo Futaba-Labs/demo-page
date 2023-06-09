@@ -20,12 +20,6 @@ export interface QueryForm {
   tokenAddress: string
 }
 
-interface QueryParam {
-  chainIds: number[]
-  tokenAddresses: string[]
-  decimals: number[]
-}
-
 interface QueryRequest {
   dstChainId: number
   height: number
@@ -34,8 +28,8 @@ interface QueryRequest {
 }
 
 const Home: NextPage = () => {
-  const { register, control, setValue, handleSubmit } = useForm()
-  const { isDark, type } = useTheme()
+  const { register, control, setValue } = useForm()
+  const { isDark } = useTheme()
   const { transactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
   const addRecentTransaction = useAddRecentTransaction()
@@ -46,9 +40,9 @@ const Home: NextPage = () => {
   })
 
   const { address, isConnected, isDisconnected } = useAccount()
-  const { chain, chains } = useNetwork()
+  const { chain } = useNetwork()
 
-  const { data, isLoading, isSuccess, write } = useContractWrite({
+  const { data, isSuccess, write } = useContractWrite({
     address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
     abi: TESTABI,
     functionName: 'sendQuery',
@@ -142,12 +136,7 @@ const Home: NextPage = () => {
           <br />
           <span>
             If you do not have a token, please mint it{' '}
-            <Link
-              isExternal
-              color='success'
-              href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
-              target='_blank'
-            >
+            <Link isExternal href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
               here
             </Link>
           </span>
@@ -171,7 +160,7 @@ const Home: NextPage = () => {
         <div style={{ padding: '16px' }}></div>
         <Row gap={0}>
           <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto color={'success'}>
+            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto>
               Add Query
             </Button>
           </Col>
@@ -182,7 +171,6 @@ const Home: NextPage = () => {
               }}
               flat
               auto
-              color={'success'}
               disabled={fields.length === 0 || isDisconnected}
             >
               Send Query

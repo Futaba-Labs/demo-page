@@ -1,4 +1,3 @@
-'use client'
 import { NextPage } from 'next/types'
 import { useTheme as useNextTheme } from 'next-themes'
 import { Navbar, useTheme } from '@nextui-org/react'

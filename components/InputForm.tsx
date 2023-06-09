@@ -26,12 +26,11 @@ const InputPage: NextPage<Props> = ({ label, setChain, registerToken, index, onC
         <Col span={4}>
           {/* <input type='text' {...registerChain} value={selectedValue} onChange={console.log} onChangeCapture={}/> */}
           <Dropdown>
-            <Dropdown.Button flat color='success' css={{ tt: 'capitalize' }}>
+            <Dropdown.Button flat css={{ tt: 'capitalize' }}>
               {selectedValue}
             </Dropdown.Button>
             <Dropdown.Menu
               aria-label='Single selection actions'
-              color='success'
               disallowEmptySelection
               selectionMode='single'
               selectedKeys={selected}

@@ -17,14 +17,28 @@ import Layout from 'components/Layout'
 import { mainColor } from 'utils/constants'
 import type { AppProps } from 'next/app'
 
-const lightTheme = createTheme({
+const theme = createTheme({
   type: 'light',
-  theme: {},
-})
+  theme: {
+    colors: {
+      green200: '#D5EAD8',
+      green300: '#A5D4AD',
+      green400: '#89C997',
+      green500: '#00A051',
+      green600: '#1F8506',
+      green700: '#006428',
 
-const darkTheme = createTheme({
-  type: 'dark',
-  theme: {},
+      primaryLight: '$green200',
+      primaryLightHover: '$green300', // commonly used on hover state
+      primaryLightActive: '$green400', // commonly used on pressed state
+      primaryLightContrast: '$green600', // commonly used for text inside the component
+      primary: '$green600',
+      primaryBorder: '$green500',
+      primaryBorderHover: '$green600',
+      primarySolidHover: '$green700',
+      primaryShadow: '$green500',
+    },
+  },
 })
 
 const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
@@ -43,15 +57,8 @@ const config = createConfig({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <NextThemesProvider
-      defaultTheme='system'
-      attribute='class'
-      value={{
-        light: lightTheme.className,
-        dark: darkTheme.className,
-      }}
-    >
-      <NextUIProvider>
+    <NextThemesProvider defaultTheme='system' attribute='class'>
+      <NextUIProvider theme={theme}>
         <WagmiConfig config={config}>
           <RainbowKitProvider
             showRecentTransactions={true}
