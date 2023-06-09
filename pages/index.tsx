@@ -11,6 +11,7 @@ import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
+import Notice from 'components/Notice'
 import type { NextPage } from 'next'
 
 const relay = new GelatoRelay()
@@ -119,6 +120,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Container>
+        <div style={{ padding: '8px' }}></div>
+        <Notice />
         <Text weight={'medium'} size={48}>
           Futaba Demo Page
         </Text>
