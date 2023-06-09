@@ -1,7 +1,7 @@
 'use client'
 import { NextPage } from 'next/types'
 import { useTheme as useNextTheme } from 'next-themes'
-import { Navbar, Switch, useTheme } from '@nextui-org/react'
+import { Navbar, useTheme } from '@nextui-org/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Image } from '@nextui-org/react'
 import 'react-toastify/dist/ReactToastify.css'
@@ -35,7 +35,7 @@ const Header = () => {
         </Navbar.Content>
         <Navbar.Content>
           <ConnectButton />
-          <Switch checked={isDark} onChange={(e) => setTheme(e.target.checked ? 'dark' : 'light')} color='success' />
+          {/* <Switch checked={isDark} onChange={(e) => setTheme(e.target.checked ? 'dark' : 'light')} color='success' /> */}
         </Navbar.Content>
       </Navbar>
     </>

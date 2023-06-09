@@ -1,14 +1,16 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button, Col, Container, Link, Row, Text, useTheme } from '@nextui-org/react'
 import { BigNumber } from 'ethers'
-import { useNetwork, useContract, useSigner } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect } from 'react'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import InputPage from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
 import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
+import { useSupabase } from 'hooks/useSupabaseClient'
 import type { NextPage } from 'next'
 
 const relay = new GelatoRelay()
@@ -35,20 +37,21 @@ const Home: NextPage = () => {
   const { register, control, setValue, handleSubmit } = useForm()
   const { isDark, type } = useTheme()
   const { transactions, fetchTransactionsBySender } = useTransaction()
+  const supabase = useSupabase()
+  const addRecentTransaction = useAddRecentTransaction()
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'queries',
   })
 
-  const { data: signer } = useSigner()
-
+  const { address, isConnected, isDisconnected } = useAccount()
   const { chain, chains } = useNetwork()
 
-  const testQuery = useContract({
-    address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test],
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
     abi: TESTABI,
-    signerOrProvider: signer,
+    functionName: 'sendQuery',
   })
 
   const sendQuery = async () => {
@@ -68,29 +71,26 @@ const Home: NextPage = () => {
         break
       }
       const blockHeight = await getLatestBlockNumber(item.chainName)
-      if (!signer) break
-      const sender = await signer.getAddress()
+      if (!isConnected) break
+
       queries.push({
         dstChainId: item.chainId,
         height: blockHeight,
-        slot: getBalanceSlot(sender),
+        slot: getBalanceSlot(address!),
         to: tokenAddress,
       })
       decimals.push(item.decimals)
     }
 
     try {
-      if (testQuery && signer) {
+      if (isConnected) {
         const fee = await relay.getEstimatedFee(
           80001,
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
           BigNumber.from('1000000'),
           true,
         )
-        console.log(queries)
-        const tx = await testQuery.sendQuery(queries, decimals, { gasLimit: 1000000, value: fee.mul(120).div(100) })
-        await tx.wait()
-        showToast('Query Sent', 'success', isDark)
+        write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
       }
     } catch (error) {
       console.log(error)
@@ -99,16 +99,28 @@ const Home: NextPage = () => {
   }
 
   const fetchTxns = async () => {
-    console.log('signer:' + signer)
-    if (signer) {
-      const sender = await signer.getAddress()
-      fetchTransactionsBySender(sender)
+    if (address) {
+      fetchTransactionsBySender(address)
     }
   }
 
   useEffect(() => {
     fetchTxns()
-  }, [signer])
+  }, [supabase])
+
+  useEffect(() => {
+    if (data) {
+      addRecentTransaction({
+        hash: data.hash,
+        description: 'Query Sent',
+        confirmations: 5,
+      })
+
+      if (!isSuccess) {
+        showToast('Transaction Failed', 'error', isDark)
+      }
+    }
+  }, [data])
 
   return (
     <>
@@ -171,7 +183,7 @@ const Home: NextPage = () => {
               flat
               auto
               color={'success'}
-              disabled={fields.length === 0 || signer == undefined}
+              disabled={fields.length === 0 || isDisconnected}
             >
               Send Query
             </Button>

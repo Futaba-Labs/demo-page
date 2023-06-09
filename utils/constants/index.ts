@@ -5,3 +5,5 @@ import E from "./erc20.abi.json"
 export const DEPLOYMENTS = D
 export const TESTABI = T
 export const ERC20ABI = E
+
+export const mainColor = "#1F8506"

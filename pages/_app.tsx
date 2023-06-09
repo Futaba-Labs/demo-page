@@ -5,15 +5,16 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import '@rainbow-me/rainbowkit/styles.css'
 
 import {
-  getDefaultWallets,
   RainbowKitProvider,
+  getDefaultWallets,
   darkTheme as rainbowDarkTheme,
   lightTheme as rainbowLightTheme,
 } from '@rainbow-me/rainbowkit'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygonMumbai } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import Layout from 'components/Layout'
+import { mainColor } from 'utils/constants'
 import type { AppProps } from 'next/app'
 
 const lightTheme = createTheme({
@@ -26,17 +27,18 @@ const darkTheme = createTheme({
   theme: {},
 })
 
-const { chains, provider } = configureChains([polygonMumbai], [publicProvider()])
+const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
 
 const { connectors } = getDefaultWallets({
-  appName: 'Futaba Demo Page',
+  appName: 'Futaba demo app',
+  projectId: '5573a7c23be46c0343267fb1dca563af',
   chains,
 })
 
-const wagmiClient = createClient({
+const config = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -50,15 +52,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <NextUIProvider>
-        <WagmiConfig client={wagmiClient}>
+        <WagmiConfig config={config}>
           <RainbowKitProvider
+            showRecentTransactions={true}
             chains={chains}
             theme={{
               lightMode: rainbowLightTheme({
-                accentColor: '#17C964',
+                accentColor: mainColor,
               }),
               darkMode: rainbowDarkTheme({
-                accentColor: '#17C964',
+                accentColor: mainColor,
               }),
             }}
             coolMode

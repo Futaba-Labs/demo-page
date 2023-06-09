@@ -10,7 +10,6 @@ export const useTransaction = () => {
   const fetchAllTransactions = async () => {
     if (supabase) {
       const { data, error } = await supabase.from('QueryData').select().order('createdAt', { ascending: false })
-      console.log(error)
       const transactionData: QueryData[] = []
       if (data) {
         for (const d of data) {
@@ -37,7 +36,6 @@ export const useTransaction = () => {
         .select()
         .eq('sender', sender)
         .order('createdAt', { ascending: false })
-      console.log(error)
       const transactionData: QueryData[] = []
       if (data) {
         for (const d of data) {
