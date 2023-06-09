@@ -1,8 +1,8 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Button, Col, Container, Link, Row, Text, useTheme } from '@nextui-org/react'
+import { Button, Col, Container, Link, Row, Text, useTheme, Loading } from '@nextui-org/react'
 import { BigNumber } from 'ethers'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import InputPage from 'components/InputForm'
@@ -29,6 +29,7 @@ interface QueryRequest {
 }
 
 const Home: NextPage = () => {
+  const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
   const { isDark } = useTheme()
   const { transactions, fetchTransactionsBySender } = useTransaction()
@@ -43,54 +44,62 @@ const Home: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
-  const { data, isSuccess, write } = useContractWrite({
+  const { data, isSuccess, write, isError } = useContractWrite({
     address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
     abi: TESTABI,
     functionName: 'sendQuery',
   })
 
   const sendQuery = async () => {
-    const queries: QueryRequest[] = []
-    const decimals: number[] = []
-    const results = []
-    for (const f of control._formValues['queries']) {
-      results.push(getTokenDecimals(f['chain'], f['tokenAddress']))
-    }
-
-    const items = await Promise.all(results)
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]
-      const tokenAddress = control._formValues['queries'][i]['tokenAddress']
-      if (item.decimals === 0) {
-        showToast('Invalid Token', 'error', isDark)
-        break
+    if (!isConnected) return
+    setLoading(true)
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<void>(async (resolve, reject) => {
+      const queries: QueryRequest[] = []
+      const decimals: number[] = []
+      const results = []
+      for (const f of control._formValues['queries']) {
+        results.push(getTokenDecimals(f['chain'], f['tokenAddress']))
       }
-      const blockHeight = await getLatestBlockNumber(item.chainName)
-      if (!isConnected) break
 
-      queries.push({
-        dstChainId: item.chainId,
-        height: blockHeight,
-        slot: getBalanceSlot(address!),
-        to: tokenAddress,
-      })
-      decimals.push(item.decimals)
-    }
+      const items = await Promise.all(results)
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        const tokenAddress = control._formValues['queries'][i]['tokenAddress']
+        if (item.decimals === 0) {
+          showToast('Invalid Token', 'error', isDark)
+          setLoading(false)
+          return
+        }
+        const blockHeight = await getLatestBlockNumber(item.chainName)
 
-    try {
-      if (isConnected) {
-        const fee = await relay.getEstimatedFee(
-          80001,
-          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          BigNumber.from('1000000'),
-          true,
-        )
-        write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
+        queries.push({
+          dstChainId: item.chainId,
+          height: blockHeight,
+          slot: getBalanceSlot(address!),
+          to: tokenAddress,
+        })
+        decimals.push(item.decimals)
       }
-    } catch (error) {
-      console.log(error)
-      showToast('Transaction Failed', 'error', isDark)
-    }
+
+      try {
+        if (isConnected) {
+          const fee = await relay.getEstimatedFee(
+            80001,
+            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+            BigNumber.from('1000000'),
+            true,
+          )
+          write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
+          return resolve()
+        }
+      } catch (error) {
+        console.log(error)
+        showToast('Transaction Failed', 'error', isDark)
+        setLoading(false)
+        return reject(error)
+      }
+    })
   }
 
   const fetchTxns = async () => {
@@ -115,13 +124,17 @@ const Home: NextPage = () => {
         showToast('Transaction Failed', 'error', isDark)
       }
     }
+    setLoading(false)
   }, [data])
+
+  useEffect(() => setLoading(false), [isError])
 
   return (
     <>
       <Container>
         <div style={{ padding: '8px' }}></div>
         <Notice />
+        <div style={{ padding: '8px' }}></div>
         <Text weight={'medium'} size={48}>
           Futaba Demo Page
         </Text>
@@ -131,12 +144,9 @@ const Home: NextPage = () => {
         <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
           {" Let's try it 🚀"}
         </Text>
-        <Text css={{ padding: '1px' }}>
-          Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.
-        </Text>
-        <Text css={{ padding: '1px' }}>
+        <Text size={18}>Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.</Text>
+        <Text size={18}>
           Step2: Select the chain and token address you want to query. You can add multiple queries.
-          <br />
           <span>
             If you do not have a token, please mint it{' '}
             <Link isExternal href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
@@ -144,8 +154,8 @@ const Home: NextPage = () => {
             </Link>
           </span>
         </Text>
-        <Text css={{ padding: '1px' }}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
-        <Text css={{ padding: '1px' }}>{'Step4: You can check the query result on the "Transactions".'}</Text>
+        <Text size={18}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
+        <Text size={18}>{'Step4: You can check the query result on the "Your Transactions".'}</Text>
       </Container>
       <Container>
         {fields.map((field, i) => (
@@ -163,7 +173,7 @@ const Home: NextPage = () => {
         <div style={{ padding: '16px' }}></div>
         <Row gap={0}>
           <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto>
+            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
               Add Query
             </Button>
           </Col>
@@ -174,9 +184,9 @@ const Home: NextPage = () => {
               }}
               flat
               auto
-              disabled={fields.length === 0 || isDisconnected}
+              disabled={fields.length === 0 || isDisconnected || loading}
             >
-              Send Query
+              {loading ? <Loading size='sm' /> : 'Send Query'}
             </Button>
           </Col>
         </Row>

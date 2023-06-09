@@ -13,7 +13,6 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygonMumbai } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import Layout from 'components/Layout'
-import { mainColor } from 'utils/constants'
 import type { AppProps } from 'next/app'
 
 const theme = createTheme({
@@ -64,10 +63,10 @@ function MyApp({ Component, pageProps }: AppProps) {
             chains={chains}
             theme={{
               lightMode: rainbowLightTheme({
-                accentColor: mainColor,
+                accentColor: '#1F8506',
               }),
               darkMode: rainbowDarkTheme({
-                accentColor: mainColor,
+                accentColor: '#1F8506',
               }),
             }}
             coolMode

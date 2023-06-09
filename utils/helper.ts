@@ -1,7 +1,7 @@
 import { BigNumber, Wallet, ethers } from "ethers"
-import { ERC20ABI } from "./constants"
 import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
+import { ERC20ABI } from "./constants"
 
 export const getTokenDecimals = async (chain: string, token: string) => {
   const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
@@ -52,7 +52,7 @@ const getProviderAndEndpoint = (chain: string) => {
   }
 }
 
-export const showToast = (message: string, type: string, isDark: boolean = false) => {
+export const showToast = (message: string, type: string, isDark = false) => {
   const theme = isDark ? "dark" : "light"
   const toastOpt: ToastOptions = {
     position: "bottom-right",
