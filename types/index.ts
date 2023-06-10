@@ -7,3 +7,10 @@ export interface QueryData {
   from: number,
   createdAt: Date
 }
+
+export interface QueryRequest {
+  dstChainId: number
+  height: number
+  slot: string
+  to: string
+}

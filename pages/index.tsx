@@ -12,6 +12,7 @@ import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
+import { QueryRequest } from 'types'
 import type { NextPage } from 'next'
 
 const relay = new GelatoRelay()
@@ -19,13 +20,6 @@ const relay = new GelatoRelay()
 export interface QueryForm {
   chain: string
   tokenAddress: string
-}
-
-interface QueryRequest {
-  dstChainId: number
-  height: number
-  slot: string
-  to: string
 }
 
 const Home: NextPage = () => {
