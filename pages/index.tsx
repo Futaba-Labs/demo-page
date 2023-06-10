@@ -5,7 +5,7 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import InputPage from 'components/InputForm'
+import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
 import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import Transaction from 'components/Transaction'
@@ -159,7 +159,7 @@ const Home: NextPage = () => {
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '16px' }}></div>
-            <InputPage
+            <InputForm
               label='Token Address'
               index={i}
               setChain={setValue}

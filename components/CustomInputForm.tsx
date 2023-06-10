@@ -11,7 +11,7 @@ type Props = {
   onClick: () => void
 } & InputHTMLAttributes<HTMLInputElement>
 
-const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onClick }) => {
+const CustomInputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onClick }) => {
   const [selected, setSelected] = useState<any>(new Set(['Select Chain']))
 
   const selectedValue = useMemo(() => {
@@ -54,4 +54,4 @@ const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onC
   )
 }
 
-export default InputForm
+export default CustomInputForm
