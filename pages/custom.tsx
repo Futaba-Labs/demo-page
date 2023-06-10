@@ -1,4 +1,4 @@
-import { Button, Col, Container, Loading, Row, Text } from '@nextui-org/react'
+import { Button, Col, Container, Link, Loading, Row, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -17,7 +17,7 @@ const Custom: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
 
   const sendQuery = async () => {
-    console.log('send query')
+    console.log(control._formValues['custom_queries'])
   }
 
   return (
@@ -29,14 +29,31 @@ const Custom: NextPage = () => {
         <Text weight={'medium'} size={32}>
           Custom Query
         </Text>
+        <Text size={18}>
+          {'Here you can specify any contract address, block height, and storage slot to run query.'}
+        </Text>
+        <Text size={18}>
+          {'Click '}
+          <span>
+            <Link
+              isExternal
+              href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
+              target='_blank'
+            >
+              here
+            </Link>
+          </span>
+          {' for information on how to calculate storage slots.'}
+        </Text>
         {fields.map((field, i) => (
           <div key={i}>
-            <div style={{ padding: '16px' }}></div>
+            <div style={{ padding: '20px' }}></div>
             <CustomInputForm
-              label='Token Address'
               index={i}
               setChain={setValue}
-              registerToken={register(`custom_queries.${i}.tokenAddress`)}
+              registerAddress={register(`custom_queries.${i}.tokenAddress`)}
+              registerHeight={register(`custom_queries.${i}.height`)}
+              registerSlot={register(`custom_queries.${i}.slot`)}
               onClick={() => remove(i)}
             />
           </div>

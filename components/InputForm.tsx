@@ -1,7 +1,9 @@
-import { Button, Col, Dropdown, Input, Row, Spacer } from '@nextui-org/react'
+import { Button, Col, Input, Row, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
+import { Delete } from 'react-iconly'
+import DropdownSelect from './DropdownSelect'
 
 type Props = {
   setChain: (name: string, value: string) => void
@@ -24,21 +26,12 @@ const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onC
     <>
       <Row gap={0}>
         <Col span={4}>
-          <Dropdown>
-            <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-              {selectedValue}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label='Single selection actions'
-              disallowEmptySelection
-              selectionMode='single'
-              selectedKeys={selected}
-              onSelectionChange={setSelected}
-            >
-              <Dropdown.Item key='Goerli'>Goerli</Dropdown.Item>
-              <Dropdown.Item key='Optimism Goerli'>Optimism Goerli</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          <DropdownSelect
+            selected={selected}
+            selectedValue={selectedValue}
+            setSelected={setSelected}
+            keys={['Goerli', 'Optimism Goerli']}
+          />
         </Col>
         <Col>
           <Input labelPlaceholder={label} fullWidth={true} {...registerToken} />
@@ -46,7 +39,7 @@ const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onC
         <Spacer y={1} />
         <Col>
           <Button onClick={onClick} flat auto color={'error'}>
-            Remove Query
+            <Delete primaryColor='red' />
           </Button>
         </Col>
       </Row>
