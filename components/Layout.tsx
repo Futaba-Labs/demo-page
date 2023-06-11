@@ -26,6 +26,7 @@ const Header = () => {
         </Navbar.Brand>
         <Navbar.Content hideIn='xs' gap={'$12'}>
           <Navbar.Link href='/custom'>Custom query</Navbar.Link>
+          <Navbar.Link href='/cache'>Access cache</Navbar.Link>
           <Navbar.Link href='/explorer'>Explorer</Navbar.Link>
           <Navbar.Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' target='block' isExternal>
             Docs

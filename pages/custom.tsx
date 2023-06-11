@@ -9,17 +9,21 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
-import { showToast } from 'utils/helper'
+import { convertChainNameToId, showToast } from 'utils/helper'
 import { CUSTOMQUERYABI, DEPLOYMENTS } from 'utils/constants'
+import Transaction from 'components/Transaction'
+import { useTransaction } from 'hooks/useTransaction'
+import { useSupabase } from 'hooks/useSupabaseClient'
 
 const relay = new GelatoRelay()
+const FORM_NAME = 'custom_queries'
 
 const Custom: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'custom_queries',
+    name: FORM_NAME,
   })
 
   const { chain } = useNetwork()
@@ -34,27 +38,24 @@ const Custom: NextPage = () => {
 
   const { address, isConnected, isDisconnected } = useAccount()
 
+  const supabase = useSupabase()
+
+  const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
+
   const sendQuery = async () => {
     const queries: QueryRequest[] = []
     setLoading(true)
 
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
-      control._formValues['custom_queries'].forEach((query: any) => {
+      control._formValues[FORM_NAME].forEach((query: any) => {
         console.log(query)
-        let dstChainId
-        switch (query.chain) {
-          case 'Goerli':
-            dstChainId = 5
-            break
-          case 'Optimism Goerli':
-            dstChainId = 420
-            break
-          default:
-            showToast('error', 'Invalid chain')
-            setLoading(false)
-            reject()
-            return
+        const dstChainId = convertChainNameToId(query.chain)
+        if (!dstChainId) {
+          showToast('error', 'Invalid chain')
+          reject()
+          setLoading(false)
+          return
         }
         if (query.height < 0) {
           showToast('error', 'Invalid height')
@@ -113,6 +114,16 @@ const Custom: NextPage = () => {
     setLoading(false)
   }, [data])
 
+  const fetchTxns = async () => {
+    if (address) {
+      fetchTransactionsBySender(address)
+    }
+  }
+
+  useEffect(() => {
+    fetchTxns()
+  }, [supabase, allTransactions])
+
   return (
     <>
       <Container>
@@ -142,11 +153,12 @@ const Custom: NextPage = () => {
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
             <CustomInputForm
+              formName={FORM_NAME}
               index={i}
               setChain={setValue}
-              registerAddress={register(`custom_queries.${i}.contractAddress`)}
-              registerHeight={register(`custom_queries.${i}.height`)}
-              registerSlot={register(`custom_queries.${i}.slot`)}
+              registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
+              registerHeight={register(`${FORM_NAME}.${i}.height`)}
+              registerSlot={register(`${FORM_NAME}*.${i}.slot`)}
               onClick={() => remove(i)}
             />
           </div>
@@ -171,6 +183,13 @@ const Custom: NextPage = () => {
             </Button>
           </Col>
         </Row>
+      </Container>
+      <Container>
+        <div style={{ padding: '24px' }}></div>
+        <Text weight={'medium'} size={32}>
+          Your Transactions
+        </Text>
+        <Transaction queryData={transactions} rowsPerPage={5} />
       </Container>
     </>
   )

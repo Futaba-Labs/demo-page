@@ -6,6 +6,7 @@ import { Delete } from 'react-iconly'
 import DropdownSelect from './DropdownSelect'
 
 type Props = {
+  formName: string
   setChain: (name: string, value: string) => void
   index: number
   registerAddress: UseFormRegisterReturn
@@ -15,6 +16,7 @@ type Props = {
 } & InputHTMLAttributes<HTMLInputElement>
 
 const CustomInputForm: NextPage<Props> = ({
+  formName,
   setChain,
   registerAddress,
   registerHeight,
@@ -26,7 +28,7 @@ const CustomInputForm: NextPage<Props> = ({
 
   const selectedValue = useMemo(() => {
     const value = Array.from(selected).join(', ').replaceAll('_', ' ')
-    setChain(`custom_queries.${index}.chain`, value)
+    setChain(`${formName}.${index}.chain`, value)
     return value
   }, [selected])
 

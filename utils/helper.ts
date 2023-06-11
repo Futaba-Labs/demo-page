@@ -73,3 +73,33 @@ export const showToast = (message: string, type: string, isDark = false) => {
       break
   }
 }
+
+export const convertChainNameToId = (chainName: string) => {
+  switch (chainName) {
+    case "Goerli":
+      return 5
+    case "Optimism Goerli":
+      return 420
+    case "Mumbai":
+      return 80001
+    default:
+      return
+  }
+}
+
+export const convertChainIdToName = (chainId: number) => {
+  switch (chainId) {
+    case 5:
+      return "Goerli"
+    case 420:
+      return "Optimism Goerli"
+    case 80001:
+      return "Mumbai"
+    default:
+      return
+  }
+}
+
+export const omitText = (text: string, start: number, end: number) => {
+  return text.substring(0, start) + '...' + text.substring(text.length - end, text.length)
+}
