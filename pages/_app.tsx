@@ -12,6 +12,7 @@ import {
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygonMumbai } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
+import { useSSR } from '@nextui-org/react'
 import Layout from 'components/Layout'
 import type { AppProps } from 'next/app'
 
@@ -54,6 +55,8 @@ const config = createConfig({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { isBrowser } = useSSR()
+  if (!isBrowser) return
   return (
     <NextThemesProvider defaultTheme='system' attribute='class'>
       <NextUIProvider theme={theme}>

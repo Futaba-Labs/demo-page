@@ -5,6 +5,7 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { useRouter } from 'next/router'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
 import { DEPLOYMENTS, TESTABI } from 'utils/constants'
@@ -23,6 +24,7 @@ export interface QueryForm {
 }
 
 const Home: NextPage = () => {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
   const { isDark } = useTheme()
