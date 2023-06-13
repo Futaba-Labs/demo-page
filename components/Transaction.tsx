@@ -98,7 +98,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
           <Table.Header>
             <Table.Column>Src Chain</Table.Column>
             <Table.Column>Request Transaction</Table.Column>
-            <Table.Column>Resopnse Transaction</Table.Column>
+            <Table.Column>Response Transaction</Table.Column>
             <Table.Column>Age</Table.Column>
             <Table.Column>Query Id</Table.Column>
             <Table.Column>Deliver Status</Table.Column>

@@ -150,13 +150,14 @@ const Home: NextPage = () => {
         </Text>
         <Text size={18}>Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.</Text>
         <Text size={18}>
-          Step2: Select the chain and token address you want to query. You can add multiple queries.
+          Step2: Select the chain and token address (only general erc20) you want to query. You can add multiple
+          queries.
           <span>
             If you do not have a token, please mint it{' '}
             <Link isExternal href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
               here
             </Link>
-          </span>
+          </span>{' '}
         </Text>
         <Text size={18}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
         <Text size={18}>{'Step4: You can check the query result on the "Your Transactions".'}</Text>
