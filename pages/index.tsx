@@ -61,6 +61,11 @@ const Home: NextPage = () => {
       const items = await Promise.all(results)
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
+        if (!item) {
+          showToast('Failed', 'error', isDark)
+          setLoading(false)
+          return
+        }
         const tokenAddress = control._formValues['queries'][i]['tokenAddress']
         if (item.decimals === 0) {
           showToast('Invalid Token', 'error', isDark)
@@ -68,7 +73,11 @@ const Home: NextPage = () => {
           return
         }
         const blockHeight = await getLatestBlockNumber(item.chainName)
-
+        if (!blockHeight) {
+          showToast('Failed', 'error', isDark)
+          setLoading(false)
+          return
+        }
         queries.push({
           dstChainId: item.chainId,
           height: blockHeight,
@@ -86,6 +95,7 @@ const Home: NextPage = () => {
             BigNumber.from('1000000'),
             true,
           )
+          console.log(queries)
           write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
           return resolve()
         }

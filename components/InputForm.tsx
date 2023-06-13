@@ -30,7 +30,7 @@ const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onC
             selected={selected}
             selectedValue={selectedValue}
             setSelected={setSelected}
-            keys={['Goerli', 'Optimism Goerli']}
+            keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
           />
         </Col>
         <Col>

@@ -39,7 +39,7 @@ const CustomInputForm: NextPage<Props> = ({
           selected={selected}
           selectedValue={selectedValue}
           setSelected={setSelected}
-          keys={['Goerli', 'Optimism Goerli']}
+          keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
         />
         <Spacer x={1} />
         <Input labelPlaceholder={'Block height'} {...registerHeight} type='number' fullWidth={true} />
