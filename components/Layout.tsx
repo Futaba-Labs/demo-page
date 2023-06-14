@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import styled from 'styled-components'
+import Head from 'next/head'
 
 interface LayoutProps {
   children?: React.ReactNode
@@ -61,6 +62,13 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
 
   return (
     <>
+      <Head>
+        <title>Futaba Demo</title>
+        <meta name='description' content='Demo page to try Futaba in action' />
+        <meta property='og:title' content='Futaba Demo' />
+        <meta property='og:description' content={'Demo page to try Futaba in action'} />
+        <meta property='og:image' content={'/images/futaba_ogp.png'} />
+      </Head>
       <Header />
       <main>{children}</main>
       <ToastContainer
