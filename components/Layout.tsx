@@ -42,6 +42,9 @@ const Header = () => {
           <Link href='/cache'>
             <CustomLink>Access cache</CustomLink>
           </Link>
+          <Link href='/vote'>
+            <CustomLink>Cross-chain Voting</CustomLink>
+          </Link>
           <Link href='/explorer'>
             <CustomLink>Explorer</CustomLink>
           </Link>

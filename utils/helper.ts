@@ -111,3 +111,8 @@ export const convertChainIdToName = (chainId: number) => {
 export const omitText = (text: string, start: number, end: number) => {
   return text.substring(0, start) + '...' + text.substring(text.length - end, text.length)
 }
+
+export const converUnixToDate = (time: number) => {
+  const date = new Date(time * 1000);
+  return date
+}
