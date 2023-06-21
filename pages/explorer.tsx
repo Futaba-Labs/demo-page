@@ -8,7 +8,7 @@ const Explorer: NextPage = () => {
   return (
     <>
       <Container>
-        <Text weight={'medium'} size={32}>
+        <Text weight={'medium'} size={36}>
           Transactions
         </Text>
         <Transaction queryData={allTransactions} rowsPerPage={15} />

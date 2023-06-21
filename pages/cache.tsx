@@ -89,7 +89,7 @@ const Cache: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={32}>
+        <Text weight={'medium'} size={36}>
           Access cache
         </Text>
         <Text size={18}>
