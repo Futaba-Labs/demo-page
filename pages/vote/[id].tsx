@@ -43,7 +43,7 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessYes,
       isError: isErrorYes,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
+      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
       abi: VOTINGABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), true],
@@ -54,7 +54,7 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessNo,
       isError: isErrorNo,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
+      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
       abi: VOTINGABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), false],

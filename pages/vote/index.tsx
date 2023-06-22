@@ -1,4 +1,4 @@
-import { Container, Link, Text } from '@nextui-org/react'
+import { Button, Container, Link, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -28,7 +28,7 @@ const Vote: NextPage = () => {
     // TODO: fetch proposals
     console.log(data)
     const proposalData = data as ProposalData[]
-    if (proposalData.length > 0) {
+    if (proposalData && proposalData.length > 0) {
       setProposals(
         proposalData.sort((a, b) => {
           if (a.expirationTime > b.expirationTime) return -1
@@ -66,6 +66,8 @@ const Vote: NextPage = () => {
           </span>
           {'.'}
         </Text>
+        <div style={{ padding: '8px' }}></div>
+        <Button onPress={() => router.push('/vote/create')}>{'Create proposal'}</Button>
         <div style={{ padding: '8px' }}></div>
         <Text weight={'medium'} size={32}>
           Proposals
