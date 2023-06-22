@@ -3,16 +3,10 @@ import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { useContractWrite, useNetwork } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
 import { DEPLOYMENTS, VOTINGABI } from 'utils/constants'
 import { showToast } from 'utils/helper'
-
-interface ProposalParam {
-  title: string
-  description: string
-  expirationTime: number
-  height: number
-}
 
 const Create: NextPage = () => {
   const [title, setTitle] = useState(''),
@@ -23,9 +17,11 @@ const Create: NextPage = () => {
 
   const addRecentTransaction = useAddRecentTransaction()
 
+  const router = useRouter()
+
   const { chain } = useNetwork()
 
-  const { data, write, isError } = useContractWrite({
+  const { data, write, isError, isSuccess } = useContractWrite({
     address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
     abi: VOTINGABI,
     functionName: 'createProposal',
@@ -56,6 +52,7 @@ const Create: NextPage = () => {
         description: 'Create proposal',
         confirmations: 5,
       })
+      router.push('/vote')
     }
     setLoading(false)
   }, [data])
