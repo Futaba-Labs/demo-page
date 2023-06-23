@@ -58,7 +58,7 @@ const Vote: NextPage = () => {
           <span>
             <Link
               isExternal
-              href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
+              href='https://goerli.etherscan.io/address/0xb75824D76C9c8E580b38F713FCFD5951C5616606#writeContract'
               target='_blank'
             >
               here
