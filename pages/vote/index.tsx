@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useNetwork, useContractRead } from 'wagmi'
 import Notice from 'components/Notice'
 import Proposal from 'components/Proposal'
-import { DEPLOYMENTS, VOTINGABI } from 'utils/constants'
+import { DEPLOYMENTS, VOTIN_GABI } from 'utils/constants'
 import { ProposalData } from 'types'
 
 const Vote: NextPage = () => {
@@ -16,7 +16,7 @@ const Vote: NextPage = () => {
 
   const { data, refetch, isFetched } = useContractRead({
     address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-    abi: VOTINGABI,
+    abi: VOTIN_GABI,
     functionName: 'getAllProposals',
   })
 

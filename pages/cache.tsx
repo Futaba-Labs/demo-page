@@ -7,7 +7,7 @@ import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { convertChainNameToId, showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
-import { DEPLOYMENTS, CUSTOMQUERYABI } from 'utils/constants'
+import { DEPLOYMENTS, CUSTOM_QUERY_ABI } from 'utils/constants'
 import CasheResult from 'components/CacheResult'
 
 const FORM_NAME = 'cache'
@@ -27,7 +27,7 @@ const Cache: NextPage = () => {
 
   const { data, refetch, isFetched } = useContractRead({
     address: DEPLOYMENTS.custom[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
-    abi: CUSTOMQUERYABI,
+    abi: CUSTOM_QUERY_ABI,
     functionName: 'getCache',
     args: [queries],
   })

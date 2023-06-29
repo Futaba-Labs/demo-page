@@ -5,7 +5,7 @@ import { useContractWrite, useNetwork } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, VOTINGABI } from 'utils/constants'
+import { DEPLOYMENTS, VOTIN_GABI } from 'utils/constants'
 import { showToast } from 'utils/helper'
 
 const Create: NextPage = () => {
@@ -23,7 +23,7 @@ const Create: NextPage = () => {
 
   const { data, write, isError, isSuccess } = useContractWrite({
     address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-    abi: VOTINGABI,
+    abi: VOTIN_GABI,
     functionName: 'createProposal',
     args: [title, description, expirationTime, height],
   })

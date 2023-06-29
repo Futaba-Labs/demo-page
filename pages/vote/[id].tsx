@@ -8,7 +8,7 @@ import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, NFT_ADDRESS, VOTINGABI } from 'utils/constants'
+import { DEPLOYMENTS, NFT_ADDRESS, VOTIN_GABI } from 'utils/constants'
 import { ProposalData, QueryRequest } from 'types'
 import { converUnixToDate, showToast } from 'utils/helper'
 
@@ -27,13 +27,13 @@ const VoteDetail: NextPage = () => {
     addRecentTransaction = useAddRecentTransaction(),
     { data, refetch } = useContractRead({
       address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTINGABI,
+      abi: VOTIN_GABI,
       functionName: 'getProposal',
       args: [parseInt(id as string)],
     }),
     { data: count } = useContractRead({
       address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTINGABI,
+      abi: VOTIN_GABI,
       functionName: 'countVotes',
       args: [parseInt(id as string)],
     }),
@@ -44,7 +44,7 @@ const VoteDetail: NextPage = () => {
       isError: isErrorYes,
     } = useContractWrite({
       address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTINGABI,
+      abi: VOTIN_GABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), true],
     }),
@@ -55,7 +55,7 @@ const VoteDetail: NextPage = () => {
       isError: isErrorNo,
     } = useContractWrite({
       address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTINGABI,
+      abi: VOTIN_GABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), false],
     })

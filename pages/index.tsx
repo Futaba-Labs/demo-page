@@ -40,7 +40,7 @@ const Home: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
-  const { data, isSuccess, write, isError } = useContractWrite({
+  const { data, isSuccess, write } = useContractWrite({
     address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
     abi: TESTABI,
     functionName: 'sendQuery',

@@ -10,7 +10,7 @@ import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { convertChainNameToId, showToast } from 'utils/helper'
-import { CUSTOMQUERYABI, DEPLOYMENTS } from 'utils/constants'
+import { CUSTOM_QUERY_ABI, DEPLOYMENTS } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
@@ -32,7 +32,7 @@ const Custom: NextPage = () => {
 
   const { data, isSuccess, write, isError } = useContractWrite({
     address: DEPLOYMENTS.custom[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
-    abi: CUSTOMQUERYABI,
+    abi: CUSTOM_QUERY_ABI,
     functionName: 'query',
   })
 
