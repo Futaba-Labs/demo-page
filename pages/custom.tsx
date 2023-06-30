@@ -71,6 +71,8 @@ const Custom: NextPage = () => {
         })
       })
 
+      console.log(queries)
+
       if (queries.length === 0) {
         showToast('error', 'No queries')
         setLoading(false)
@@ -158,7 +160,7 @@ const Custom: NextPage = () => {
               setChain={setValue}
               registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
               registerHeight={register(`${FORM_NAME}.${i}.height`)}
-              registerSlot={register(`${FORM_NAME}*.${i}.slot`)}
+              registerSlot={register(`${FORM_NAME}.${i}.slot`)}
               onClick={() => remove(i)}
             />
           </div>
