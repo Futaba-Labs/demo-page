@@ -37,7 +37,6 @@ const Cache: NextPage = () => {
     return new Promise<void>((resolve, reject) => {
       const requests: QueryRequest[] = []
       control._formValues[FORM_NAME].forEach((query: any) => {
-        console.log(query)
         const dstChainId = convertChainNameToId(query.chain)
         if (!dstChainId) {
           showToast('error', 'Invalid chain')
@@ -72,6 +71,7 @@ const Cache: NextPage = () => {
 
   useEffect(() => {
     if (queries.length === 0) return
+    console.log(queries)
     refetch()
     setLoading(false)
   }, [queries])
