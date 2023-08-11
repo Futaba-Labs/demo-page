@@ -10,8 +10,8 @@ import {
   lightTheme as rainbowLightTheme,
 } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { infuraProvider } from 'wagmi/providers/infura'
 import { polygonMumbai } from 'wagmi/chains'
-import { publicProvider } from 'wagmi/providers/public'
 import { useSSR } from '@nextui-org/react'
 import Layout from 'components/Layout'
 import type { AppProps } from 'next/app'
@@ -40,7 +40,14 @@ const theme = createTheme({
   },
 })
 
-const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
+const { chains, publicClient } = configureChains(
+  [polygonMumbai],
+  [
+    infuraProvider({
+      apiKey: process.env.NEXT_PUBLIC_RPC_KEY !== undefined ? process.env.NEXT_PUBLIC_RPC_KEY : '',
+    }),
+  ],
+)
 
 const { connectors } = getDefaultWallets({
   appName: 'Futaba demo app',
