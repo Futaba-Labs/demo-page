@@ -1,6 +1,5 @@
 import '../styles/globals.css'
 import { NextUIProvider } from '@nextui-org/react'
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import '@rainbow-me/rainbowkit/styles.css'
 
 import {
@@ -62,29 +61,27 @@ const config = createConfig({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <NextThemesProvider defaultTheme='system' attribute='class'>
-      <NextUIProvider>
-        <WagmiConfig config={config}>
-          <RainbowKitProvider
-            showRecentTransactions={true}
-            chains={chains}
-            theme={{
-              lightMode: rainbowLightTheme({
-                accentColor: '#1F8506',
-              }),
-              darkMode: rainbowDarkTheme({
-                accentColor: '#1F8506',
-              }),
-            }}
-            coolMode
-          >
-            <Layout {...pageProps}>
-              <Component {...pageProps} />
-            </Layout>
-          </RainbowKitProvider>
-        </WagmiConfig>
-      </NextUIProvider>
-    </NextThemesProvider>
+    <NextUIProvider>
+      <WagmiConfig config={config}>
+        <RainbowKitProvider
+          showRecentTransactions={true}
+          chains={chains}
+          theme={{
+            lightMode: rainbowLightTheme({
+              accentColor: '#1F8506',
+            }),
+            darkMode: rainbowDarkTheme({
+              accentColor: '#1F8506',
+            }),
+          }}
+          coolMode
+        >
+          <Layout {...pageProps}>
+            <Component {...pageProps} />
+          </Layout>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </NextUIProvider>
   )
 }
 

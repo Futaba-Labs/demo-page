@@ -30,5 +30,5 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ["tailwind.config.js", ".eslintrc.js"]
+  ignorePatterns: ["tailwind.config.js", ".eslintrc.js", "postcss.config.js"]
 }

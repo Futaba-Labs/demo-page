@@ -4,8 +4,8 @@ import { Image } from '@nextui-org/react'
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { getLightClientAddress, ChainStage } from '@futaba-lab/sdk'
 import { LIGHT_CLIENT_ABI } from 'utils'
+import { useLightClient } from 'hooks'
 
 interface Props {
   visible: boolean
@@ -20,7 +20,7 @@ const VerifyModal: NextPage<Props> = ({ visible, handler, closeHandler }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
 
-  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+  const lightClient = useLightClient()
 
   const { data, refetch } = useContractRead({
     address: lightClient as `0x${string}`,
