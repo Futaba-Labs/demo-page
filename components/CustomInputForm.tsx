@@ -1,4 +1,4 @@
-import { Button, Input, Row, Spacer } from '@nextui-org/react'
+import { Button, Input, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
@@ -34,7 +34,7 @@ const CustomInputForm: NextPage<Props> = ({
 
   return (
     <div style={{ width: '70%' }}>
-      <Row css={{ display: 'flex', justifyContent: 'flex-start' }}>
+      <div>
         <DropdownSelect
           selected={selected}
           selectedValue={selectedValue}
@@ -42,18 +42,18 @@ const CustomInputForm: NextPage<Props> = ({
           keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
         />
         <Spacer x={1} />
-        <Input labelPlaceholder={'Block height'} {...registerHeight} type='number' fullWidth={true} />
+        <Input placeholder={'Block height'} {...registerHeight} type='number' fullWidth={true} />
         <Spacer x={1} />
-        <Input labelPlaceholder={'Contarct address'} {...registerAddress} fullWidth={true} />
-      </Row>
+        <Input placeholder={'Contarct address'} {...registerAddress} fullWidth={true} />
+      </div>
       <div style={{ padding: '16px' }}></div>
-      <Row>
-        <Input labelPlaceholder={'Storage slot'} fullWidth={true} {...registerSlot} />
+      <div>
+        <Input placeholder={'Storage slot'} fullWidth={true} {...registerSlot} />
         <Spacer y={1} />
-        <Button onClick={onClick} flat auto color={'error'}>
+        <Button onClick={onClick} color={'danger'}>
           <Delete primaryColor='red' />
         </Button>
-      </Row>
+      </div>
     </div>
   )
 }

@@ -34,3 +34,9 @@ export interface ProposalData {
   height: number
   voterInfo: Voter[]
 }
+
+export type Deployment = {
+  balance: string
+  custom: string
+  voting: string
+}

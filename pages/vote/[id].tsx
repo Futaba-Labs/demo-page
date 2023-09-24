@@ -1,4 +1,4 @@
-import { Button, Card, Container, Grid, Loading, Progress, Spacer, Text } from '@nextui-org/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Progress, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useNetwork, useContractRead, useContractWrite, useAccount } from 'wagmi'
@@ -11,7 +11,8 @@ import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import { ProposalData, QueryRequest } from 'types'
 import { converUnixToDate, showToast } from 'utils/helper'
-import { getDeployment, NFT_ADDRESS, VOTING_ABI } from 'utils'
+import { NFT_ADDRESS, VOTING_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 
 const relay = new GelatoRelay()
 
@@ -27,7 +28,7 @@ const VoteDetail: NextPage = () => {
     { address, isConnected } = useAccount(),
     addRecentTransaction = useAddRecentTransaction()
 
-  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+  const deployment = useDeployment()
   const votingAddress = deployment.voting as `0x${string}`
   const { data, refetch } = useContractRead({
       address: votingAddress,
@@ -140,94 +141,73 @@ const VoteDetail: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          {'Voting'}
-        </Text>
+        {'Voting'}
         <div style={{ padding: '16px' }}></div>
         {proposal ? (
-          <Grid.Container gap={2} justify='center'>
-            <Grid xs={6} justify='center'>
-              <Card css={{ mw: '500px' }}>
-                <Card.Header>
-                  <Text weight={'normal'} size={32}>
-                    {proposal.title}
-                  </Text>
-                </Card.Header>
-                <Card.Divider />
-                <Card.Body css={{ py: '$10' }}>
-                  <Text>{proposal.description}</Text>
-                </Card.Body>
-                <Card.Divider />
-                <Card.Footer>
-                  <Text weight={'normal'} size={16}>
-                    Expire Date:{' '}
-                    {parseInt(proposal.expirationTime.toString()) !== 0
-                      ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
-                      : 0}
-                  </Text>
-                </Card.Footer>
+          <div>
+            <div>
+              <Card>
+                <CardHeader>{proposal.title}</CardHeader>
+                <Divider />
+                <CardBody>{proposal.description}</CardBody>
+                <Divider />
+                <CardFooter>
+                  Expire Date:{' '}
+                  {parseInt(proposal.expirationTime.toString()) !== 0
+                    ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
+                    : 0}
+                </CardFooter>
               </Card>
-            </Grid>
-            <Grid xs={6} direction='column'>
+            </div>
+            <div>
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
-                <Grid.Container xs={12} gap={2} justify='center'>
+                <div>
                   {loading ? (
-                    <Loading />
+                    <div />
                   ) : (
                     <>
-                      <Grid>
-                        <Button rounded shadow onPress={() => voting(true)}>
-                          {'Vote "Yes"'}
-                        </Button>
-                      </Grid>
-                      <Grid>
-                        <Button rounded shadow onPress={() => voting(false)}>
-                          {'Vote "No"'}
-                        </Button>
-                      </Grid>
+                      <div>
+                        <Button onPress={() => voting(true)}>{'Vote "Yes"'}</Button>
+                      </div>
+                      <div>
+                        <Button onPress={() => voting(false)}>{'Vote "No"'}</Button>
+                      </div>
                     </>
                   )}
-                </Grid.Container>
+                </div>
               )}
 
               <div style={{ padding: '8px' }}></div>
-              <Grid.Container xs={12} gap={2} direction='column'>
-                <Grid css={{ margin: '0 15%' }}>
-                  <Text weight={'normal'} size={20}>
-                    Yes
-                  </Text>
+              <div>
+                <div>
+                  Yes
                   <Progress
                     value={voteCount.yes !== 0 ? (voteCount.yes / (voteCount.no + voteCount.yes)) * 100 : 0}
                     size='lg'
-                    shadow
-                    css={{ width: '100%' }}
                   />
-                </Grid>
-                <Grid css={{ margin: '0 15%' }}>
-                  <Text weight={'normal'} size={20}>
-                    No
-                  </Text>
+                </div>
+                <div>
+                  No
                   <Progress
-                    color='error'
+                    color='danger'
                     value={voteCount.no !== 0 ? (voteCount.no / (voteCount.no + voteCount.yes)) * 100 : 0}
                     size='lg'
-                    shadow
                   />
-                </Grid>
+                </div>
                 <Spacer x={1} />
-              </Grid.Container>
-            </Grid>
-          </Grid.Container>
+              </div>
+            </div>
+          </div>
         ) : (
           <></>
         )}
-      </Container>
+      </div>
     </>
   )
 }

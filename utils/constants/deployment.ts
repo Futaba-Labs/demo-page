@@ -1,10 +1,5 @@
 import { ChainId, ChainKey, ChainStage, getChainKey } from "@futaba-lab/sdk"
-
-type Deployment = {
-  balance: string
-  custom: string
-  voting: string
-}
+import { Deployment } from "types"
 
 export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>>> = {
   [ChainStage.MAINNET]: {

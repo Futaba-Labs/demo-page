@@ -1,4 +1,4 @@
-import { Badge, Card, Col, Container, Grid, Row, Text } from '@nextui-org/react'
+import { Badge, Card, CardBody, CardFooter, CardHeader, Divider } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { ProposalData } from 'types'
@@ -12,58 +12,43 @@ const Proposal: NextPage<ProposalProps> = ({ proposals }) => {
   const router = useRouter()
   return (
     <>
-      <Container>
-        <Grid.Container gap={2} justify='center'>
+      <div>
+        <div>
           {proposals.length > 0 ? (
             proposals.map((proposal) => {
               const expireTime = converUnixToDate(parseInt(proposal.expirationTime.toString()))
               return (
-                <Grid key={proposal.id} sm={12} md={4}>
-                  <Card
-                    css={{ mw: '600px' }}
-                    isPressable
-                    isHoverable
-                    onPress={() => router.push(`/vote/${proposal.id.toString()}`)}
-                  >
-                    <Card.Header>
-                      <Row gap={0} align={'center'}>
-                        <Col>
-                          <Text weight={'normal'} size={24}>
-                            {proposal.title}
-                          </Text>
-                        </Col>
-                        <Col css={{ textAlign: 'end' }}>
+                <div key={proposal.id}>
+                  <Card isPressable isHoverable onPress={() => router.push(`/vote/${proposal.id.toString()}`)}>
+                    <CardHeader>
+                      <div>
+                        <div>{proposal.title}</div>
+                        <div>
                           {expireTime.getTime() > Date.now() ? (
-                            <Badge enableShadow disableOutline color='success'>
+                            <Badge disableOutline color='success'>
                               Active
                             </Badge>
                           ) : (
-                            <Badge enableShadow disableOutline color='secondary'>
+                            <Badge disableOutline color='secondary'>
                               Finisihed
                             </Badge>
                           )}
-                        </Col>
-                      </Row>
-                    </Card.Header>
-                    <Card.Divider />
-                    <Card.Body css={{ py: '$10' }}>
-                      <Text>{proposal.description}</Text>
-                    </Card.Body>
-                    <Card.Divider />
-                    <Card.Footer>
-                      <Text weight={'normal'} size={16}>
-                        Expire Date: {expireTime.toDateString()}
-                      </Text>
-                    </Card.Footer>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>{proposal.description}</CardBody>
+                    <Divider />
+                    <CardFooter>Expire Date: {expireTime.toDateString()}</CardFooter>
                   </Card>
-                </Grid>
+                </div>
               )
             })
           ) : (
             <></>
           )}
-        </Grid.Container>
-      </Container>
+        </div>
+      </div>
     </>
   )
 }

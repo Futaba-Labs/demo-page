@@ -1,80 +1,56 @@
 import { NextPage } from 'next/types'
-import { Navbar, useTheme } from '@nextui-org/react'
+import { Navbar, NavbarBrand, NavbarContent } from '@nextui-org/react'
 import { Image } from '@nextui-org/react'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
-import styled from 'styled-components'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useContractRead } from 'wagmi'
-import { ChainStage, getLightClientAddress } from '@futaba-lab/sdk'
+import { useAccount, useContractRead } from 'wagmi'
 import { LIGHT_CLIENT_ABI } from 'utils'
+import { useLightClient } from 'hooks/useLightClient'
 import VerifyModal from './VerifyModal'
-
 interface LayoutProps {
   children?: React.ReactNode
 }
 
 const Header = () => {
-  const { theme } = useTheme()
-  const CustomLink = styled.span`
-    color: ${theme!.colors.black.value};
-    &:hover {
-      color: ${theme!.colors.accents5.value};
-      transition-duration: 200ms;
-    }
-  `
   return (
     <>
-      <Navbar variant='floating' shouldHideOnScroll>
-        <Navbar.Brand>
+      <Navbar isBordered shouldHideOnScroll>
+        <NavbarBrand>
           <Link href='/'>
-            <Image
-              height={75}
-              width={220}
-              src={'/images/futaba_banner_black.png'}
-              alt='Default Image'
-              objectFit='scale-down'
-            />
+            <Image height={75} width={220} src={'/images/futaba_banner_black.png'} alt='Default Image' />
           </Link>
-        </Navbar.Brand>
-        <Navbar.Content hideIn='xs' gap={'$12'}>
-          <Link href='/custom'>
-            <CustomLink>Custom query</CustomLink>
-          </Link>
-          <Link href='/cache'>
-            <CustomLink>Access cache</CustomLink>
-          </Link>
-          <Link href='/vote'>
-            <CustomLink>Cross-chain Voting</CustomLink>
-          </Link>
-          <Link href='/explorer'>
-            <CustomLink>Explorer</CustomLink>
-          </Link>
-          <Navbar.Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' target='block' isExternal>
-            <CustomLink>Docs</CustomLink>
-          </Navbar.Link>
-        </Navbar.Content>
-        <Navbar.Content>
+        </NavbarBrand>
+        <NavbarContent>
+          <Link href='/'>Balance query</Link>
+          <Link href='/custom'>Custom query</Link>
+          <Link href='/cache'>Access cache</Link>
+          <Link href='/vote'>Cross-chain Voting</Link>
+          <Link href='/explorer'>Explorer</Link>
+          <NavbarContent>
+            <Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' target='block'>
+              Docs
+            </Link>
+          </NavbarContent>
+        </NavbarContent>
+        <NavbarContent>
           <ConnectButton />
-        </Navbar.Content>
+        </NavbarContent>
       </Navbar>
     </>
   )
 }
 
 const Layout: NextPage = ({ children }: LayoutProps) => {
-  const { isDark } = useTheme()
   const [visible, setVisible] = useState(false)
   const handler = () => window.open('https://futaba.gitbook.io/docs/introduction/futaba-introduction', '_blank')
   const closeHandler = () => setVisible(false)
 
   const { address, isConnected } = useAccount()
-  const { chain } = useNetwork()
-
-  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+  const lightClient = useLightClient()
 
   const { data, refetch, isError } = useContractRead({
     address: lightClient as `0x${string}`,
@@ -121,7 +97,6 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme={isDark ? 'dark' : 'light'}
       />
     </>
   )

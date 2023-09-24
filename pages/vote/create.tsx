@@ -1,13 +1,13 @@
-import { Button, Container, Input, Loading, Row, Spacer, Text, Textarea } from '@nextui-org/react'
+import { Button, Input, Spacer, Textarea } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { useContractWrite, useNetwork } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
-import { ChainStage } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import { showToast } from 'utils/helper'
-import { VOTING_ABI, getDeployment } from 'utils'
+import { VOTING_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 
 const Create: NextPage = () => {
   const [title, setTitle] = useState(''),
@@ -22,7 +22,7 @@ const Create: NextPage = () => {
 
   const { chain } = useNetwork()
 
-  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+  const deployment = useDeployment()
 
   const { data, write, isError } = useContractWrite({
     address: deployment.voting as `0x${string}`,
@@ -68,17 +68,15 @@ const Create: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          Create proposal
-        </Text>
-        <Text size={18}>{'You can create your own Proposal here.'}</Text>
-        <Text size={18}>{'Enter at which Block height you want to check for the presence of NFT.'}</Text>
+        Create proposal
+        {'You can create your own Proposal here.'}
+        {'Enter at which Block height you want to check for the presence of NFT.'}
         <div style={{ padding: '16px' }}></div>
-        <Row css={{ display: 'flex', justifyContent: 'flex-start' }}>
+        <div>
           <Input label={'Title'} fullWidth={true} value={title} onChange={(e) => setTitle(e.target.value)} />
           <Spacer x={1} />
           <Input label={'Expiration date'} type='date' fullWidth={true} onChange={onChangeExpirationTime} />
@@ -87,12 +85,11 @@ const Create: NextPage = () => {
             label={'Block height'}
             type='number'
             fullWidth={true}
-            value={height}
             onChange={(e) => setHeight(parseInt(e.target.value))}
           />
-        </Row>
+        </div>
         <div style={{ padding: '16px' }}></div>
-        <Row>
+        <div>
           <Textarea
             label='Description'
             placeholder='Enter proposal description'
@@ -100,12 +97,10 @@ const Create: NextPage = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-        </Row>
+        </div>
         <div style={{ padding: '16px' }}></div>
-        <Button onPress={() => createProposal()} flat auto>
-          {loading ? <Loading /> : 'Create'}
-        </Button>
-      </Container>
+        <Button onPress={() => createProposal()}>{loading ? <div /> : 'Create'}</Button>
+      </div>
     </>
   )
 }

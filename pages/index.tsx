@@ -1,10 +1,9 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Button, Col, Container, Link, Row, Text, useTheme, Loading } from '@nextui-org/react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
+import { Button, Link } from '@nextui-org/react'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
@@ -12,10 +11,9 @@ import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
-import { BALANCE_QUERY_ABI, getDeployment } from 'utils'
+import { BALANCE_QUERY_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 import type { NextPage } from 'next'
-
-const relay = new GelatoRelay()
 
 export interface QueryForm {
   chain: string
@@ -25,7 +23,7 @@ export interface QueryForm {
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
-  const { isDark } = useTheme()
+  const isDark = false
   const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
   const addRecentTransaction = useAddRecentTransaction()
@@ -38,7 +36,7 @@ const Home: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
-  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+  const deployment = useDeployment()
 
   const { data, isSuccess, write } = useContractWrite({
     address: deployment.balance as `0x${string}`,
@@ -129,34 +127,25 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={48}>
-          Futaba Demo Page
-        </Text>
-        <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          {"On this page you can experience Futaba's query."}
-        </Text>
-        <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          {" Let's try it 🚀"}
-        </Text>
-        <Text size={18}>Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.</Text>
-        <Text size={18}>
-          Step2: Select the chain and token address (only general erc20) you want to query. You can add multiple
-          queries.
-          <span>
-            If you do not have a token, please mint it{' '}
-            <Link isExternal href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
-              here
-            </Link>
-          </span>{' '}
-        </Text>
-        <Text size={18}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
-        <Text size={18}>{'Step4: You can check the query result on the "Your Transactions".'}</Text>
-      </Container>
-      <Container>
+        Futaba Demo Page
+        {"On this page you can experience Futaba's query."}
+        {" Let's try it 🚀"}
+        Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink. Step2: Select the chain and
+        token address (only general erc20) you want to query. You can add multiple queries.
+        <span>
+          If you do not have a token, please mint it{' '}
+          <Link href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
+            here
+          </Link>
+        </span>{' '}
+        {'Step3: Click the "Send Query" button to send the query.'}
+        {'Step4: You can check the query result on the "Your Transactions".'}
+      </div>
+      <div>
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '16px' }}></div>
@@ -170,33 +159,29 @@ const Home: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <Row gap={0}>
-          <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
+        <div>
+          <div>
+            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
               Add Query
             </Button>
-          </Col>
-          <Col>
+          </div>
+          <div>
             <Button
               onClick={() => {
                 sendQuery()
               }}
-              flat
-              auto
               disabled={fields.length === 0 || isDisconnected || loading}
             >
-              {loading ? <Loading size='sm' /> : 'Send Query'}
+              {loading ? <div /> : 'Send Query'}
             </Button>
-          </Col>
-        </Row>
-      </Container>
-      <Container>
+          </div>
+        </div>
+      </div>
+      <div>
         <div style={{ padding: '24px' }}></div>
-        <Text weight={'medium'} size={32}>
-          Your Transactions
-        </Text>
+        Your Transactions
         <Transaction queryData={transactions} rowsPerPage={5} />
-      </Container>
+      </div>
     </>
   )
 }

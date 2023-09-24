@@ -1,4 +1,4 @@
-import { Dropdown } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import { NextPage } from 'next'
 
 type Props = {
@@ -12,10 +12,10 @@ const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue,
   return (
     <>
       <Dropdown>
-        <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-          {selectedValue}
-        </Dropdown.Button>
-        <Dropdown.Menu
+        <DropdownTrigger>
+          <Button>{selectedValue}</Button>
+        </DropdownTrigger>
+        <DropdownMenu
           aria-label='Single selection actions'
           disallowEmptySelection
           selectionMode='single'
@@ -23,9 +23,9 @@ const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue,
           onSelectionChange={setSelected}
         >
           {keys.map((key) => (
-            <Dropdown.Item key={key}>{key}</Dropdown.Item>
+            <DropdownItem key={key}>{key}</DropdownItem>
           ))}
-        </Dropdown.Menu>
+        </DropdownMenu>
       </Dropdown>
     </>
   )

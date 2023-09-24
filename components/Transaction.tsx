@@ -1,4 +1,4 @@
-import { Badge, Link, SimpleColors, Table } from '@nextui-org/react'
+import { Badge, Link, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import { NextPage } from 'next/types'
 import { QueryData as QueryData } from 'types'
 
@@ -8,7 +8,7 @@ interface Props {
 }
 interface BadgeParam {
   text: string
-  color: SimpleColors
+  color: any
 }
 const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page }) => {
   const omitText = (text?: string) => {
@@ -88,34 +88,28 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
   return (
     <>
       {queries.length > 0 ? (
-        <Table
-          aria-label='Example table with static content'
-          css={{
-            height: 'auto',
-            minWidth: '100%',
-          }}
-        >
-          <Table.Header>
-            <Table.Column>Src Chain</Table.Column>
-            <Table.Column>Request Transaction</Table.Column>
-            <Table.Column>Response Transaction</Table.Column>
-            <Table.Column>Age</Table.Column>
-            <Table.Column>Query Id</Table.Column>
-            <Table.Column>Deliver Status</Table.Column>
-          </Table.Header>
-          <Table.Body>
+        <Table aria-label='Example static collection table'>
+          <TableHeader>
+            <TableColumn>Src Chain</TableColumn>
+            <TableColumn>Request Transaction</TableColumn>
+            <TableColumn>Response Transaction</TableColumn>
+            <TableColumn>Age</TableColumn>
+            <TableColumn>Query Id</TableColumn>
+            <TableColumn>Deliver Status</TableColumn>
+          </TableHeader>
+          <TableBody>
             {queries.map((query) => {
               const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash)
               return (
-                <Table.Row key={query.transactionHash}>
-                  <Table.Cell>{converChain(query.from)}</Table.Cell>
-                  <Table.Cell>
+                <TableRow key={query.transactionHash}>
+                  <TableCell>{converChain(query.from)}</TableCell>
+                  <TableCell>
                     <Link isExternal href={getExploerUrl(query.from) + query.transactionHash} target='_blank'>
                       {omitText(query.transactionHash)}
                     </Link>
-                  </Table.Cell>
-                  <Table.Cell>
+                  </TableCell>
+                  <TableCell>
                     {resTxHash !== '' ? (
                       <Link isExternal href={getExploerUrl(query.from) + query.executedHash} target='_blank'>
                         {resTxHash}
@@ -123,19 +117,18 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
                     ) : (
                       <div></div>
                     )}
-                  </Table.Cell>
-                  <Table.Cell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</Table.Cell>
-                  <Table.Cell>{omitText(query.id)}</Table.Cell>
-                  <Table.Cell>
+                  </TableCell>
+                  <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
+                  <TableCell>{omitText(query.id)}</TableCell>
+                  <TableCell>
                     <Badge color={color} size='lg'>
                       {status}
                     </Badge>
-                  </Table.Cell>
-                </Table.Row>
+                  </TableCell>
+                </TableRow>
               )
             })}
-          </Table.Body>
-          <Table.Pagination noMargin align='center' rowsPerPage={page} />
+          </TableBody>
         </Table>
       ) : (
         <div></div>

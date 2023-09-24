@@ -1,11 +1,11 @@
-import { Button, Col, Container, Link, Loading, Row, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
+import { Button } from '@nextui-org/react'
+import Link from 'next/link'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
@@ -13,9 +13,9 @@ import { convertChainNameToId, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
-import { CUSTOM_QUERY_ABI, getDeployment } from 'utils'
+import { CUSTOM_QUERY_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 
-const relay = new GelatoRelay()
 const FORM_NAME = 'custom_queries'
 
 const Custom: NextPage = () => {
@@ -29,7 +29,7 @@ const Custom: NextPage = () => {
   const { chain } = useNetwork()
 
   const addRecentTransaction = useAddRecentTransaction()
-  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+  const deployment = useDeployment()
 
   const { data, isSuccess, write } = useContractWrite({
     address: deployment.custom as `0x${string}`,
@@ -121,29 +121,22 @@ const Custom: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          Custom Query
-        </Text>
-        <Text size={18}>
-          {'Here you can specify any contract address, block height, and storage slot to run query.'}
-        </Text>
-        <Text size={18}>
-          {'Click '}
-          <span>
-            <Link
-              isExternal
-              href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
-              target='_blank'
-            >
-              here
-            </Link>
-          </span>
-          {' for information on how to calculate storage slots.'}
-        </Text>
+        Custom Query
+        {'Here you can specify any contract address, block height, and storage slot to run query.'}
+        {'Click '}
+        <span>
+          <Link
+            href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
+            target='_blank'
+          >
+            here
+          </Link>
+        </span>
+        {' for information on how to calculate storage slots.'}
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
@@ -159,33 +152,29 @@ const Custom: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <Row gap={0}>
-          <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
+        <div>
+          <div>
+            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
               Add Query
             </Button>
-          </Col>
-          <Col>
+          </div>
+          <div>
             <Button
               onClick={() => {
                 sendQuery()
               }}
-              flat
-              auto
               disabled={fields.length === 0 || isDisconnected || loading}
             >
-              {loading ? <Loading size='sm' /> : 'Send Query'}
+              {loading ? <div /> : 'Send Query'}
             </Button>
-          </Col>
-        </Row>
-      </Container>
-      <Container>
+          </div>
+        </div>
+      </div>
+      <div>
         <div style={{ padding: '24px' }}></div>
-        <Text weight={'medium'} size={32}>
-          Your Transactions
-        </Text>
+        Your Transactions
         <Transaction queryData={transactions} rowsPerPage={5} />
-      </Container>
+      </div>
     </>
   )
 }

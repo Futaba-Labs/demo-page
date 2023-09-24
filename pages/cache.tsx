@@ -1,9 +1,9 @@
-import { Button, Col, Container, Loading, Row, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLightClientAddress, ChainStage } from '@futaba-lab/sdk'
+import { Button } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { convertChainNameToId, showToast } from 'utils/helper'
@@ -87,17 +87,13 @@ const Cache: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          Access cache
-        </Text>
-        <Text size={18}>
-          {'Here you can access the data of other chains you have queried in the past in byte type.'}
-        </Text>
-        <Text size={18}>{'Specify destination chain, block height, contract address, and storage slot.'}</Text>
+        Access cache
+        {'Here you can access the data of other chains you have queried in the past in byte type.'}
+        {'Specify destination chain, block height, contract address, and storage slot.'}{' '}
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
@@ -113,28 +109,26 @@ const Cache: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <Row gap={0}>
-          <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
+        <div>
+          <div>
+            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
               Add Query
             </Button>
-          </Col>
-          <Col>
+          </div>
+          <div>
             <Button
               onClick={() => {
                 getCache()
               }}
-              flat
-              auto
               disabled={fields.length === 0 || isDisconnected}
             >
-              {loading ? <Loading /> : 'Get Cache'}
+              {loading ? <div /> : 'Get Cache'}
             </Button>
-          </Col>
-        </Row>
+          </div>
+        </div>
         <div style={{ padding: '16px' }}></div>
         <CasheResult page={10} queries={queries} results={results} />
-      </Container>
+      </div>
     </>
   )
 }
