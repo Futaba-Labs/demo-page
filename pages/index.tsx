@@ -1,19 +1,18 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button, Col, Container, Link, Row, Text, useTheme, Loading } from '@nextui-org/react'
-import { BigNumber } from 'ethers'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { useRouter } from 'next/router'
+import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
-import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
+import { BALANCE_QUERY_ABI, getDeployment } from 'utils'
 import type { NextPage } from 'next'
 
 const relay = new GelatoRelay()
@@ -24,7 +23,6 @@ export interface QueryForm {
 }
 
 const Home: NextPage = () => {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
   const { isDark } = useTheme()
@@ -40,9 +38,11 @@ const Home: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
+  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+
   const { data, isSuccess, write } = useContractWrite({
-    address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
-    abi: TESTABI,
+    address: deployment.balance as `0x${string}`,
+    abi: BALANCE_QUERY_ABI,
     functionName: 'sendQuery',
   })
 
@@ -89,18 +89,12 @@ const Home: NextPage = () => {
 
       try {
         if (isConnected) {
-          const fee = await relay.getEstimatedFee(
-            80001,
-            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-            BigNumber.from('1000000'),
-            true,
-          )
-          console.log(queries)
-          write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
+          const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+          const fee = await queryAPI.estimateFee(queries)
+          write({ args: [queries, decimals], value: fee.toBigInt() })
           return resolve()
         }
       } catch (error) {
-        console.log(error)
         showToast('Transaction Failed', 'error', isDark)
         setLoading(false)
         return reject(error)

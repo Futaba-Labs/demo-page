@@ -1,16 +1,12 @@
-import D from "./deployments.json"
-import T from "./query.abi.json"
-import E from "./erc20.abi.json"
-import C from "./custom_query.json"
-import V from "./voting.abi.json"
-import L from "./light_client.abi.json"
+import CUSTOM_QUERY_ABI from "./abi/custom_query.json"
+import BALANCE_QUERY_ABI from "./abi/balance_query.abi.json"
+import VOTING_ABI from "./abi/voting.abi.json"
+import ERC20_ABI from "./abi/erc20.abi.json"
+import LIGHT_CLIENT_ABI from "./abi/light_client.abi.json"
 
-export const DEPLOYMENTS = D
-export const TESTABI = T
-export const ERC20ABI = E
-export const CUSTOM_QUERY_ABI = C
-export const VOTIN_GABI = V
-export const LIGHT_CLIENT_ABI = L
+export { CUSTOM_QUERY_ABI, BALANCE_QUERY_ABI, VOTING_ABI, ERC20_ABI, LIGHT_CLIENT_ABI }
+
+export * from "./deployment"
 
 export const mainColor = "#1F8506"
 

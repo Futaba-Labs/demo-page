@@ -3,17 +3,17 @@ import { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { BigNumber } from 'ethers'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { convertChainNameToId, showToast } from 'utils/helper'
-import { CUSTOM_QUERY_ABI, DEPLOYMENTS } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
+import { CUSTOM_QUERY_ABI, getDeployment } from 'utils'
 
 const relay = new GelatoRelay()
 const FORM_NAME = 'custom_queries'
@@ -29,9 +29,10 @@ const Custom: NextPage = () => {
   const { chain } = useNetwork()
 
   const addRecentTransaction = useAddRecentTransaction()
+  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
 
-  const { data, isSuccess, write, isError } = useContractWrite({
-    address: DEPLOYMENTS.custom[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
+  const { data, isSuccess, write } = useContractWrite({
+    address: deployment.custom as `0x${string}`,
     abi: CUSTOM_QUERY_ABI,
     functionName: 'query',
   })
@@ -49,7 +50,6 @@ const Custom: NextPage = () => {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       control._formValues[FORM_NAME].forEach((query: any) => {
-        console.log(query)
         const dstChainId = convertChainNameToId(query.chain)
         if (!dstChainId) {
           showToast('error', 'Invalid chain')
@@ -71,8 +71,6 @@ const Custom: NextPage = () => {
         })
       })
 
-      console.log(queries)
-
       if (queries.length === 0) {
         showToast('error', 'No queries')
         setLoading(false)
@@ -82,17 +80,12 @@ const Custom: NextPage = () => {
 
       try {
         if (isConnected) {
-          const fee = await relay.getEstimatedFee(
-            80001,
-            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-            BigNumber.from('1000000'),
-            true,
-          )
+          const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+          const fee = await queryAPI.estimateFee(queries)
           write({ args: [queries], value: fee.mul(120).div(100).toBigInt() })
           return resolve()
         }
       } catch (error) {
-        console.log(error)
         showToast('error', 'Invalid query')
         setLoading(false)
         reject()

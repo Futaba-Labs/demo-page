@@ -10,7 +10,6 @@ interface ProposalProps {
 
 const Proposal: NextPage<ProposalProps> = ({ proposals }) => {
   const router = useRouter()
-  console.log(proposals)
   return (
     <>
       <Container>

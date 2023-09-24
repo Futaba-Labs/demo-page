@@ -9,7 +9,8 @@ import styled from 'styled-components'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useAccount, useNetwork, useContractRead } from 'wagmi'
-import { DEPLOYMENTS, LIGHT_CLIENT_ABI } from 'utils/constants'
+import { ChainStage, getLightClientAddress } from '@futaba-lab/sdk'
+import { LIGHT_CLIENT_ABI } from 'utils'
 import VerifyModal from './VerifyModal'
 
 interface LayoutProps {
@@ -73,10 +74,10 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
   const { address, isConnected } = useAccount()
   const { chain } = useNetwork()
 
+  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+
   const { data, refetch, isError } = useContractRead({
-    address: DEPLOYMENTS['light_client'][
-      chain?.id.toString() as keyof (typeof DEPLOYMENTS)['light_client']
-    ] as `0x${string}`,
+    address: lightClient as `0x${string}`,
     abi: LIGHT_CLIENT_ABI,
     functionName: 'isWhitelisted',
     args: [address],

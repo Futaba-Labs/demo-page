@@ -7,10 +7,11 @@ import { BigNumber } from 'ethers'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, NFT_ADDRESS, VOTIN_GABI } from 'utils/constants'
 import { ProposalData, QueryRequest } from 'types'
 import { converUnixToDate, showToast } from 'utils/helper'
+import { getDeployment, NFT_ADDRESS, VOTING_ABI } from 'utils'
 
 const relay = new GelatoRelay()
 
@@ -24,16 +25,19 @@ const VoteDetail: NextPage = () => {
     { id } = router.query,
     { chain } = useNetwork(),
     { address, isConnected } = useAccount(),
-    addRecentTransaction = useAddRecentTransaction(),
-    { data, refetch } = useContractRead({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+    addRecentTransaction = useAddRecentTransaction()
+
+  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+  const votingAddress = deployment.voting as `0x${string}`
+  const { data, refetch } = useContractRead({
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'getProposal',
       args: [parseInt(id as string)],
     }),
     { data: count } = useContractRead({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'countVotes',
       args: [parseInt(id as string)],
     }),
@@ -43,8 +47,8 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessYes,
       isError: isErrorYes,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), true],
     }),
@@ -54,28 +58,24 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessNo,
       isError: isErrorNo,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), false],
     })
+
   const voting = async (vote: boolean) => {
     if (!isConnected || queries.length == 0) return
     setLoading(true)
     try {
-      const fee = await relay.getEstimatedFee(
-        80001,
-        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        BigNumber.from('1000000'),
-        true,
-      )
+      const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+      const fee = await queryAPI.estimateFee(queries)
       if (vote) {
         voteYes({ value: fee.toBigInt() })
       } else {
         voteNo({ value: fee.toBigInt() })
       }
     } catch (error) {
-      console.log(error)
       setLoading(false)
       showToast('error', 'Transaction Failed')
     }

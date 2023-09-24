@@ -4,7 +4,8 @@ import { Image } from '@nextui-org/react'
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { DEPLOYMENTS, LIGHT_CLIENT_ABI } from 'utils/constants'
+import { getLightClientAddress, ChainStage } from '@futaba-lab/sdk'
+import { LIGHT_CLIENT_ABI } from 'utils'
 
 interface Props {
   visible: boolean
@@ -19,10 +20,10 @@ const VerifyModal: NextPage<Props> = ({ visible, handler, closeHandler }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
 
+  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+
   const { data, refetch } = useContractRead({
-    address: DEPLOYMENTS['light_client'][
-      chain?.id.toString() as keyof (typeof DEPLOYMENTS)['light_client']
-    ] as `0x${string}`,
+    address: lightClient as `0x${string}`,
     abi: LIGHT_CLIENT_ABI,
     functionName: 'isWhitelisted',
     args: [address],

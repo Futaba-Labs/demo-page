@@ -3,20 +3,22 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useNetwork, useContractRead } from 'wagmi'
+import { ChainStage } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import Proposal from 'components/Proposal'
-import { DEPLOYMENTS, VOTIN_GABI } from 'utils/constants'
 import { ProposalData } from 'types'
+import { VOTING_ABI, getDeployment } from 'utils'
 
 const Vote: NextPage = () => {
   const [proposals, setProposals] = useState<ProposalData[]>([])
   const router = useRouter()
 
   const { chain } = useNetwork()
+  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
 
   const { data, refetch, isFetched } = useContractRead({
-    address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-    abi: VOTIN_GABI,
+    address: deployment.voting as `0x${string}`,
+    abi: VOTING_ABI,
     functionName: 'getAllProposals',
   })
 
@@ -26,7 +28,6 @@ const Vote: NextPage = () => {
 
   useEffect(() => {
     // TODO: fetch proposals
-    console.log(data)
     const proposalData = data as ProposalData[]
     if (proposalData && proposalData.length > 0) {
       setProposals(

@@ -57,7 +57,6 @@ export const useTransaction = () => {
 
   const subscribeTransactions = async () => {
     if (supabase) {
-      console.log('subscribe')
       supabase
         .channel('any')
         .on(

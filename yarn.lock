@@ -1515,6 +1515,15 @@
   dependencies:
     tslib "^2.4.0"
 
+"@futaba-lab/sdk@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@futaba-lab/sdk/-/sdk-0.1.8.tgz#89c097ff288e5b3e95dbc264d742273c2e729ed3"
+  integrity sha512-Ca7rnpt9HYvmNlYWankAxFPbpClX+YfKX6wt293+aoYRRKTGbWzh7ucHHSIlXgfhTnOWVHNz1uik28vCI/LmKg==
+  dependencies:
+    "@gelatonetwork/relay-sdk" "^4.0.0"
+    ethers "^5.7.2"
+    typescript "^5.1.3"
+
 "@gelatonetwork/relay-sdk@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@gelatonetwork/relay-sdk/-/relay-sdk-4.0.0.tgz#700796d0700a950304437c8ab2ac78e2dc1f45e4"
@@ -6868,6 +6877,11 @@ typescript@4.9.5:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+
+typescript@^5.1.3:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
+  integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
 uint8arrays@^3.0.0, uint8arrays@^3.1.0:
   version "3.1.1"

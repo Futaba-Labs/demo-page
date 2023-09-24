@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 import { useContractWrite, useNetwork } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
+import { ChainStage } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, VOTIN_GABI } from 'utils/constants'
 import { showToast } from 'utils/helper'
+import { VOTING_ABI, getDeployment } from 'utils'
 
 const Create: NextPage = () => {
   const [title, setTitle] = useState(''),
@@ -21,9 +22,11 @@ const Create: NextPage = () => {
 
   const { chain } = useNetwork()
 
-  const { data, write, isError, isSuccess } = useContractWrite({
-    address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-    abi: VOTIN_GABI,
+  const deployment = getDeployment(ChainStage.TESTNET, chain?.id as number)
+
+  const { data, write, isError } = useContractWrite({
+    address: deployment.voting as `0x${string}`,
+    abi: VOTING_ABI,
     functionName: 'createProposal',
     args: [title, description, expirationTime, height],
   })
@@ -39,7 +42,6 @@ const Create: NextPage = () => {
     try {
       write()
     } catch (error) {
-      console.log(error)
       setLoading(false)
       showToast('error', 'Transaction failed')
     }

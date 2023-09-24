@@ -3,12 +3,13 @@ import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
+import { getLightClientAddress, ChainStage } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { convertChainNameToId, showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
-import { DEPLOYMENTS, CUSTOM_QUERY_ABI } from 'utils/constants'
 import CasheResult from 'components/CacheResult'
+import { CUSTOM_QUERY_ABI } from 'utils'
 
 const FORM_NAME = 'cache'
 
@@ -22,11 +23,13 @@ const Cache: NextPage = () => {
     name: FORM_NAME,
   })
 
-  const { address, isConnected, isDisconnected } = useAccount()
+  const { isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
-  const { data, refetch, isFetched } = useContractRead({
-    address: DEPLOYMENTS.custom[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
+  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+
+  const { data, refetch } = useContractRead({
+    address: lightClient as `0x${string}`,
     abi: CUSTOM_QUERY_ABI,
     functionName: 'getCache',
     args: [queries],
@@ -71,7 +74,6 @@ const Cache: NextPage = () => {
 
   useEffect(() => {
     if (queries.length === 0) return
-    console.log(queries)
     refetch()
     setLoading(false)
   }, [queries])
