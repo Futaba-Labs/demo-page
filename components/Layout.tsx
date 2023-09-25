@@ -8,6 +8,7 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
   Link,
+  useDisclosure,
 } from '@nextui-org/react'
 import { Image } from '@nextui-org/react'
 import 'react-toastify/dist/ReactToastify.css'
@@ -116,9 +117,7 @@ const Header = () => {
 }
 
 const Layout: NextPage = ({ children }: LayoutProps) => {
-  const [visible, setVisible] = useState(false)
-  const handler = () => window.open('https://futaba.gitbook.io/docs/introduction/futaba-introduction', '_blank')
-  const closeHandler = () => setVisible(false)
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
 
   const { address, isConnected } = useAccount()
   const lightClient = useLightClient()
@@ -131,20 +130,27 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
   })
 
   useEffect(() => {
-    if (isError) setVisible(true)
+    console.log(isError)
+    if (isError) {
+      console.log('error')
+      onOpen()
+    }
     if (isConnected && data) {
-      setVisible(!data as boolean)
+      if (data as boolean) {
+        onClose()
+      } else {
+        onOpen()
+      }
     } else {
-      setVisible(true)
+      onOpen()
     }
   }, [data, isError])
 
   useEffect(() => {
-    setVisible(true)
-    if (address) {
+    if (address && lightClient) {
       refetch()
     }
-  }, [address])
+  }, [address, lightClient])
 
   return (
     <>
@@ -157,7 +163,8 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
       </Head>
       <Header />
       <main>{children}</main>
-      <VerifyModal visible={visible} handler={handler} closeHandler={closeHandler} />
+
+      <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
       <ToastContainer
         position='bottom-right'
         autoClose={5000}
