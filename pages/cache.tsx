@@ -127,11 +127,12 @@ const Cache: NextPage = () => {
             onClick={() => {
               getCache()
             }}
+            isLoading={loading}
             disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Get Cache'}
+            {loading ? 'Querying' : 'Get Cache'}
           </Button>
         </div>
         <div style={{ padding: '16px' }}></div>

@@ -115,8 +115,8 @@ const Create: NextPage = () => {
           />
         </div>
         <div style={{ padding: '16px' }}></div>
-        <Button onPress={() => createProposal()} color='success' variant='flat'>
-          {loading ? <div /> : 'Create'}
+        <Button onPress={() => createProposal()} color='success' variant='flat' isLoading={loading}>
+          {loading ? 'Creating' : 'Create'}
         </Button>
       </div>
     </>

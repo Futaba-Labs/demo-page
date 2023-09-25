@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
   const deployment = useDeployment()
 
-  const { data, isSuccess, write } = useContractWrite({
+  const { data, isSuccess, write, isError } = useContractWrite({
     address: deployment.balance as `0x${string}`,
     abi: BALANCE_QUERY_ABI,
     functionName: 'sendQuery',
@@ -125,6 +125,12 @@ const Home: NextPage = () => {
     setLoading(false)
   }, [data])
 
+  useEffect(() => {
+    if (isError) {
+      setLoading(false)
+    }
+  }, [isError])
+
   return (
     <>
       <div className='mx-auto'>
@@ -188,11 +194,12 @@ const Home: NextPage = () => {
             onClick={() => {
               sendQuery()
             }}
-            disabled={fields.length === 0 || isDisconnected || loading}
+            isLoading={loading}
+            disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Send Query'}
+            {loading ? 'Sending' : 'Send Query'}
           </Button>
         </div>
       </div>

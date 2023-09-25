@@ -173,11 +173,12 @@ const Custom: NextPage = () => {
             onClick={() => {
               sendQuery()
             }}
-            disabled={fields.length === 0 || isDisconnected || loading}
+            isLoading={loading}
+            disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Send Query'}
+            {loading ? 'Sending' : 'Send Query'}
           </Button>
         </div>
       </div>

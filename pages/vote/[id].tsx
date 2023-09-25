@@ -16,7 +16,8 @@ import { useDeployment } from 'hooks'
 const VoteDetail: NextPage = () => {
   const [proposal, setProposal] = useState<ProposalData>(),
     [queries, setQueries] = useState<QueryRequest[]>([]),
-    [loading, setLoading] = useState(false),
+    [loadingYes, setLoadingYes] = useState(false),
+    [loadingNo, setLoadingNo] = useState(false),
     [hasVoted, setHasVoted] = useState(false),
     [voteCount, setVoteCount] = useState<{ yes: number; no: number }>({ yes: 0, no: 0 }),
     router = useRouter(),
@@ -64,7 +65,11 @@ const VoteDetail: NextPage = () => {
 
   const voting = async (vote: boolean) => {
     if (!isConnected || queries.length == 0) return
-    setLoading(true)
+    if (vote) {
+      setLoadingYes(true)
+    } else {
+      setLoadingNo(true)
+    }
     try {
       const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
       const fee = await queryAPI.estimateFee(queries)
@@ -74,7 +79,9 @@ const VoteDetail: NextPage = () => {
         voteNo({ value: fee.toBigInt() })
       }
     } catch (error) {
-      setLoading(false)
+      setLoadingYes(false)
+      setLoadingNo(false)
+
       showToast('error', 'Transaction Failed')
     }
   }
@@ -89,7 +96,8 @@ const VoteDetail: NextPage = () => {
 
   useEffect(() => {
     if (isErrorYes || isErrorNo) {
-      setLoading(false)
+      setLoadingYes(false)
+      setLoadingNo(false)
       showToast('error', 'Transaction Failed')
     }
   }, [isErrorYes, isErrorNo])
@@ -117,7 +125,8 @@ const VoteDetail: NextPage = () => {
         confirmations: 5,
       })
     }
-    setLoading(false)
+    setLoadingYes(false)
+    setLoadingNo(false)
   }, [yesTx, noTx])
 
   useEffect(() => {
@@ -188,19 +197,27 @@ const VoteDetail: NextPage = () => {
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
-                <div>
-                  {loading ? (
-                    <div />
-                  ) : (
-                    <div className='flex w-full gap-6'>
-                      <Button onPress={() => voting(true)} color='success' variant='flat' fullWidth={true}>
-                        {'Vote "Yes"'}
-                      </Button>
-                      <Button onPress={() => voting(false)} color='danger' variant='flat' fullWidth={true}>
-                        {'Vote "No"'}
-                      </Button>
-                    </div>
-                  )}
+                <div className='flex w-full gap-6'>
+                  <Button
+                    onPress={() => voting(true)}
+                    color='success'
+                    variant='flat'
+                    fullWidth={true}
+                    isLoading={loadingYes}
+                    isDisabled={loadingYes || loadingNo}
+                  >
+                    {loadingYes ? 'Voting' : 'Vote "Yes"'}
+                  </Button>
+                  <Button
+                    onPress={() => voting(false)}
+                    color='danger'
+                    variant='flat'
+                    fullWidth={true}
+                    isLoading={loadingNo}
+                    isDisabled={loadingYes || loadingNo}
+                  >
+                    {loadingNo ? 'Voting' : 'Vote "No"'}
+                  </Button>
                 </div>
               )}
 
