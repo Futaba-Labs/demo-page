@@ -1,8 +1,7 @@
 import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { useAccount, useContractRead, useNetwork } from 'wagmi'
+import { useAccount, useContractRead } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { getLightClientAddress, ChainStage } from '@futaba-lab/sdk'
 import { Button } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
@@ -10,6 +9,7 @@ import { convertChainNameToId, showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
 import CasheResult from 'components/CacheResult'
 import { CUSTOM_QUERY_ABI } from 'utils'
+import { useLightClient } from 'hooks'
 
 const FORM_NAME = 'cache'
 
@@ -24,9 +24,8 @@ const Cache: NextPage = () => {
   })
 
   const { isDisconnected } = useAccount()
-  const { chain } = useNetwork()
 
-  const lightClient = getLightClientAddress(ChainStage.TESTNET, chain?.id as number)
+  const lightClient = useLightClient()
 
   const { data, refetch } = useContractRead({
     address: lightClient as `0x${string}`,
