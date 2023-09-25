@@ -127,7 +127,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div>
+      <div className='mx-auto'>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>

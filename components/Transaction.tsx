@@ -17,7 +17,7 @@ interface Props {
   queryData: QueryData[]
   rowsPerPage: number
 }
-interface BadgeParam {
+interface ChipParam {
   text: string
   color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
 }
@@ -37,7 +37,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
     return text ? text.substring(0, 10) + '...' : ''
   }
 
-  const convertStatus = (status: number): BadgeParam => {
+  const convertStatus = (status: number): ChipParam => {
     switch (status) {
       case 0:
         return { text: 'Request Pending...', color: 'secondary' }
@@ -142,13 +142,25 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                 <TableRow key={query.transactionHash}>
                   <TableCell>{converChain(query.from)}</TableCell>
                   <TableCell>
-                    <Link isExternal isBlock showAnchorIcon href={getExploerUrl(query.from) + query.transactionHash}>
+                    <Link
+                      isExternal
+                      isBlock
+                      showAnchorIcon
+                      href={getExploerUrl(query.from) + query.transactionHash}
+                      color='success'
+                    >
                       {omitText(query.transactionHash)}
                     </Link>
                   </TableCell>
                   <TableCell>
                     {resTxHash !== '' ? (
-                      <Link isExternal isBlock showAnchorIcon href={getExploerUrl(query.from) + query.executedHash}>
+                      <Link
+                        isExternal
+                        isBlock
+                        showAnchorIcon
+                        href={getExploerUrl(query.from) + query.executedHash}
+                        color='success'
+                      >
                         {resTxHash}
                       </Link>
                     ) : (

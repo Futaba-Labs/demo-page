@@ -62,25 +62,27 @@ const config = createConfig({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <NextUIProvider>
-      <WagmiConfig config={config}>
-        <RainbowKitProvider
-          showRecentTransactions={true}
-          chains={chains}
-          theme={{
-            lightMode: rainbowLightTheme({
-              accentColor: '#1F8506',
-            }),
-            darkMode: rainbowDarkTheme({
-              accentColor: '#1F8506',
-            }),
-          }}
-          coolMode
-        >
-          <Layout {...pageProps}>
-            <Component {...pageProps} />
-          </Layout>
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <main className='light text-foreground bg-background'>
+        <WagmiConfig config={config}>
+          <RainbowKitProvider
+            showRecentTransactions={true}
+            chains={chains}
+            theme={{
+              lightMode: rainbowLightTheme({
+                accentColor: '#1F8506',
+              }),
+              darkMode: rainbowDarkTheme({
+                accentColor: '#1F8506',
+              }),
+            }}
+            coolMode
+          >
+            <Layout {...pageProps}>
+              <Component {...pageProps} />
+            </Layout>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </main>
     </NextUIProvider>
   )
 }

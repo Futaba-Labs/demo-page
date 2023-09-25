@@ -47,32 +47,37 @@ const Header = () => {
         </NavbarBrand>
         <NavbarContent className='hidden lg:flex gap-4' justify='start'>
           <NavbarItem>
-            <Link href='/' as={NextLink}>
+            <Link href='/' as={NextLink} color='foreground'>
               Balance query
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/custom' as={NextLink}>
+            <Link href='/custom' as={NextLink} color='foreground'>
               Custom query
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/cache' as={NextLink}>
+            <Link href='/cache' as={NextLink} color='foreground'>
               Access cache
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/vote' as={NextLink}>
+            <Link href='/vote' as={NextLink} color='foreground'>
               Cross-chain voting
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/explorer' as={NextLink}>
+            <Link href='/explorer' as={NextLink} color='foreground'>
               Explorer
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
+            <Link
+              href='https://futaba.gitbook.io/docs/introduction/futaba-introduction'
+              isExternal
+              showAnchorIcon
+              color='primary'
+            >
               Docs
             </Link>
           </NavbarItem>
