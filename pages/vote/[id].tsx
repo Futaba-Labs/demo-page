@@ -145,25 +145,32 @@ const VoteDetail: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        {'Voting'}
+        <h2 className='text-3xl font-semibold mb-4'>{'Voting'}</h2>
         <div style={{ padding: '16px' }}></div>
         {proposal ? (
-          <div>
-            <div>
-              <Card>
-                <CardHeader>{proposal.title}</CardHeader>
+          <div className='flex justify-around gap-12'>
+            <div className='w-full'>
+              <Card className='max-w-1/2 min-w-1/3'>
+                <CardHeader>
+                  <p className='text-lg font-medium ml-2'>{proposal.title}</p>
+                </CardHeader>
                 <Divider />
-                <CardBody>{proposal.description}</CardBody>
+                <CardBody>
+                  <p className='text-md font-normal'>{proposal.description}</p>
+                </CardBody>
                 <Divider />
                 <CardFooter>
-                  Expire Date:{' '}
-                  {parseInt(proposal.expirationTime.toString()) !== 0
-                    ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
-                    : 0}
+                  <p className='text-md font-normal ml-2'>
+                    Expire Date:{' '}
+                    {parseInt(proposal.expirationTime.toString()) !== 0
+                      ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
+                      : 0}
+                  </p>
                 </CardFooter>
               </Card>
             </div>
-            <div>
+
+            <div className='flex flex-col w-1/2'>
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
@@ -171,29 +178,30 @@ const VoteDetail: NextPage = () => {
                   {loading ? (
                     <div />
                   ) : (
-                    <>
-                      <div>
-                        <Button onPress={() => voting(true)}>{'Vote "Yes"'}</Button>
-                      </div>
-                      <div>
-                        <Button onPress={() => voting(false)}>{'Vote "No"'}</Button>
-                      </div>
-                    </>
+                    <div className='flex w-full gap-6'>
+                      <Button onPress={() => voting(true)} color='success' variant='flat' fullWidth={true}>
+                        {'Vote "Yes"'}
+                      </Button>
+                      <Button onPress={() => voting(false)} color='danger' variant='flat' fullWidth={true}>
+                        {'Vote "No"'}
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
 
               <div style={{ padding: '8px' }}></div>
-              <div>
-                <div>
-                  Yes
+              <div className='flex flex-col'>
+                <div className='mb-2'>
+                  <p className='text-md font-normal mb-1'>Yes</p>
                   <Progress
+                    color='success'
                     value={voteCount.yes !== 0 ? (voteCount.yes / (voteCount.no + voteCount.yes)) * 100 : 0}
                     size='lg'
                   />
                 </div>
                 <div>
-                  No
+                  <p className='text-md font-normal mb-1'>No</p>
                   <Progress
                     color='danger'
                     value={voteCount.no !== 0 ? (voteCount.no / (voteCount.no + voteCount.yes)) * 100 : 0}

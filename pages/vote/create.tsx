@@ -72,17 +72,33 @@ const Create: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        Create proposal
-        {'You can create your own Proposal here.'}
-        {'Enter at which Block height you want to check for the presence of NFT.'}
+        <h2 className='text-3xl font-semibold mb-4'>Create proposal</h2>
+        <p className='text-lg font-normal mb-1'>{'You can create your own Proposal here.'}</p>
+        <p className='text-lg font-normal mb-1'>
+          {'Enter at which Block height you want to check for the presence of NFT.'}
+        </p>
+
         <div style={{ padding: '16px' }}></div>
-        <div>
-          <Input label={'Title'} fullWidth={true} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className='flex flex-row gap-4'>
+          <Input
+            label={'Title'}
+            placeholder='Proposal title'
+            fullWidth={true}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <Spacer x={1} />
-          <Input label={'Expiration date'} type='date' fullWidth={true} onChange={onChangeExpirationTime} />
+          <Input
+            label={'Expiration date'}
+            placeholder={Date.now().toString()}
+            type='date'
+            fullWidth={true}
+            onChange={onChangeExpirationTime}
+          />
           <Spacer x={1} />
           <Input
             label={'Block height'}
+            placeholder={'0'}
             type='number'
             fullWidth={true}
             onChange={(e) => setHeight(parseInt(e.target.value))}
@@ -92,14 +108,16 @@ const Create: NextPage = () => {
         <div>
           <Textarea
             label='Description'
-            placeholder='Enter proposal description'
+            placeholder='Proposal description'
             fullWidth={true}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
         <div style={{ padding: '16px' }}></div>
-        <Button onPress={() => createProposal()}>{loading ? <div /> : 'Create'}</Button>
+        <Button onPress={() => createProposal()} color='success' variant='flat'>
+          {loading ? <div /> : 'Create'}
+        </Button>
       </div>
     </>
   )

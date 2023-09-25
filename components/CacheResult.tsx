@@ -12,7 +12,7 @@ type Props = {
 const CasheResult: NextPage<Props> = ({ queries, results, page }) => {
   return (
     <>
-      Results
+      <h2 className='text-3xl font-semibold mb-4'>Results</h2>
       {queries.length > 0 ? (
         <Table aria-label='Example table with static content'>
           <TableHeader>

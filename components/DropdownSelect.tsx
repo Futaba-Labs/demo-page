@@ -11,9 +11,11 @@ type Props = {
 const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue, keys }) => {
   return (
     <>
-      <Dropdown>
+      <Dropdown className=''>
         <DropdownTrigger>
-          <Button>{selectedValue}</Button>
+          <Button className='px-10' color='success' variant='flat'>
+            {selectedValue}
+          </Button>
         </DropdownTrigger>
         <DropdownMenu
           aria-label='Single selection actions'
@@ -21,6 +23,8 @@ const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue,
           selectionMode='single'
           selectedKeys={selected}
           onSelectionChange={setSelected}
+          color='success'
+          variant='flat'
         >
           {keys.map((key) => (
             <DropdownItem key={key}>{key}</DropdownItem>

@@ -4,8 +4,7 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
-import { Button } from '@nextui-org/react'
-import Link from 'next/link'
+import { Button, Link } from '@nextui-org/react'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
@@ -125,18 +124,26 @@ const Custom: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        Custom Query
-        {'Here you can specify any contract address, block height, and storage slot to run query.'}
-        {'Click '}
-        <span>
-          <Link
-            href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
-            target='_blank'
-          >
-            here
-          </Link>
-        </span>
-        {' for information on how to calculate storage slots.'}
+        <h2 className='text-3xl font-semibold mb-4'>Custom query</h2>
+        <p className='text-lg font-normal mb-1'>
+          {'Here you can specify any contract address, block height, and storage slot to run query.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          {'Click '}
+          <span>
+            <Link
+              href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
+              isExternal
+              showAnchorIcon
+              color='primary'
+              className='text-lg font-normal mb-1'
+            >
+              here
+            </Link>
+          </span>
+          {' for information on how to calculate storage slots.'}
+        </p>
+
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
@@ -152,22 +159,26 @@ const Custom: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <div>
-          <div>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
-              Add Query
-            </Button>
-          </div>
-          <div>
-            <Button
-              onClick={() => {
-                sendQuery()
-              }}
-              disabled={fields.length === 0 || isDisconnected || loading}
-            >
-              {loading ? <div /> : 'Send Query'}
-            </Button>
-          </div>
+        <div className='flex'>
+          <Button
+            onClick={() => append({ chain: '', tokenAddress: '' })}
+            disabled={fields.length > 11}
+            color='success'
+            variant='flat'
+            className='mr-4'
+          >
+            Add Query
+          </Button>
+          <Button
+            onClick={() => {
+              sendQuery()
+            }}
+            disabled={fields.length === 0 || isDisconnected || loading}
+            color='success'
+            variant='flat'
+          >
+            {loading ? <div /> : 'Send Query'}
+          </Button>
         </div>
       </div>
       <div>

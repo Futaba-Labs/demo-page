@@ -91,9 +91,14 @@ const Cache: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        Access cache
-        {'Here you can access the data of other chains you have queried in the past in byte type.'}
-        {'Specify destination chain, block height, contract address, and storage slot.'}{' '}
+        <h2 className='text-3xl font-semibold mb-4'>Access cashe</h2>
+        <p className='text-lg font-normal'>
+          {'Here you can access the data of other chains you have queried in the past in byte type.'}
+        </p>
+        <p className='text-lg font-normal'>
+          {'Specify destination chain, block height, contract address, and storage slot.'}
+        </p>
+
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
@@ -109,22 +114,26 @@ const Cache: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <div>
-          <div>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
-              Add Query
-            </Button>
-          </div>
-          <div>
-            <Button
-              onClick={() => {
-                getCache()
-              }}
-              disabled={fields.length === 0 || isDisconnected}
-            >
-              {loading ? <div /> : 'Get Cache'}
-            </Button>
-          </div>
+        <div className='flex'>
+          <Button
+            onClick={() => append({ chain: '', tokenAddress: '' })}
+            disabled={fields.length > 11}
+            color='success'
+            variant='flat'
+            className='mr-4'
+          >
+            Add Query
+          </Button>
+          <Button
+            onClick={() => {
+              getCache()
+            }}
+            disabled={fields.length === 0 || isDisconnected}
+            color='success'
+            variant='flat'
+          >
+            {loading ? <div /> : 'Get Cache'}
+          </Button>
         </div>
         <div style={{ padding: '16px' }}></div>
         <CasheResult page={10} queries={queries} results={results} />

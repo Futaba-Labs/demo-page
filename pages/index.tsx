@@ -3,7 +3,7 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
-import { Button, Link } from '@nextui-org/react'
+import { Button, Divider, Link } from '@nextui-org/react'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
@@ -131,19 +131,34 @@ const Home: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        Futaba Demo Page
-        {"On this page you can experience Futaba's query."}
-        {" Let's try it 🚀"}
-        Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink. Step2: Select the chain and
-        token address (only general erc20) you want to query. You can add multiple queries.
-        <span>
+        <h1 className='text-4xl font-semibold my-4'>Futaba Demo 🌱</h1>
+        <p className='text-2xl font-medium mb-3'>{"On this page you can experience Futaba's query. Let's try it 🚀"}</p>
+        <Divider className='my-4' />
+        <h2 className='text-3xl font-semibold mb-4'>Balance query</h2>
+        <p className='text-lg font-normal mb-1'>
+          Step1: Connect your wallet. You can use Metamask, WalletConnect and so on.
+        </p>
+
+        <p className='text-lg font-normal'>
+          Step2: Select the chain and token address (only general erc20) you want to query. You can add multiple
+          queries.
+        </p>
+        <p className='text-lg font-normal mb-1'>
           If you do not have a token, please mint it{' '}
-          <Link href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
+          <Link
+            href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
+            isExternal
+            showAnchorIcon
+            className='text-lg font-normal mb-1'
+          >
             here
           </Link>
-        </span>{' '}
-        {'Step3: Click the "Send Query" button to send the query.'}
-        {'Step4: You can check the query result on the "Your Transactions".'}
+          {'.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>{'Step3: Click the "Send Query" button to send the query.'}</p>
+        <p className='text-lg font-normal mb-1'>
+          {'Step4: You can check the query result on the "Your Transactions".'}
+        </p>
       </div>
       <div>
         {fields.map((field, i) => (
@@ -159,27 +174,31 @@ const Home: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <div>
-          <div>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} disabled={fields.length > 11}>
-              Add Query
-            </Button>
-          </div>
-          <div>
-            <Button
-              onClick={() => {
-                sendQuery()
-              }}
-              disabled={fields.length === 0 || isDisconnected || loading}
-            >
-              {loading ? <div /> : 'Send Query'}
-            </Button>
-          </div>
+        <div className='flex'>
+          <Button
+            onClick={() => append({ chain: '', tokenAddress: '' })}
+            disabled={fields.length > 11}
+            color='success'
+            variant='flat'
+            className='mr-4'
+          >
+            Add Query
+          </Button>
+          <Button
+            onClick={() => {
+              sendQuery()
+            }}
+            disabled={fields.length === 0 || isDisconnected || loading}
+            color='success'
+            variant='flat'
+          >
+            {loading ? <div /> : 'Send Query'}
+          </Button>
         </div>
       </div>
       <div>
         <div style={{ padding: '24px' }}></div>
-        Your Transactions
+        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
         <Transaction queryData={transactions} rowsPerPage={5} />
       </div>
     </>

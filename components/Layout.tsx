@@ -29,14 +29,7 @@ const Header = () => {
 
   return (
     <>
-      <Navbar
-        isMenuOpen={isMenuOpen}
-        onMenuOpenChange={setIsMenuOpen}
-        isBordered
-        shouldHideOnScroll
-        maxWidth='full'
-        height='5rem'
-      >
+      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} isBordered maxWidth='full' height='5rem'>
         <NavbarContent className='lg:hidden' justify='start'>
           <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
         </NavbarContent>
@@ -48,22 +41,22 @@ const Header = () => {
         <NavbarContent className='hidden lg:flex gap-4' justify='start'>
           <NavbarItem>
             <Link href='/' as={NextLink} color='foreground'>
-              Balance query
+              Balance
             </Link>
           </NavbarItem>
           <NavbarItem>
             <Link href='/custom' as={NextLink} color='foreground'>
-              Custom query
+              Custom
             </Link>
           </NavbarItem>
           <NavbarItem>
             <Link href='/cache' as={NextLink} color='foreground'>
-              Access cache
+              Cache
             </Link>
           </NavbarItem>
           <NavbarItem>
             <Link href='/vote' as={NextLink} color='foreground'>
-              Cross-chain voting
+              Voting
             </Link>
           </NavbarItem>
           <NavbarItem>
@@ -88,22 +81,22 @@ const Header = () => {
         <NavbarMenu>
           <NavbarMenuItem>
             <Link href='/' as={NextLink}>
-              Balance query
+              Balance
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
             <Link href='/custom' as={NextLink}>
-              Custom query
+              Custom
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
             <Link href='/cache' as={NextLink}>
-              Access cache
+              Access
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
             <Link href='/vote' as={NextLink}>
-              Cross-chain voting
+              Voting
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>

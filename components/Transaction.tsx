@@ -117,7 +117,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                 isCompact
                 showControls
                 showShadow
-                color='default'
+                color='success'
                 page={page}
                 total={pages}
                 onChange={(page) => setPage(page)}
@@ -125,6 +125,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
             </div>
           }
           aria-label='Example static collection table'
+          className='mb-10'
         >
           <TableHeader>
             <TableColumn>Src Chain</TableColumn>

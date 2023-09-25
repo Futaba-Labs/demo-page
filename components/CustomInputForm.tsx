@@ -1,4 +1,4 @@
-import { Button, Input, Spacer } from '@nextui-org/react'
+import { Button, Input } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
@@ -33,24 +33,30 @@ const CustomInputForm: NextPage<Props> = ({
   }, [selected])
 
   return (
-    <div style={{ width: '70%' }}>
-      <div>
-        <DropdownSelect
-          selected={selected}
-          selectedValue={selectedValue}
-          setSelected={setSelected}
-          keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
-        />
-        <Spacer x={1} />
-        <Input placeholder={'Block height'} {...registerHeight} type='number' fullWidth={true} />
-        <Spacer x={1} />
-        <Input placeholder={'Contarct address'} {...registerAddress} fullWidth={true} />
+    <div className='flex flex-col w-2/3'>
+      <div className='flex flex-row mb-4 gap-4'>
+        <div>
+          <DropdownSelect
+            selected={selected}
+            selectedValue={selectedValue}
+            setSelected={setSelected}
+            keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
+          />
+        </div>
+        <div className='flex flex-row gap-4 w-full'>
+          <Input
+            placeholder={'Block height'}
+            {...registerHeight}
+            type='number'
+            fullWidth={false}
+            className='basis-1/4'
+          />
+          <Input placeholder={'Contarct address'} {...registerAddress} className='basis-3/4' />
+        </div>
       </div>
-      <div style={{ padding: '16px' }}></div>
-      <div>
-        <Input placeholder={'Storage slot'} fullWidth={true} {...registerSlot} />
-        <Spacer y={1} />
-        <Button onClick={onClick} color={'danger'}>
+      <div className='flex'>
+        <Input placeholder={'Storage slot'} {...registerSlot} className='mr-4' />
+        <Button onClick={onClick} color={'danger'} variant='flat'>
           <Delete primaryColor='red' />
         </Button>
       </div>
