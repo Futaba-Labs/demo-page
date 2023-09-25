@@ -1,12 +1,13 @@
-import { Button, Container, Input, Loading, Row, Spacer, Text, Textarea } from '@nextui-org/react'
+import { Button, Input, Spacer, Textarea } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { useContractWrite, useNetwork } from 'wagmi'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, VOTIN_GABI } from 'utils/constants'
 import { showToast } from 'utils/helper'
+import { VOTING_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 
 const Create: NextPage = () => {
   const [title, setTitle] = useState(''),
@@ -21,9 +22,11 @@ const Create: NextPage = () => {
 
   const { chain } = useNetwork()
 
-  const { data, write, isError, isSuccess } = useContractWrite({
-    address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-    abi: VOTIN_GABI,
+  const deployment = useDeployment()
+
+  const { data, write, isError } = useContractWrite({
+    address: deployment.voting as `0x${string}`,
+    abi: VOTING_ABI,
     functionName: 'createProposal',
     args: [title, description, expirationTime, height],
   })
@@ -39,7 +42,6 @@ const Create: NextPage = () => {
     try {
       write()
     } catch (error) {
-      console.log(error)
       setLoading(false)
       showToast('error', 'Transaction failed')
     }
@@ -66,44 +68,57 @@ const Create: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          Create proposal
-        </Text>
-        <Text size={18}>{'You can create your own Proposal here.'}</Text>
-        <Text size={18}>{'Enter at which Block height you want to check for the presence of NFT.'}</Text>
+        <h2 className='text-3xl font-semibold mb-4'>Create proposal</h2>
+        <p className='text-lg font-normal mb-1'>{'You can create your own Proposal here.'}</p>
+        <p className='text-lg font-normal mb-1'>
+          {'Enter at which Block height you want to check for the presence of NFT.'}
+        </p>
+
         <div style={{ padding: '16px' }}></div>
-        <Row css={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <Input label={'Title'} fullWidth={true} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className='flex flex-row gap-4'>
+          <Input
+            label={'Title'}
+            placeholder='Proposal title'
+            fullWidth={true}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <Spacer x={1} />
-          <Input label={'Expiration date'} type='date' fullWidth={true} onChange={onChangeExpirationTime} />
+          <Input
+            label={'Expiration date'}
+            placeholder={Date.now().toString()}
+            type='date'
+            fullWidth={true}
+            onChange={onChangeExpirationTime}
+          />
           <Spacer x={1} />
           <Input
             label={'Block height'}
+            placeholder={'0'}
             type='number'
             fullWidth={true}
-            value={height}
             onChange={(e) => setHeight(parseInt(e.target.value))}
           />
-        </Row>
+        </div>
         <div style={{ padding: '16px' }}></div>
-        <Row>
+        <div>
           <Textarea
             label='Description'
-            placeholder='Enter proposal description'
+            placeholder='Proposal description'
             fullWidth={true}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-        </Row>
+        </div>
         <div style={{ padding: '16px' }}></div>
-        <Button onPress={() => createProposal()} flat auto>
-          {loading ? <Loading /> : 'Create'}
+        <Button onPress={() => createProposal()} color='success' variant='flat'>
+          {loading ? <div /> : 'Create'}
         </Button>
-      </Container>
+      </div>
     </>
   )
 }

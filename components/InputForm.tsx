@@ -1,4 +1,4 @@
-import { Button, Col, Input, Row, Spacer } from '@nextui-org/react'
+import { Button, Input } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
@@ -24,25 +24,22 @@ const InputForm: NextPage<Props> = ({ label, setChain, registerToken, index, onC
 
   return (
     <>
-      <Row gap={0}>
-        <Col span={4}>
+      <div className='flex w-2/3'>
+        <div className='mr-4'>
           <DropdownSelect
             selected={selected}
             selectedValue={selectedValue}
             setSelected={setSelected}
             keys={['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']}
           />
-        </Col>
-        <Col>
-          <Input labelPlaceholder={label} fullWidth={true} {...registerToken} />
-        </Col>
-        <Spacer y={1} />
-        <Col>
-          <Button onClick={onClick} flat auto color={'error'}>
-            <Delete primaryColor='red' />
-          </Button>
-        </Col>
-      </Row>
+        </div>
+
+        <Input placeholder={label} fullWidth={true} {...registerToken} className='mr-4' />
+
+        <Button onClick={onClick} color={'danger'} variant='flat'>
+          <Delete primaryColor='red' />
+        </Button>
+      </div>
     </>
   )
 }

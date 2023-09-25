@@ -1,4 +1,4 @@
-import { Button, Card, Container, Grid, Loading, Progress, Spacer, Text } from '@nextui-org/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Progress, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useNetwork, useContractRead, useContractWrite, useAccount } from 'wagmi'
@@ -7,10 +7,12 @@ import { BigNumber } from 'ethers'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { GelatoRelay } from '@gelatonetwork/relay-sdk'
+import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
-import { DEPLOYMENTS, NFT_ADDRESS, VOTIN_GABI } from 'utils/constants'
 import { ProposalData, QueryRequest } from 'types'
 import { converUnixToDate, showToast } from 'utils/helper'
+import { NFT_ADDRESS, VOTING_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 
 const relay = new GelatoRelay()
 
@@ -24,16 +26,19 @@ const VoteDetail: NextPage = () => {
     { id } = router.query,
     { chain } = useNetwork(),
     { address, isConnected } = useAccount(),
-    addRecentTransaction = useAddRecentTransaction(),
-    { data, refetch } = useContractRead({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+    addRecentTransaction = useAddRecentTransaction()
+
+  const deployment = useDeployment()
+  const votingAddress = deployment.voting as `0x${string}`
+  const { data, refetch } = useContractRead({
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'getProposal',
       args: [parseInt(id as string)],
     }),
     { data: count } = useContractRead({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'countVotes',
       args: [parseInt(id as string)],
     }),
@@ -43,8 +48,8 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessYes,
       isError: isErrorYes,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), true],
     }),
@@ -54,28 +59,24 @@ const VoteDetail: NextPage = () => {
       isSuccess: isSuccessNo,
       isError: isErrorNo,
     } = useContractWrite({
-      address: DEPLOYMENTS.voting[chain?.id.toString() as keyof typeof DEPLOYMENTS.voting] as `0x${string}`,
-      abi: VOTIN_GABI,
+      address: votingAddress,
+      abi: VOTING_ABI,
       functionName: 'queryNFT',
       args: [queries, parseInt(id as string), false],
     })
+
   const voting = async (vote: boolean) => {
     if (!isConnected || queries.length == 0) return
     setLoading(true)
     try {
-      const fee = await relay.getEstimatedFee(
-        80001,
-        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        BigNumber.from('1000000'),
-        true,
-      )
+      const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+      const fee = await queryAPI.estimateFee(queries)
       if (vote) {
         voteYes({ value: fee.toBigInt() })
       } else {
         voteNo({ value: fee.toBigInt() })
       }
     } catch (error) {
-      console.log(error)
       setLoading(false)
       showToast('error', 'Transaction Failed')
     }
@@ -140,94 +141,81 @@ const VoteDetail: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          {'Voting'}
-        </Text>
+        <h2 className='text-3xl font-semibold mb-4'>{'Voting'}</h2>
         <div style={{ padding: '16px' }}></div>
         {proposal ? (
-          <Grid.Container gap={2} justify='center'>
-            <Grid xs={6} justify='center'>
-              <Card css={{ mw: '500px' }}>
-                <Card.Header>
-                  <Text weight={'normal'} size={32}>
-                    {proposal.title}
-                  </Text>
-                </Card.Header>
-                <Card.Divider />
-                <Card.Body css={{ py: '$10' }}>
-                  <Text>{proposal.description}</Text>
-                </Card.Body>
-                <Card.Divider />
-                <Card.Footer>
-                  <Text weight={'normal'} size={16}>
+          <div className='flex justify-around gap-12'>
+            <div className='w-full'>
+              <Card className='max-w-1/2 min-w-1/3'>
+                <CardHeader>
+                  <p className='text-lg font-medium ml-2'>{proposal.title}</p>
+                </CardHeader>
+                <Divider />
+                <CardBody>
+                  <p className='text-md font-normal'>{proposal.description}</p>
+                </CardBody>
+                <Divider />
+                <CardFooter>
+                  <p className='text-md font-normal ml-2'>
                     Expire Date:{' '}
                     {parseInt(proposal.expirationTime.toString()) !== 0
                       ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
                       : 0}
-                  </Text>
-                </Card.Footer>
+                  </p>
+                </CardFooter>
               </Card>
-            </Grid>
-            <Grid xs={6} direction='column'>
+            </div>
+
+            <div className='flex flex-col w-1/2'>
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
-                <Grid.Container xs={12} gap={2} justify='center'>
+                <div>
                   {loading ? (
-                    <Loading />
+                    <div />
                   ) : (
-                    <>
-                      <Grid>
-                        <Button rounded shadow onPress={() => voting(true)}>
-                          {'Vote "Yes"'}
-                        </Button>
-                      </Grid>
-                      <Grid>
-                        <Button rounded shadow onPress={() => voting(false)}>
-                          {'Vote "No"'}
-                        </Button>
-                      </Grid>
-                    </>
+                    <div className='flex w-full gap-6'>
+                      <Button onPress={() => voting(true)} color='success' variant='flat' fullWidth={true}>
+                        {'Vote "Yes"'}
+                      </Button>
+                      <Button onPress={() => voting(false)} color='danger' variant='flat' fullWidth={true}>
+                        {'Vote "No"'}
+                      </Button>
+                    </div>
                   )}
-                </Grid.Container>
+                </div>
               )}
 
               <div style={{ padding: '8px' }}></div>
-              <Grid.Container xs={12} gap={2} direction='column'>
-                <Grid css={{ margin: '0 15%' }}>
-                  <Text weight={'normal'} size={20}>
-                    Yes
-                  </Text>
+              <div className='flex flex-col'>
+                <div className='mb-2'>
+                  <p className='text-md font-normal mb-1'>Yes</p>
                   <Progress
+                    color='success'
                     value={voteCount.yes !== 0 ? (voteCount.yes / (voteCount.no + voteCount.yes)) * 100 : 0}
                     size='lg'
-                    shadow
-                    css={{ width: '100%' }}
                   />
-                </Grid>
-                <Grid css={{ margin: '0 15%' }}>
-                  <Text weight={'normal'} size={20}>
-                    No
-                  </Text>
+                </div>
+                <div>
+                  <p className='text-md font-normal mb-1'>No</p>
                   <Progress
-                    color='error'
+                    color='danger'
                     value={voteCount.no !== 0 ? (voteCount.no / (voteCount.no + voteCount.yes)) * 100 : 0}
                     size='lg'
-                    shadow
                   />
-                </Grid>
+                </div>
                 <Spacer x={1} />
-              </Grid.Container>
-            </Grid>
-          </Grid.Container>
+              </div>
+            </div>
+          </div>
         ) : (
           <></>
         )}
-      </Container>
+      </div>
     </>
   )
 }

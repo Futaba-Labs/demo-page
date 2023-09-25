@@ -1,6 +1,5 @@
 import '../styles/globals.css'
-import { createTheme, NextUIProvider } from '@nextui-org/react'
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import { NextUIProvider } from '@nextui-org/react'
 import '@rainbow-me/rainbowkit/styles.css'
 
 import {
@@ -12,33 +11,32 @@ import {
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { polygonMumbai } from 'wagmi/chains'
-import { useSSR } from '@nextui-org/react'
 import Layout from 'components/Layout'
 import type { AppProps } from 'next/app'
 
-const theme = createTheme({
-  type: 'light',
-  theme: {
-    colors: {
-      green200: '#D5EAD8',
-      green300: '#A5D4AD',
-      green400: '#89C997',
-      green500: '#00A051',
-      green600: '#1F8506',
-      green700: '#006428',
+// const theme = createTheme({
+//   type: 'light',
+//   theme: {
+//     colors: {
+//       green200: '#D5EAD8',
+//       green300: '#A5D4AD',
+//       green400: '#89C997',
+//       green500: '#00A051',
+//       green600: '#1F8506',
+//       green700: '#006428',
 
-      primaryLight: '$green200',
-      primaryLightHover: '$green300', // commonly used on hover state
-      primaryLightActive: '$green400', // commonly used on pressed state
-      primaryLightContrast: '$green600', // commonly used for text inside the component
-      primary: '$green600',
-      primaryBorder: '$green500',
-      primaryBorderHover: '$green600',
-      primarySolidHover: '$green700',
-      primaryShadow: '$green500',
-    },
-  },
-})
+//       primaryLight: '$green200',
+//       primaryLightHover: '$green300', // commonly used on hover state
+//       primaryLightActive: '$green400', // commonly used on pressed state
+//       primaryLightContrast: '$green600', // commonly used for text inside the component
+//       primary: '$green600',
+//       primaryBorder: '$green500',
+//       primaryBorderHover: '$green600',
+//       primarySolidHover: '$green700',
+//       primaryShadow: '$green500',
+//     },
+//   },
+// })
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai],
@@ -62,11 +60,9 @@ const config = createConfig({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { isBrowser } = useSSR()
-  if (!isBrowser) return
   return (
-    <NextThemesProvider defaultTheme='system' attribute='class'>
-      <NextUIProvider theme={theme}>
+    <NextUIProvider>
+      <main className='light text-foreground bg-background'>
         <WagmiConfig config={config}>
           <RainbowKitProvider
             showRecentTransactions={true}
@@ -86,8 +82,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             </Layout>
           </RainbowKitProvider>
         </WagmiConfig>
-      </NextUIProvider>
-    </NextThemesProvider>
+      </main>
+    </NextUIProvider>
   )
 }
 

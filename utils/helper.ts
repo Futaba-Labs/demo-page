@@ -1,7 +1,7 @@
 import { BigNumber, Wallet, ethers } from "ethers"
 import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
-import { ERC20ABI } from "./constants"
+import { ERC20_ABI } from "./constants"
 
 export const getTokenDecimals = async (chain: string, token: string) => {
   const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
@@ -11,7 +11,7 @@ export const getTokenDecimals = async (chain: string, token: string) => {
 
   const erc20 = new ethers.Contract(
     token,
-    ERC20ABI,
+    ERC20_ABI,
     wallet
   )
   let result = 0

@@ -1,28 +1,50 @@
-import { Badge, Link, SimpleColors, Table } from '@nextui-org/react'
+import {
+  Chip,
+  Link,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react'
 import { NextPage } from 'next/types'
+import { useState, useMemo } from 'react'
 import { QueryData as QueryData } from 'types'
 
 interface Props {
   queryData: QueryData[]
   rowsPerPage: number
 }
-interface BadgeParam {
+interface ChipParam {
   text: string
-  color: SimpleColors
+  color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
 }
-const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page }) => {
+const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPerPage }) => {
+  const [page, setPage] = useState(1)
+
+  const pages = Math.ceil(queries.length / rowsPerPage)
+
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage
+    const end = start + rowsPerPage
+
+    return queries.slice(start, end)
+  }, [page, queries])
+
   const omitText = (text?: string) => {
     return text ? text.substring(0, 10) + '...' : ''
   }
 
-  const convertStatus = (status: number): BadgeParam => {
+  const convertStatus = (status: number): ChipParam => {
     switch (status) {
       case 0:
-        return { text: 'Request Pending...', color: 'default' }
+        return { text: 'Request Pending...', color: 'secondary' }
       case 1:
-        return { text: 'Delivered', color: 'primary' }
+        return { text: 'Delivered', color: 'success' }
       case 3:
-        return { text: 'Failed', color: 'error' }
+        return { text: 'Failed', color: 'danger' }
       default:
         return { text: 'Request Pending', color: 'default' }
     }
@@ -89,53 +111,74 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
     <>
       {queries.length > 0 ? (
         <Table
-          aria-label='Example table with static content'
-          css={{
-            height: 'auto',
-            minWidth: '100%',
-          }}
+          bottomContent={
+            <div className='flex w-full justify-center'>
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color='success'
+                page={page}
+                total={pages}
+                onChange={(page) => setPage(page)}
+              />
+            </div>
+          }
+          aria-label='Example static collection table'
+          className='mb-10'
         >
-          <Table.Header>
-            <Table.Column>Src Chain</Table.Column>
-            <Table.Column>Request Transaction</Table.Column>
-            <Table.Column>Response Transaction</Table.Column>
-            <Table.Column>Age</Table.Column>
-            <Table.Column>Query Id</Table.Column>
-            <Table.Column>Deliver Status</Table.Column>
-          </Table.Header>
-          <Table.Body>
-            {queries.map((query) => {
+          <TableHeader>
+            <TableColumn>Src Chain</TableColumn>
+            <TableColumn>Request Transaction</TableColumn>
+            <TableColumn>Response Transaction</TableColumn>
+            <TableColumn>Age</TableColumn>
+            <TableColumn>Query Id</TableColumn>
+            <TableColumn>Deliver Status</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {items.map((query) => {
               const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash)
               return (
-                <Table.Row key={query.transactionHash}>
-                  <Table.Cell>{converChain(query.from)}</Table.Cell>
-                  <Table.Cell>
-                    <Link isExternal href={getExploerUrl(query.from) + query.transactionHash} target='_blank'>
+                <TableRow key={query.transactionHash}>
+                  <TableCell>{converChain(query.from)}</TableCell>
+                  <TableCell>
+                    <Link
+                      isExternal
+                      isBlock
+                      showAnchorIcon
+                      href={getExploerUrl(query.from) + query.transactionHash}
+                      color='success'
+                    >
                       {omitText(query.transactionHash)}
                     </Link>
-                  </Table.Cell>
-                  <Table.Cell>
+                  </TableCell>
+                  <TableCell>
                     {resTxHash !== '' ? (
-                      <Link isExternal href={getExploerUrl(query.from) + query.executedHash} target='_blank'>
+                      <Link
+                        isExternal
+                        isBlock
+                        showAnchorIcon
+                        href={getExploerUrl(query.from) + query.executedHash}
+                        color='success'
+                      >
                         {resTxHash}
                       </Link>
                     ) : (
                       <div></div>
                     )}
-                  </Table.Cell>
-                  <Table.Cell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</Table.Cell>
-                  <Table.Cell>{omitText(query.id)}</Table.Cell>
-                  <Table.Cell>
-                    <Badge color={color} size='lg'>
+                  </TableCell>
+                  <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
+                  <TableCell>{omitText(query.id)}</TableCell>
+                  <TableCell>
+                    <Chip color={color} size='lg'>
                       {status}
-                    </Badge>
-                  </Table.Cell>
-                </Table.Row>
+                    </Chip>
+                  </TableCell>
+                </TableRow>
               )
             })}
-          </Table.Body>
-          <Table.Pagination noMargin align='center' rowsPerPage={page} />
+          </TableBody>
         </Table>
       ) : (
         <div></div>

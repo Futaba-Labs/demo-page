@@ -1,22 +1,19 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Button, Col, Container, Link, Row, Text, useTheme, Loading } from '@nextui-org/react'
-import { BigNumber } from 'ethers'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { useRouter } from 'next/router'
+import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
+import { Button, Divider, Link } from '@nextui-org/react'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
-import { DEPLOYMENTS, TESTABI } from 'utils/constants'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
+import { BALANCE_QUERY_ABI } from 'utils'
+import { useDeployment } from 'hooks'
 import type { NextPage } from 'next'
-
-const relay = new GelatoRelay()
 
 export interface QueryForm {
   chain: string
@@ -24,10 +21,9 @@ export interface QueryForm {
 }
 
 const Home: NextPage = () => {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const { register, control, setValue } = useForm()
-  const { isDark } = useTheme()
+  const isDark = false
   const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
   const addRecentTransaction = useAddRecentTransaction()
@@ -40,9 +36,11 @@ const Home: NextPage = () => {
   const { address, isConnected, isDisconnected } = useAccount()
   const { chain } = useNetwork()
 
+  const deployment = useDeployment()
+
   const { data, isSuccess, write } = useContractWrite({
-    address: DEPLOYMENTS.test[chain?.id.toString() as keyof typeof DEPLOYMENTS.test] as `0x${string}`,
-    abi: TESTABI,
+    address: deployment.balance as `0x${string}`,
+    abi: BALANCE_QUERY_ABI,
     functionName: 'sendQuery',
   })
 
@@ -89,18 +87,12 @@ const Home: NextPage = () => {
 
       try {
         if (isConnected) {
-          const fee = await relay.getEstimatedFee(
-            80001,
-            '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-            BigNumber.from('1000000'),
-            true,
-          )
-          console.log(queries)
-          write({ args: [queries, decimals], value: fee.mul(120).div(100).toBigInt() })
+          const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+          const fee = await queryAPI.estimateFee(queries)
+          write({ args: [queries, decimals], value: fee.toBigInt() })
           return resolve()
         }
       } catch (error) {
-        console.log(error)
         showToast('Transaction Failed', 'error', isDark)
         setLoading(false)
         return reject(error)
@@ -135,34 +127,40 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div className='mx-auto'>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={48}>
-          Futaba Demo Page
-        </Text>
-        <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          {"On this page you can experience Futaba's query."}
-        </Text>
-        <Text weight={'normal'} size={24} css={{ padding: '1px' }}>
-          {" Let's try it 🚀"}
-        </Text>
-        <Text size={18}>Step1: Connect your wallet. You can use Metamask, WalletConnect, or WalletLink.</Text>
-        <Text size={18}>
+        <h1 className='text-4xl font-semibold my-4'>Futaba Demo 🌱</h1>
+        <p className='text-2xl font-medium mb-3'>{"On this page you can experience Futaba's query. Let's try it 🚀"}</p>
+        <Divider className='my-4' />
+        <h2 className='text-3xl font-semibold mb-4'>Balance query</h2>
+        <p className='text-lg font-normal mb-1'>
+          Step1: Connect your wallet. You can use Metamask, WalletConnect and so on.
+        </p>
+
+        <p className='text-lg font-normal'>
           Step2: Select the chain and token address (only general erc20) you want to query. You can add multiple
           queries.
-          <span>
-            If you do not have a token, please mint it{' '}
-            <Link isExternal href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3' target='_blank'>
-              here
-            </Link>
-          </span>{' '}
-        </Text>
-        <Text size={18}>{'Step3: Click the "Send Query" button to send the query.'}</Text>
-        <Text size={18}>{'Step4: You can check the query result on the "Your Transactions".'}</Text>
-      </Container>
-      <Container>
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          If you do not have a token, please mint it{' '}
+          <Link
+            href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
+            isExternal
+            showAnchorIcon
+            className='text-lg font-normal mb-1'
+          >
+            here
+          </Link>
+          {'.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>{'Step3: Click the "Send Query" button to send the query.'}</p>
+        <p className='text-lg font-normal mb-1'>
+          {'Step4: You can check the query result on the "Your Transactions".'}
+        </p>
+      </div>
+      <div>
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '16px' }}></div>
@@ -176,33 +174,33 @@ const Home: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <Row gap={0}>
-          <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
-              Add Query
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              onClick={() => {
-                sendQuery()
-              }}
-              flat
-              auto
-              disabled={fields.length === 0 || isDisconnected || loading}
-            >
-              {loading ? <Loading size='sm' /> : 'Send Query'}
-            </Button>
-          </Col>
-        </Row>
-      </Container>
-      <Container>
+        <div className='flex'>
+          <Button
+            onClick={() => append({ chain: '', tokenAddress: '' })}
+            disabled={fields.length > 11}
+            color='success'
+            variant='flat'
+            className='mr-4'
+          >
+            Add Query
+          </Button>
+          <Button
+            onClick={() => {
+              sendQuery()
+            }}
+            disabled={fields.length === 0 || isDisconnected || loading}
+            color='success'
+            variant='flat'
+          >
+            {loading ? <div /> : 'Send Query'}
+          </Button>
+        </div>
+      </div>
+      <div>
         <div style={{ padding: '24px' }}></div>
-        <Text weight={'medium'} size={32}>
-          Your Transactions
-        </Text>
+        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
         <Transaction queryData={transactions} rowsPerPage={5} />
-      </Container>
+      </div>
     </>
   )
 }

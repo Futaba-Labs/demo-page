@@ -1,14 +1,15 @@
-import { Button, Col, Container, Loading, Row, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { useAccount, useContractRead, useNetwork } from 'wagmi'
+import { useAccount, useContractRead } from 'wagmi'
 import { useEffect, useState } from 'react'
+import { Button } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { convertChainNameToId, showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
-import { DEPLOYMENTS, CUSTOM_QUERY_ABI } from 'utils/constants'
 import CasheResult from 'components/CacheResult'
+import { CUSTOM_QUERY_ABI } from 'utils'
+import { useLightClient } from 'hooks'
 
 const FORM_NAME = 'cache'
 
@@ -22,11 +23,12 @@ const Cache: NextPage = () => {
     name: FORM_NAME,
   })
 
-  const { address, isConnected, isDisconnected } = useAccount()
-  const { chain } = useNetwork()
+  const { isDisconnected } = useAccount()
 
-  const { data, refetch, isFetched } = useContractRead({
-    address: DEPLOYMENTS.custom[chain?.id.toString() as keyof typeof DEPLOYMENTS.custom] as `0x${string}`,
+  const lightClient = useLightClient()
+
+  const { data, refetch } = useContractRead({
+    address: lightClient as `0x${string}`,
     abi: CUSTOM_QUERY_ABI,
     functionName: 'getCache',
     args: [queries],
@@ -71,7 +73,6 @@ const Cache: NextPage = () => {
 
   useEffect(() => {
     if (queries.length === 0) return
-    console.log(queries)
     refetch()
     setLoading(false)
   }, [queries])
@@ -85,17 +86,18 @@ const Cache: NextPage = () => {
 
   return (
     <>
-      <Container>
+      <div>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <Text weight={'medium'} size={36}>
-          Access cache
-        </Text>
-        <Text size={18}>
+        <h2 className='text-3xl font-semibold mb-4'>Access cashe</h2>
+        <p className='text-lg font-normal'>
           {'Here you can access the data of other chains you have queried in the past in byte type.'}
-        </Text>
-        <Text size={18}>{'Specify destination chain, block height, contract address, and storage slot.'}</Text>
+        </p>
+        <p className='text-lg font-normal'>
+          {'Specify destination chain, block height, contract address, and storage slot.'}
+        </p>
+
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '20px' }}></div>
@@ -111,28 +113,30 @@ const Cache: NextPage = () => {
           </div>
         ))}
         <div style={{ padding: '16px' }}></div>
-        <Row gap={0}>
-          <Col span={2}>
-            <Button onClick={() => append({ chain: '', tokenAddress: '' })} flat auto disabled={fields.length > 11}>
-              Add Query
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              onClick={() => {
-                getCache()
-              }}
-              flat
-              auto
-              disabled={fields.length === 0 || isDisconnected}
-            >
-              {loading ? <Loading /> : 'Get Cache'}
-            </Button>
-          </Col>
-        </Row>
+        <div className='flex'>
+          <Button
+            onClick={() => append({ chain: '', tokenAddress: '' })}
+            disabled={fields.length > 11}
+            color='success'
+            variant='flat'
+            className='mr-4'
+          >
+            Add Query
+          </Button>
+          <Button
+            onClick={() => {
+              getCache()
+            }}
+            disabled={fields.length === 0 || isDisconnected}
+            color='success'
+            variant='flat'
+          >
+            {loading ? <div /> : 'Get Cache'}
+          </Button>
+        </div>
         <div style={{ padding: '16px' }}></div>
         <CasheResult page={10} queries={queries} results={results} />
-      </Container>
+      </div>
     </>
   )
 }
