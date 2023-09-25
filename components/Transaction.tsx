@@ -1,5 +1,16 @@
-import { Badge, Link, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import {
+  Chip,
+  Link,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react'
 import { NextPage } from 'next/types'
+import { useState, useMemo } from 'react'
 import { QueryData as QueryData } from 'types'
 
 interface Props {
@@ -8,9 +19,20 @@ interface Props {
 }
 interface BadgeParam {
   text: string
-  color: any
+  color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
 }
-const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page }) => {
+const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPerPage }) => {
+  const [page, setPage] = useState(1)
+
+  const pages = Math.ceil(queries.length / rowsPerPage)
+
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage
+    const end = start + rowsPerPage
+
+    return queries.slice(start, end)
+  }, [page, queries])
+
   const omitText = (text?: string) => {
     return text ? text.substring(0, 10) + '...' : ''
   }
@@ -18,11 +40,11 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
   const convertStatus = (status: number): BadgeParam => {
     switch (status) {
       case 0:
-        return { text: 'Request Pending...', color: 'default' }
+        return { text: 'Request Pending...', color: 'secondary' }
       case 1:
-        return { text: 'Delivered', color: 'primary' }
+        return { text: 'Delivered', color: 'success' }
       case 3:
-        return { text: 'Failed', color: 'error' }
+        return { text: 'Failed', color: 'danger' }
       default:
         return { text: 'Request Pending', color: 'default' }
     }
@@ -88,7 +110,22 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
   return (
     <>
       {queries.length > 0 ? (
-        <Table aria-label='Example static collection table'>
+        <Table
+          bottomContent={
+            <div className='flex w-full justify-center'>
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color='default'
+                page={page}
+                total={pages}
+                onChange={(page) => setPage(page)}
+              />
+            </div>
+          }
+          aria-label='Example static collection table'
+        >
           <TableHeader>
             <TableColumn>Src Chain</TableColumn>
             <TableColumn>Request Transaction</TableColumn>
@@ -98,20 +135,20 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
             <TableColumn>Deliver Status</TableColumn>
           </TableHeader>
           <TableBody>
-            {queries.map((query) => {
+            {items.map((query) => {
               const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash)
               return (
                 <TableRow key={query.transactionHash}>
                   <TableCell>{converChain(query.from)}</TableCell>
                   <TableCell>
-                    <Link isExternal href={getExploerUrl(query.from) + query.transactionHash} target='_blank'>
+                    <Link isExternal isBlock showAnchorIcon href={getExploerUrl(query.from) + query.transactionHash}>
                       {omitText(query.transactionHash)}
                     </Link>
                   </TableCell>
                   <TableCell>
                     {resTxHash !== '' ? (
-                      <Link isExternal href={getExploerUrl(query.from) + query.executedHash} target='_blank'>
+                      <Link isExternal isBlock showAnchorIcon href={getExploerUrl(query.from) + query.executedHash}>
                         {resTxHash}
                       </Link>
                     ) : (
@@ -121,9 +158,9 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: page })
                   <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
                   <TableCell>{omitText(query.id)}</TableCell>
                   <TableCell>
-                    <Badge color={color} size='lg'>
+                    <Chip color={color} size='lg'>
                       {status}
-                    </Badge>
+                    </Chip>
                   </TableCell>
                 </TableRow>
               )
