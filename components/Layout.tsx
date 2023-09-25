@@ -7,7 +7,7 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-  Link as NextLink,
+  Link,
 } from '@nextui-org/react'
 import { Image } from '@nextui-org/react'
 import 'react-toastify/dist/ReactToastify.css'
@@ -16,7 +16,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useAccount, useContractRead } from 'wagmi'
-import Link from 'next/link'
+import NextLink from 'next/link'
 import { LIGHT_CLIENT_ABI } from 'utils'
 import { useLightClient } from 'hooks/useLightClient'
 import VerifyModal from './VerifyModal'
@@ -29,35 +29,52 @@ const Header = () => {
 
   return (
     <>
-      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} isBordered shouldHideOnScroll maxWidth='full'>
+      <Navbar
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        isBordered
+        shouldHideOnScroll
+        maxWidth='full'
+        height='5rem'
+      >
         <NavbarContent className='lg:hidden' justify='start'>
           <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
         </NavbarContent>
         <NavbarBrand>
-          <Link href='/'>
+          <Link href='/' as={NextLink}>
             <Image height={75} width={220} src={'/images/futaba_banner_black.png'} alt='Default Image' />
           </Link>
         </NavbarBrand>
         <NavbarContent className='hidden lg:flex gap-4' justify='start'>
           <NavbarItem>
-            <Link href='/'>Balance query</Link>
+            <Link href='/' as={NextLink}>
+              Balance query
+            </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/custom'>Custom query</Link>
+            <Link href='/custom' as={NextLink}>
+              Custom query
+            </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/cache'>Access cache</Link>
+            <Link href='/cache' as={NextLink}>
+              Access cache
+            </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/vote'>Cross-chain Voting</Link>
+            <Link href='/vote' as={NextLink}>
+              Cross-chain voting
+            </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href='/explorer'>Explorer</Link>
+            <Link href='/explorer' as={NextLink}>
+              Explorer
+            </Link>
           </NavbarItem>
           <NavbarItem>
-            <NextLink href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
+            <Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
               Docs
-            </NextLink>
+            </Link>
           </NavbarItem>
         </NavbarContent>
         <NavbarContent>
@@ -65,24 +82,34 @@ const Header = () => {
         </NavbarContent>
         <NavbarMenu>
           <NavbarMenuItem>
-            <Link href='/'>Balance query</Link>
+            <Link href='/' as={NextLink}>
+              Balance query
+            </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link href='/custom'>Custom query</Link>
+            <Link href='/custom' as={NextLink}>
+              Custom query
+            </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link href='/cache'>Access cache</Link>
+            <Link href='/cache' as={NextLink}>
+              Access cache
+            </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link href='/vote'>Cross-chain Voting</Link>
+            <Link href='/vote' as={NextLink}>
+              Cross-chain voting
+            </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link href='/explorer'>Explorer</Link>
+            <Link href='/explorer' as={NextLink}>
+              Explorer
+            </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <NextLink href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
+            <Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
               Docs
-            </NextLink>
+            </Link>
           </NavbarMenuItem>
         </NavbarMenu>
       </Navbar>
