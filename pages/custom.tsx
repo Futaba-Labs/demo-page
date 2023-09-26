@@ -8,7 +8,7 @@ import { Button, Link } from '@nextui-org/react'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
-import { convertChainNameToId, showToast } from 'utils/helper'
+import { showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
@@ -49,7 +49,7 @@ const Custom: NextPage = () => {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       control._formValues[FORM_NAME].forEach((query: any) => {
-        const dstChainId = convertChainNameToId(query.chain)
+        const dstChainId = query.chain
         if (!dstChainId) {
           showToast('error', 'Invalid chain')
           reject()
@@ -118,6 +118,13 @@ const Custom: NextPage = () => {
     fetchTxns()
   }, [supabase, allTransactions])
 
+  useEffect(() => {
+    append({ chain: '', contractAddress: '', height: 0, slot: '' })
+    return () => {
+      remove(0)
+    }
+  }, [])
+
   return (
     <>
       <div>
@@ -142,6 +149,21 @@ const Custom: NextPage = () => {
             </Link>
           </span>
           {' for information on how to calculate storage slots.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          {'Sample data can be found '}
+          <span>
+            <Link
+              href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
+              isExternal
+              showAnchorIcon
+              color='primary'
+              className='text-lg font-normal mb-1'
+            >
+              here
+            </Link>
+          </span>
+          {'.'}
         </p>
 
         {fields.map((field, i) => (
@@ -173,17 +195,18 @@ const Custom: NextPage = () => {
             onClick={() => {
               sendQuery()
             }}
-            disabled={fields.length === 0 || isDisconnected || loading}
+            isLoading={loading}
+            disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Send Query'}
+            {loading ? 'Sending' : 'Send Query'}
           </Button>
         </div>
       </div>
       <div>
         <div style={{ padding: '24px' }}></div>
-        Your Transactions
+        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
         <Transaction queryData={transactions} rowsPerPage={5} />
       </div>
     </>

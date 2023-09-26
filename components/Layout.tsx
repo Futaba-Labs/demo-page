@@ -8,6 +8,7 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
   Link,
+  useDisclosure,
 } from '@nextui-org/react'
 import { Image } from '@nextui-org/react'
 import 'react-toastify/dist/ReactToastify.css'
@@ -15,10 +16,7 @@ import { ToastContainer } from 'react-toastify'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useAccount, useContractRead } from 'wagmi'
 import NextLink from 'next/link'
-import { LIGHT_CLIENT_ABI } from 'utils'
-import { useLightClient } from 'hooks/useLightClient'
 import VerifyModal from './VerifyModal'
 interface LayoutProps {
   children?: React.ReactNode
@@ -116,35 +114,11 @@ const Header = () => {
 }
 
 const Layout: NextPage = ({ children }: LayoutProps) => {
-  const [visible, setVisible] = useState(false)
-  const handler = () => window.open('https://futaba.gitbook.io/docs/introduction/futaba-introduction', '_blank')
-  const closeHandler = () => setVisible(false)
-
-  const { address, isConnected } = useAccount()
-  const lightClient = useLightClient()
-
-  const { data, refetch, isError } = useContractRead({
-    address: lightClient as `0x${string}`,
-    abi: LIGHT_CLIENT_ABI,
-    functionName: 'isWhitelisted',
-    args: [address],
-  })
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
 
   useEffect(() => {
-    if (isError) setVisible(true)
-    if (isConnected && data) {
-      setVisible(!data as boolean)
-    } else {
-      setVisible(true)
-    }
-  }, [data, isError])
-
-  useEffect(() => {
-    setVisible(true)
-    if (address) {
-      refetch()
-    }
-  }, [address])
+    onOpen()
+  }, [onOpen])
 
   return (
     <>
@@ -157,7 +131,8 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
       </Head>
       <Header />
       <main>{children}</main>
-      <VerifyModal visible={visible} handler={handler} closeHandler={closeHandler} />
+
+      <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
       <ToastContainer
         position='bottom-right'
         autoClose={5000}

@@ -1,4 +1,4 @@
-import { ChainId, ChainKey, ChainStage, getChainKey } from "@futaba-lab/sdk"
+import { ChainKey, ChainStage } from "@futaba-lab/sdk"
 import { Deployment } from "types"
 
 export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>>> = {
@@ -48,11 +48,11 @@ export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>
   },
 }
 
-export const getDeployment = (stage: ChainStage, chainId: ChainId) => {
-  const chainKey = getChainKey(chainId)
-  const deployment = DEPLOYMENT[stage][chainKey]
-  if (!deployment) {
-    throw new Error(`No deployment for ${stage} ${chainKey}`)
-  }
-  return deployment
-}
+// export const getDeployment = (stage: ChainStage, chainId: ChainId) => {
+//   const chainKey = getChainKey(chainId)
+//   const deployment = DEPLOYMENT[stage][chainKey]
+//   if (!deployment) {
+//     throw new Error(`No deployment for ${stage} ${chainKey}`)
+//   }
+//   return deployment
+// }

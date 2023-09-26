@@ -5,7 +5,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import { Button, Divider, Link } from '@nextui-org/react'
 import InputForm from 'components/InputForm'
-import { getBalanceSlot, getLatestBlockNumber, getTokenDecimals, showToast } from 'utils/helper'
+import { getBalanceSlot, getLatestBlockNumber, getTokenDecimal, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
@@ -22,7 +22,8 @@ export interface QueryForm {
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
-  const { register, control, setValue } = useForm()
+  const { register, control, setValue, watch } = useForm()
+
   const isDark = false
   const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
@@ -38,60 +39,66 @@ const Home: NextPage = () => {
 
   const deployment = useDeployment()
 
-  const { data, isSuccess, write } = useContractWrite({
+  const { data, isSuccess, write, isError } = useContractWrite({
     address: deployment.balance as `0x${string}`,
     abi: BALANCE_QUERY_ABI,
     functionName: 'sendQuery',
   })
 
   const sendQuery = async () => {
-    if (!isConnected) return
     setLoading(true)
+    if (!isConnected || !chain || !address) {
+      showToast('Failed', 'error', isDark)
+      setLoading(false)
+      return
+    }
+
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       const queries: QueryRequest[] = []
       const decimals: number[] = []
-      const results = []
-      for (const f of control._formValues['queries']) {
-        results.push(getTokenDecimals(f['chain'], f['tokenAddress']))
-      }
 
-      const items = await Promise.all(results)
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i]
-        if (!item) {
-          showToast('Failed', 'error', isDark)
+      for (const value of control._formValues['queries']) {
+        const chainId = parseInt(value['chain'])
+        const tokenAddress = value['tokenAddress']
+        const decimal = value['decimal']
+        console.log(chainId, tokenAddress, decimal)
+        if (tokenAddress == '' || decimal.toString() == '') {
+          showToast('Invalid token', 'error', isDark)
           setLoading(false)
-          return
+          return reject('Invalid token')
         }
-        const tokenAddress = control._formValues['queries'][i]['tokenAddress']
-        if (item.decimals === 0) {
-          showToast('Invalid Token', 'error', isDark)
-          setLoading(false)
-          return
-        }
-        const blockHeight = await getLatestBlockNumber(item.chainName)
+
+        const blockHeight = await getLatestBlockNumber(chainId)
         if (!blockHeight) {
           showToast('Failed', 'error', isDark)
           setLoading(false)
-          return
+          return reject("Can't get block height")
         }
+
+        const slot = getBalanceSlot(address)
+
         queries.push({
-          dstChainId: item.chainId,
+          dstChainId: 5,
           height: blockHeight,
-          slot: getBalanceSlot(address!),
+          slot: slot,
           to: tokenAddress,
         })
-        decimals.push(item.decimals)
+
+        decimals.push(parseInt(decimal))
+      }
+
+      if (queries.length == 0) {
+        showToast('No queries', 'error', isDark)
+        setLoading(false)
+        return reject('No queries')
       }
 
       try {
-        if (isConnected) {
-          const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
-          const fee = await queryAPI.estimateFee(queries)
-          write({ args: [queries, decimals], value: fee.toBigInt() })
-          return resolve()
-        }
+        const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+        const fee = await queryAPI.estimateFee(queries)
+        write({ args: [queries, decimals], value: fee.toBigInt() })
+        return resolve()
       } catch (error) {
         showToast('Transaction Failed', 'error', isDark)
         setLoading(false)
@@ -124,6 +131,38 @@ const Home: NextPage = () => {
     }
     setLoading(false)
   }, [data])
+
+  useEffect(() => {
+    if (isError) {
+      setLoading(false)
+    }
+  }, [isError])
+
+  useEffect(() => {
+    watch(async (value, { name, type }) => {
+      if (!name) return
+      if (type === 'change' && name.includes('queries')) {
+        const result = name.match(/\d+/)
+        if (result) {
+          const index = result[0]
+
+          const decimal = await getTokenDecimal(
+            parseInt(value['queries'][index]['chain']),
+            value['queries'][index]['tokenAddress'],
+          )
+          if (!decimal) return
+          setValue(`queries.${index}.decimal`, decimal)
+        }
+      }
+    })
+  }, [watch])
+
+  useEffect(() => {
+    append({ chain: '', tokenAddress: '', decimal: 0 })
+    return () => {
+      remove(0)
+    }
+  }, [])
 
   return (
     <>
@@ -165,10 +204,10 @@ const Home: NextPage = () => {
           <div key={i}>
             <div style={{ padding: '16px' }}></div>
             <InputForm
-              label='Token Address'
               index={i}
               setChain={setValue}
               registerToken={register(`queries.${i}.tokenAddress`)}
+              registerDecimal={register(`queries.${i}.decimal`)}
               onClick={() => remove(i)}
             />
           </div>
@@ -188,11 +227,12 @@ const Home: NextPage = () => {
             onClick={() => {
               sendQuery()
             }}
-            disabled={fields.length === 0 || isDisconnected || loading}
+            isLoading={loading}
+            disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Send Query'}
+            {loading ? 'Sending' : 'Send Query'}
           </Button>
         </div>
       </div>

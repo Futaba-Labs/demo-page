@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Progress, Spacer } from '@nextui-org/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Link, Progress, Spacer } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useNetwork, useContractRead, useContractWrite, useAccount } from 'wagmi'
@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { BigNumber } from 'ethers'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { GelatoRelay } from '@gelatonetwork/relay-sdk'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import { ProposalData, QueryRequest } from 'types'
@@ -14,12 +13,11 @@ import { converUnixToDate, showToast } from 'utils/helper'
 import { NFT_ADDRESS, VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
 
-const relay = new GelatoRelay()
-
 const VoteDetail: NextPage = () => {
   const [proposal, setProposal] = useState<ProposalData>(),
     [queries, setQueries] = useState<QueryRequest[]>([]),
-    [loading, setLoading] = useState(false),
+    [loadingYes, setLoadingYes] = useState(false),
+    [loadingNo, setLoadingNo] = useState(false),
     [hasVoted, setHasVoted] = useState(false),
     [voteCount, setVoteCount] = useState<{ yes: number; no: number }>({ yes: 0, no: 0 }),
     router = useRouter(),
@@ -67,7 +65,11 @@ const VoteDetail: NextPage = () => {
 
   const voting = async (vote: boolean) => {
     if (!isConnected || queries.length == 0) return
-    setLoading(true)
+    if (vote) {
+      setLoadingYes(true)
+    } else {
+      setLoadingNo(true)
+    }
     try {
       const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
       const fee = await queryAPI.estimateFee(queries)
@@ -77,9 +79,15 @@ const VoteDetail: NextPage = () => {
         voteNo({ value: fee.toBigInt() })
       }
     } catch (error) {
-      setLoading(false)
+      setLoadingYes(false)
+      setLoadingNo(false)
+
       showToast('error', 'Transaction Failed')
     }
+  }
+
+  const getScanUrl = (height: string) => {
+    return `https://goerli.etherscan.io/block/${height}`
   }
 
   useEffect(() => {
@@ -88,7 +96,8 @@ const VoteDetail: NextPage = () => {
 
   useEffect(() => {
     if (isErrorYes || isErrorNo) {
-      setLoading(false)
+      setLoadingYes(false)
+      setLoadingNo(false)
       showToast('error', 'Transaction Failed')
     }
   }, [isErrorYes, isErrorNo])
@@ -116,7 +125,8 @@ const VoteDetail: NextPage = () => {
         confirmations: 5,
       })
     }
-    setLoading(false)
+    setLoadingYes(false)
+    setLoadingNo(false)
   }, [yesTx, noTx])
 
   useEffect(() => {
@@ -160,12 +170,25 @@ const VoteDetail: NextPage = () => {
                 </CardBody>
                 <Divider />
                 <CardFooter>
-                  <p className='text-md font-normal ml-2'>
-                    Expire Date:{' '}
-                    {parseInt(proposal.expirationTime.toString()) !== 0
-                      ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
-                      : 0}
-                  </p>
+                  <div className='flex flex-col ml-2'>
+                    <span className='text-md font-normal mb-1'>
+                      Block height:{' '}
+                      <Link
+                        href={getScanUrl(proposal.height.toString())}
+                        className='text-md font-normal'
+                        isExternal
+                        showAnchorIcon
+                      >
+                        {proposal.height.toString()}
+                      </Link>
+                    </span>
+                    <p className='text-md font-normal'>
+                      Expire Date:{' '}
+                      {parseInt(proposal.expirationTime.toString()) !== 0
+                        ? converUnixToDate(parseInt(proposal.expirationTime.toString())).toDateString()
+                        : 0}
+                    </p>
+                  </div>
                 </CardFooter>
               </Card>
             </div>
@@ -174,19 +197,27 @@ const VoteDetail: NextPage = () => {
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
-                <div>
-                  {loading ? (
-                    <div />
-                  ) : (
-                    <div className='flex w-full gap-6'>
-                      <Button onPress={() => voting(true)} color='success' variant='flat' fullWidth={true}>
-                        {'Vote "Yes"'}
-                      </Button>
-                      <Button onPress={() => voting(false)} color='danger' variant='flat' fullWidth={true}>
-                        {'Vote "No"'}
-                      </Button>
-                    </div>
-                  )}
+                <div className='flex w-full gap-6'>
+                  <Button
+                    onPress={() => voting(true)}
+                    color='success'
+                    variant='flat'
+                    fullWidth={true}
+                    isLoading={loadingYes}
+                    isDisabled={loadingYes || loadingNo}
+                  >
+                    {loadingYes ? 'Voting' : 'Vote "Yes"'}
+                  </Button>
+                  <Button
+                    onPress={() => voting(false)}
+                    color='danger'
+                    variant='flat'
+                    fullWidth={true}
+                    isLoading={loadingNo}
+                    isDisabled={loadingYes || loadingNo}
+                  >
+                    {loadingNo ? 'Voting' : 'Vote "No"'}
+                  </Button>
                 </div>
               )}
 

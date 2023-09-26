@@ -2,14 +2,14 @@ import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useAccount, useContractRead } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { Button } from '@nextui-org/react'
+import { Button, Link } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
-import { convertChainNameToId, showToast } from 'utils/helper'
+import { showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
 import CasheResult from 'components/CacheResult'
-import { CUSTOM_QUERY_ABI } from 'utils'
-import { useLightClient } from 'hooks'
+import { GATEWAY_ABI } from 'utils'
+import { useGateway } from 'hooks'
 
 const FORM_NAME = 'cache'
 
@@ -25,50 +25,37 @@ const Cache: NextPage = () => {
 
   const { isDisconnected } = useAccount()
 
-  const lightClient = useLightClient()
+  const gateway = useGateway()
 
   const { data, refetch } = useContractRead({
-    address: lightClient as `0x${string}`,
-    abi: CUSTOM_QUERY_ABI,
+    address: gateway as `0x${string}`,
+    abi: GATEWAY_ABI,
     functionName: 'getCache',
     args: [queries],
   })
 
   const getCache = async () => {
-    setLoading(true)
-    return new Promise<void>((resolve, reject) => {
-      const requests: QueryRequest[] = []
-      control._formValues[FORM_NAME].forEach((query: any) => {
-        const dstChainId = convertChainNameToId(query.chain)
-        if (!dstChainId) {
-          showToast('error', 'Invalid chain')
-          reject()
-          setLoading(false)
-          return
-        }
-        if (query.height < 0) {
-          setLoading(false)
-          showToast('error', 'Invalid height')
-          reject()
-          return
-        }
-        requests.push({
-          dstChainId,
-          to: query.contractAddress,
-          height: query.height,
-          slot: query.slot,
-        })
-      })
-
-      if (requests.length === 0) {
+    const requests: QueryRequest[] = []
+    control._formValues[FORM_NAME].forEach((query: any) => {
+      if (query.height < 0) {
         setLoading(false)
-        showToast('error', 'No queries')
-        reject()
+        showToast('error', 'Invalid height')
         return
       }
-
-      setQueries(requests)
+      requests.push({
+        dstChainId: parseInt(query.chain),
+        to: query.contractAddress,
+        height: query.height,
+        slot: query.slot,
+      })
     })
+
+    if (requests.length === 0) {
+      setLoading(false)
+      showToast('error', 'No queries')
+      return
+    }
+    setQueries(requests)
   }
 
   useEffect(() => {
@@ -84,6 +71,13 @@ const Cache: NextPage = () => {
     }
   }, [data])
 
+  useEffect(() => {
+    append({ chain: '', contractAddress: '', height: 0, slot: '' })
+    return () => {
+      remove(0)
+    }
+  }, [])
+
   return (
     <>
       <div>
@@ -94,8 +88,23 @@ const Cache: NextPage = () => {
         <p className='text-lg font-normal'>
           {'Here you can access the data of other chains you have queried in the past in byte type.'}
         </p>
-        <p className='text-lg font-normal'>
+        <p className='text-lg font-normal mb-1'>
           {'Specify destination chain, block height, contract address, and storage slot.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          {'Sample data can be found '}
+          <span>
+            <Link
+              href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
+              isExternal
+              showAnchorIcon
+              color='primary'
+              className='text-lg font-normal mb-1'
+            >
+              here
+            </Link>
+          </span>
+          {'.'}
         </p>
 
         {fields.map((field, i) => (
@@ -127,11 +136,12 @@ const Cache: NextPage = () => {
             onClick={() => {
               getCache()
             }}
+            isLoading={loading}
             disabled={fields.length === 0 || isDisconnected}
             color='success'
             variant='flat'
           >
-            {loading ? <div /> : 'Get Cache'}
+            {loading ? 'Querying' : 'Get Cache'}
           </Button>
         </div>
         <div style={{ padding: '16px' }}></div>

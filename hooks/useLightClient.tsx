@@ -9,6 +9,7 @@ export const useLightClient = () => {
 
   useEffect(() => {
     if (!chain) return
+    if (chain.id !== 80001) return
     const lc = getLightClientAddress(ChainStage.TESTNET, chain?.id as number) as `0x${string}`
     setLightClient(lc)
   }, [chain])
