@@ -129,10 +129,10 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
         >
           <TableHeader>
             <TableColumn>Src Chain</TableColumn>
+            <TableColumn>Sender</TableColumn>
             <TableColumn>Request Transaction</TableColumn>
             <TableColumn>Response Transaction</TableColumn>
             <TableColumn>Age</TableColumn>
-            <TableColumn>Query Id</TableColumn>
             <TableColumn>Deliver Status</TableColumn>
           </TableHeader>
           <TableBody>
@@ -142,6 +142,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
               return (
                 <TableRow key={query.transactionHash}>
                   <TableCell>{converChain(query.from)}</TableCell>
+                  <TableCell>{omitText(query.sender)}</TableCell>
                   <TableCell>
                     <Link
                       isExternal
@@ -169,7 +170,6 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                     )}
                   </TableCell>
                   <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
-                  <TableCell>{omitText(query.id)}</TableCell>
                   <TableCell>
                     <Chip color={color} size='lg'>
                       {status}
