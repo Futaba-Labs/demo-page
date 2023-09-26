@@ -71,6 +71,13 @@ const Cache: NextPage = () => {
     }
   }, [data])
 
+  useEffect(() => {
+    append({ chain: '', contractAddress: '', height: 0, slot: '' })
+    return () => {
+      remove(0)
+    }
+  }, [])
+
   return (
     <>
       <div>

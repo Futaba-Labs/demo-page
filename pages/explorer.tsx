@@ -7,7 +7,7 @@ const Explorer: NextPage = () => {
   return (
     <>
       <div>
-        Transactions
+        <h2 className='text-3xl font-semibold my-6'>Transactions</h2>
         <Transaction queryData={allTransactions} rowsPerPage={15} />
       </div>
     </>

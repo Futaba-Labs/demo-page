@@ -49,7 +49,6 @@ const Custom: NextPage = () => {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       control._formValues[FORM_NAME].forEach((query: any) => {
-        console.log(query)
         const dstChainId = query.chain
         if (!dstChainId) {
           showToast('error', 'Invalid chain')
@@ -119,6 +118,13 @@ const Custom: NextPage = () => {
     fetchTxns()
   }, [supabase, allTransactions])
 
+  useEffect(() => {
+    append({ chain: '', contractAddress: '', height: 0, slot: '' })
+    return () => {
+      remove(0)
+    }
+  }, [])
+
   return (
     <>
       <div>
@@ -185,7 +191,7 @@ const Custom: NextPage = () => {
       </div>
       <div>
         <div style={{ padding: '24px' }}></div>
-        Your Transactions
+        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
         <Transaction queryData={transactions} rowsPerPage={5} />
       </div>
     </>

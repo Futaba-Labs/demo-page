@@ -157,6 +157,13 @@ const Home: NextPage = () => {
     })
   }, [watch])
 
+  useEffect(() => {
+    append({ chain: '', tokenAddress: '', decimal: 0 })
+    return () => {
+      remove(0)
+    }
+  }, [])
+
   return (
     <>
       <div className='mx-auto'>
