@@ -8,7 +8,7 @@ import { Button, Link } from '@nextui-org/react'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
-import { convertChainNameToId, showToast } from 'utils/helper'
+import { showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
@@ -49,7 +49,8 @@ const Custom: NextPage = () => {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       control._formValues[FORM_NAME].forEach((query: any) => {
-        const dstChainId = convertChainNameToId(query.chain)
+        console.log(query)
+        const dstChainId = query.chain
         if (!dstChainId) {
           showToast('error', 'Invalid chain')
           reject()

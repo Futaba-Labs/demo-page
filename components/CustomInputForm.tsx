@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 import { Delete } from 'react-iconly'
+import { convertChainNameToId } from 'utils'
 import DropdownSelect from './DropdownSelect'
 
 type Props = {
@@ -28,7 +29,10 @@ const CustomInputForm: NextPage<Props> = ({
 
   const selectedValue = useMemo(() => {
     const value = Array.from(selected).join(', ').replaceAll('_', ' ')
-    setChain(`${formName}.${index}.chain`, value)
+    const chainId = convertChainNameToId(value)
+    if (chainId) {
+      setChain(`${formName}.${index}.chain`, chainId.toString())
+    }
     return value
   }, [selected])
 
