@@ -3,31 +3,31 @@ import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
 import { ERC20_ABI } from "./constants"
 
-export const getTokenDecimals = async (chain: string, token: string) => {
+export const getTokenDecimal = async (chainId: number, token: string) => {
   const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
-  const config = getNeteorkConfig(chain)
-  if (!config) return
-  const wallet = new Wallet(PRIVATE_KEY, config.provider)
+  const provider = getProvider(chainId)
+  if (!provider) return
+  const wallet = new Wallet(PRIVATE_KEY, provider)
 
   const erc20 = new ethers.Contract(
     token,
     ERC20_ABI,
     wallet
   )
-  let result = 0
+  let decimal = 0
   try {
-    result = await erc20.decimals()
+    decimal = await erc20.decimals()
   } catch (error) {
     console.log(error)
   }
 
-  return { decimals: result, chainId: config.chainId, chainName: chain }
+  return decimal
 }
 
-export const getLatestBlockNumber = async (chain: string) => {
-  const config = getNeteorkConfig(chain)
-  if (!config) return
-  const blockNumber = await config.provider.getBlockNumber()
+export const getLatestBlockNumber = async (chainId: number) => {
+  const provider = getProvider(chainId)
+  if (!provider) return
+  const blockNumber = await provider.getBlockNumber()
   return blockNumber
 }
 
@@ -41,16 +41,16 @@ export const getBalanceSlot = (token: string) => {
   ]));
 }
 
-const getNeteorkConfig = (chain: string) => {
-  switch (chain) {
-    case "Goerli":
-      return { chainId: 5, provider: new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ETHEREUM_GOERLI_API_KEY}`) }
-    case "Optimism Goerli":
-      return { chainId: 420, provider: new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_GOERLI_API_KEY}`) }
-    case "Mumbai":
-      return { chainId: 80001, provider: new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TESTNET_API_KEY}`) }
-    case "Arbitrum Goerli":
-      return { chainId: 421613, provider: new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_GOERLI_API_KEY}`) }
+const getProvider = (chainId: number) => {
+  switch (chainId) {
+    case 5:
+      return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ETHEREUM_GOERLI_API_KEY}`)
+    case 420:
+      return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_GOERLI_API_KEY}`)
+    case 80001:
+      return new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TESTNET_API_KEY}`)
+    case 421613:
+      return new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_GOERLI_API_KEY}`)
     default:
       return
   }

@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import { Image } from '@nextui-org/react'
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { LIGHT_CLIENT_ABI } from 'utils'
 import { useLightClient } from 'hooks'
 
@@ -13,9 +13,8 @@ interface Props {
   onClose: () => void
 }
 const VerifyModal: NextPage<Props> = ({ isOpen, onOpenChange, onClose }) => {
-  const [allowed, setAllowed] = useState(true)
-  const { connectModalOpen, openConnectModal } = useConnectModal()
-  const { chainModalOpen, openChainModal } = useChainModal()
+  const { openConnectModal } = useConnectModal()
+  const { openChainModal } = useChainModal()
 
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -29,24 +28,24 @@ const VerifyModal: NextPage<Props> = ({ isOpen, onOpenChange, onClose }) => {
     args: [address],
   })
 
-  useEffect(() => {
-    if (address && lightClient) {
-      setAllowed(false)
-      refetch()
+  const allowed = useMemo(() => {
+    if (data) {
+      return data as boolean
     }
-  }, [address, chainModalOpen, connectModalOpen, refetch, lightClient])
+    return false
+  }, [data])
 
   useEffect(() => {
-    if (data) {
-      setAllowed(data as boolean)
+    if (address && lightClient) {
+      refetch()
     }
-  }, [data])
+  }, [address, refetch, lightClient, chain])
 
   useEffect(() => {
     if (allowed) {
       onClose()
     }
-  }, [allowed])
+  }, [allowed, onClose])
 
   return (
     <Modal

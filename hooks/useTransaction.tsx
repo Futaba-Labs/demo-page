@@ -9,7 +9,7 @@ export const useTransaction = () => {
 
   const fetchAllTransactions = async () => {
     if (supabase) {
-      const { data, error } = await supabase.from('QueryData').select().order('createdAt', { ascending: false })
+      const { data } = await supabase.from('QueryData').select().order('createdAt', { ascending: false })
       const transactionData: QueryData[] = []
       if (data) {
         for (const d of data) {
@@ -31,7 +31,7 @@ export const useTransaction = () => {
 
   const fetchTransactionsBySender = async (sender: string) => {
     if (supabase) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('QueryData')
         .select()
         .eq('sender', sender)

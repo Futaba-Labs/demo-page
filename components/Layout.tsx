@@ -16,10 +16,7 @@ import { ToastContainer } from 'react-toastify'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useAccount, useContractRead } from 'wagmi'
 import NextLink from 'next/link'
-import { LIGHT_CLIENT_ABI } from 'utils'
-import { useLightClient } from 'hooks/useLightClient'
 import VerifyModal from './VerifyModal'
 interface LayoutProps {
   children?: React.ReactNode
@@ -119,38 +116,9 @@ const Header = () => {
 const Layout: NextPage = ({ children }: LayoutProps) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
 
-  const { address, isConnected } = useAccount()
-  const lightClient = useLightClient()
-
-  const { data, refetch, isError } = useContractRead({
-    address: lightClient as `0x${string}`,
-    abi: LIGHT_CLIENT_ABI,
-    functionName: 'isWhitelisted',
-    args: [address],
-  })
-
   useEffect(() => {
-    console.log(isError)
-    if (isError) {
-      console.log('error')
-      onOpen()
-    }
-    if (isConnected && data) {
-      if (data as boolean) {
-        onClose()
-      } else {
-        onOpen()
-      }
-    } else {
-      onOpen()
-    }
-  }, [data, isError])
-
-  useEffect(() => {
-    if (address && lightClient) {
-      refetch()
-    }
-  }, [address, lightClient])
+    onOpen()
+  }, [onOpen])
 
   return (
     <>
