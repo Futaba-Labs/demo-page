@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useAccount, useContractRead } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { Button } from '@nextui-org/react'
+import { Button, Link } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { showToast } from 'utils/helper'
@@ -88,8 +88,23 @@ const Cache: NextPage = () => {
         <p className='text-lg font-normal'>
           {'Here you can access the data of other chains you have queried in the past in byte type.'}
         </p>
-        <p className='text-lg font-normal'>
+        <p className='text-lg font-normal mb-1'>
           {'Specify destination chain, block height, contract address, and storage slot.'}
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          {'Sample data can be found '}
+          <span>
+            <Link
+              href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
+              isExternal
+              showAnchorIcon
+              color='primary'
+              className='text-lg font-normal mb-1'
+            >
+              here
+            </Link>
+          </span>
+          {'.'}
         </p>
 
         {fields.map((field, i) => (

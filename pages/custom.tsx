@@ -150,6 +150,21 @@ const Custom: NextPage = () => {
           </span>
           {' for information on how to calculate storage slots.'}
         </p>
+        <p className='text-lg font-normal mb-1'>
+          {'Sample data can be found '}
+          <span>
+            <Link
+              href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
+              isExternal
+              showAnchorIcon
+              color='primary'
+              className='text-lg font-normal mb-1'
+            >
+              here
+            </Link>
+          </span>
+          {'.'}
+        </p>
 
         {fields.map((field, i) => (
           <div key={i}>
