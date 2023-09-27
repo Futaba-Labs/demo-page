@@ -84,7 +84,7 @@ const Cache: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <h2 className='text-3xl font-semibold mb-4'>Access cashe</h2>
+        <h2 className='text-3xl font-semibold mb-4'>Access cache</h2>
         <p className='text-lg font-normal'>
           {'Here you can access the data of other chains you have queried in the past in byte type.'}
         </p>
