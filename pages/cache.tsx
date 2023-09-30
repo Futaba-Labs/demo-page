@@ -7,7 +7,7 @@ import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
-import CasheResult from 'components/CacheResult'
+import CacheResult from 'components/CacheResult'
 import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
 
@@ -145,7 +145,7 @@ const Cache: NextPage = () => {
           </Button>
         </div>
         <div style={{ padding: '16px' }}></div>
-        <CasheResult page={10} queries={queries} results={results} />
+        <CacheResult page={10} queries={queries} results={results} />
       </div>
     </>
   )
