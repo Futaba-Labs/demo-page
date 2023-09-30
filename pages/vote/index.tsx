@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useContractRead } from 'wagmi'
-import { Button, Link } from '@nextui-org/react'
+import { Button, Card, Link, Skeleton } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import Proposal from 'components/Proposal'
 import { ProposalData } from 'types'
@@ -26,7 +26,6 @@ const Vote: NextPage = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: fetch proposals
     const proposalData = data as ProposalData[]
     if (proposalData && proposalData.length > 0) {
       setProposals(
@@ -71,8 +70,47 @@ const Vote: NextPage = () => {
         </Button>
         <div style={{ padding: '8px' }}></div>
         <h2 className='text-3xl font-semibold mb-4'>Proposals</h2>
-        {isFetched && data ? <Proposal proposals={proposals} /> : <span>No proposals</span>}
+        {isFetched && data ? (
+          <Proposal proposals={proposals} />
+        ) : (
+          <div className='grid grid-cols-3 gap-4'>
+            <Card className='space-y-5 p-4'>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-10 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-20 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-4/5 rounded-lg'>
+                <div className='h-8 w-4/5 rounded-lg bg-default-300'></div>
+              </Skeleton>
+            </Card>
+            <Card className='space-y-5 p-4'>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-10 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-20 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-4/5 rounded-lg'>
+                <div className='h-8 w-4/5 rounded-lg bg-default-300'></div>
+              </Skeleton>
+            </Card>
+            <Card className='space-y-5 p-4'>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-10 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-full rounded-lg'>
+                <div className='h-20 w-full rounded-lg bg-default-200'></div>
+              </Skeleton>
+              <Skeleton className='w-4/5 rounded-lg'>
+                <div className='h-8 w-4/5 rounded-lg bg-default-300'></div>
+              </Skeleton>
+            </Card>
+          </div>
+        )}
       </div>
+      <div className='pb-10'></div>
     </>
   )
 }
