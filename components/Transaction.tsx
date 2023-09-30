@@ -8,10 +8,12 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Image,
 } from '@nextui-org/react'
 import { NextPage } from 'next/types'
 import { useState, useMemo } from 'react'
 import { QueryData as QueryData } from 'types'
+import { convertChainIdToName } from 'utils'
 
 interface Props {
   queryData: QueryData[]
@@ -47,26 +49,6 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
         return { text: 'Failed', color: 'danger' }
       default:
         return { text: 'Request Pending', color: 'default' }
-    }
-  }
-
-  const converChain = (chainId: number) => {
-    switch (chainId) {
-      case 80001:
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img height={25} width={25} src={'/images/matic.svg'} alt='Default Image' />
-            <span style={{ paddingLeft: '0.5rem' }}>Mumbai</span>
-          </div>
-        )
-
-      default:
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img height={25} width={25} src={'/images/matic.svg'} alt='Default Image' />
-            <span style={{ paddingLeft: '0.5rem' }}>Mumbai</span>
-          </div>
-        )
     }
   }
 
@@ -139,9 +121,15 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
             {items.map((query) => {
               const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash)
+              const imageURL = '/images/chains/' + query.from.toString() + '.svg'
               return (
                 <TableRow key={query.transactionHash}>
-                  <TableCell>{converChain(query.from)}</TableCell>
+                  <TableCell>
+                    <div className='flex items-center'>
+                      <Image src={imageURL} width={25} height={25} />
+                      <p className='ml-1'>{convertChainIdToName(query.from)}</p>
+                    </div>
+                  </TableCell>
                   <TableCell>{omitText(query.sender)}</TableCell>
                   <TableCell>
                     <Link
@@ -172,7 +160,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                   <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
                   <TableCell>
                     <Chip color={color} size='lg'>
-                      {status}
+                      <span className='text-white'>{status}</span>
                     </Chip>
                   </TableCell>
                 </TableRow>

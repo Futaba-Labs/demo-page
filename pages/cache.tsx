@@ -7,7 +7,7 @@ import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { showToast } from 'utils/helper'
 import { QueryRequest } from 'types'
-import CasheResult from 'components/CacheResult'
+import CacheResult from 'components/CacheResult'
 import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
 
@@ -84,7 +84,7 @@ const Cache: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <h2 className='text-3xl font-semibold mb-4'>Access cashe</h2>
+        <h2 className='text-3xl font-semibold mb-4'>Access cache</h2>
         <p className='text-lg font-normal'>
           {'Here you can access the data of other chains you have queried in the past in byte type.'}
         </p>
@@ -145,7 +145,7 @@ const Cache: NextPage = () => {
           </Button>
         </div>
         <div style={{ padding: '16px' }}></div>
-        <CasheResult page={10} queries={queries} results={results} />
+        <CacheResult page={10} queries={queries} results={results} />
       </div>
     </>
   )
