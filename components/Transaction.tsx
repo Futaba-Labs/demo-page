@@ -172,7 +172,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                   <TableCell>{calculateTimeDifference(new Date(query.createdAt.toString()))}</TableCell>
                   <TableCell>
                     <Chip color={color} size='lg'>
-                      {status}
+                      <span className='text-white'>{status}</span>
                     </Chip>
                   </TableCell>
                 </TableRow>
