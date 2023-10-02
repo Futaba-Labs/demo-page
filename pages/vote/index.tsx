@@ -52,10 +52,10 @@ const Vote: NextPage = () => {
           }
         </p>
         <p className='text-lg font-normal mb-1'>
-          {'You can mint a sample NFT '}
+          {'You can mint a sample NFT from '}
           <span>
             <Link href='/faucet' className='text-lg font-normal mb-1' as={NextLink}>
-              here
+              Faucet
             </Link>
           </span>
           {'.'}

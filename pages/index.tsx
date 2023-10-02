@@ -175,6 +175,18 @@ const Home: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <h1 className='text-4xl font-semibold my-4'>Futaba Demo 🌱</h1>
         <p className='text-2xl font-medium mb-3'>{"On this page you can experience Futaba's query. Let's try it 🚀"}</p>
+        <p>
+          {'You can find detailed usage instructions in '}
+          <Link
+            href='https://futaba.gitbook.io/docs/guide/futaba-demo'
+            isExternal
+            showAnchorIcon
+            color='primary'
+            className='mb-1'
+          >
+            Guide
+          </Link>
+        </p>
         <Divider className='my-4' />
         <h2 className='text-3xl font-semibold mb-4'>Balance query</h2>
         <p className='text-lg font-normal mb-1'>
@@ -182,13 +194,14 @@ const Home: NextPage = () => {
         </p>
 
         <p className='text-lg font-normal'>
-          Step2: Select the chain and token address (only general erc20) you want to query. You can add multiple
-          queries.
-        </p>
-        <p className='text-lg font-normal mb-1'>
-          If you do not have a token, please mint it{' '}
+          Step2: Select the chain and token address you want to query. But the only tokens that can be queried are those
+          received from{' '}
           <Link href='/faucet' className='text-lg font-normal mb-1' as={NextLink}>
-            here
+            Faucet
+          </Link>
+          {'. If you wish to query any ERC20 token, use '}
+          <Link href='/custom' className='text-lg font-normal mb-1' as={NextLink}>
+            Custom query
           </Link>
           {'.'}
         </p>
