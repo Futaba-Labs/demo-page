@@ -105,7 +105,7 @@ const Cache: NextPage = () => {
           {'Specify destination chain, block height, contract address, and storage slot.'}
         </p>
         <p className='text-lg font-normal mb-1'>
-          {'Sample data can be found '}
+          {'Sample data can be found in '}
           <span>
             <Link
               href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
@@ -114,7 +114,7 @@ const Cache: NextPage = () => {
               color='primary'
               className='text-lg font-normal mb-1'
             >
-              here
+              Guide
             </Link>
           </span>
           {'.'}

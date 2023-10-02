@@ -151,7 +151,7 @@ const Custom: NextPage = () => {
           {' for information on how to calculate storage slots.'}
         </p>
         <p className='text-lg font-normal mb-1'>
-          {'Sample data can be found '}
+          {'Sample data can be found in '}
           <span>
             <Link
               href='https://futaba.gitbook.io/docs/guide/futaba-demo/custom-query'
@@ -160,7 +160,7 @@ const Custom: NextPage = () => {
               color='primary'
               className='text-lg font-normal mb-1'
             >
-              here
+              Guide
             </Link>
           </span>
           {'.'}

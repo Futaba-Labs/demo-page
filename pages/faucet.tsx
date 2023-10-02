@@ -80,12 +80,11 @@ const Faucet: NextPage = () => {
               }
               setTransactions(txs)
               setLocalStorege(storageKey, JSON.stringify(txs))
-              showToast('success', 'Tokens sent')
               setLoading(false)
             })
             .catch((err) => {
               console.log(err)
-              showToast('error', 'Invalid query')
+              showToast('error', 'Error')
               setLoading(false)
               reject()
               return
@@ -94,7 +93,7 @@ const Faucet: NextPage = () => {
 
         return resolve()
       } catch (error) {
-        showToast('error', 'Invalid query')
+        showToast('error', 'Error')
         setLoading(false)
         reject()
         return

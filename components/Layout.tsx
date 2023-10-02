@@ -24,6 +24,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import NextLink from 'next/link'
 import { BsSun, BsMoon } from 'react-icons/bs'
+import { FaTwitter } from 'react-icons/fa'
 import { useTheme } from 'next-themes'
 import { polygonMumbai } from 'viem/chains'
 import { configureChains } from 'wagmi'
@@ -72,6 +73,11 @@ const Header = () => {
         </NavbarBrand>
         <NavbarContent className='hidden lg:flex gap-4' justify='start'>
           <NavbarItem>
+            <Link href='/faucet' as={NextLink} color='foreground'>
+              Faucet
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
             <Link href='/' as={NextLink} color='foreground'>
               Balance
             </Link>
@@ -97,29 +103,36 @@ const Header = () => {
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link
-              href='https://futaba.gitbook.io/docs/introduction/futaba-introduction'
-              isExternal
-              showAnchorIcon
-              color='primary'
-            >
-              Docs
+            <Link href='https://futaba.gitbook.io/docs/guide/futaba-demo' isExternal showAnchorIcon color='primary'>
+              Guide
             </Link>
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify='end'>
           <ConnectButton showBalance={false} />
-          {theme === 'light' ? (
-            <Button isIconOnly variant='light' onClick={() => setTheme('dark')}>
-              <BsMoon />
+          <div className='flex gap-1'>
+            <Button isIconOnly variant='light'>
+              <Link href='https://twitter.com/FutabaOmni' color='foreground'>
+                <FaTwitter />
+              </Link>
             </Button>
-          ) : (
-            <Button isIconOnly variant='light' onClick={() => setTheme('light')}>
-              <BsSun />
-            </Button>
-          )}
+            {theme === 'light' ? (
+              <Button isIconOnly variant='light' onClick={() => setTheme('dark')}>
+                <BsMoon />
+              </Button>
+            ) : (
+              <Button isIconOnly variant='light' onClick={() => setTheme('light')}>
+                <BsSun />
+              </Button>
+            )}
+          </div>
         </NavbarContent>
         <NavbarMenu>
+          <NavbarItem>
+            <Link href='/faucet' as={NextLink}>
+              Faucet
+            </Link>
+          </NavbarItem>
           <NavbarMenuItem>
             <Link href='/' as={NextLink}>
               Balance
@@ -146,7 +159,7 @@ const Header = () => {
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link href='https://futaba.gitbook.io/docs/introduction/futaba-introduction' isExternal showAnchorIcon>
+            <Link href='https://futaba.gitbook.io/docs/guide/futaba-demo' isExternal showAnchorIcon>
               Docs
             </Link>
           </NavbarMenuItem>
