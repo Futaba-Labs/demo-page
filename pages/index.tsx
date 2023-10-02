@@ -199,6 +199,10 @@ const Home: NextPage = () => {
         <p className='text-lg font-normal mb-1'>
           {'Step4: You can check the query result on the "Your Transactions".'}
         </p>
+        <p className='text-lg font-normal mb-1'>
+          Step5: Checking the Explorer from the response transaction, you can see that new tokens have been minted for
+          the total of the queries.
+        </p>
       </div>
       <div>
         {fields.map((field, i) => (
