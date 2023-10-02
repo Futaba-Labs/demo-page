@@ -30,6 +30,7 @@ import { polygonMumbai } from 'viem/chains'
 import { configureChains } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { usePageTheme } from 'hooks'
+import VerifyModal from './VerifyModal'
 
 interface LayoutProps {
   children?: React.ReactNode
@@ -181,7 +182,6 @@ const { chains } = configureChains(
 const Layout: NextPage = ({ children }: LayoutProps) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const { pageTheme } = usePageTheme()
-  console.log(`pageTheme: ${pageTheme}`)
 
   useEffect(() => {
     onOpen()
@@ -214,7 +214,7 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
 
         <main>{children}</main>
 
-        {/* <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} /> */}
+        <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
         <ToastContainer
           position='bottom-right'
           autoClose={5000}
