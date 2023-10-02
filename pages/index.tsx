@@ -64,7 +64,6 @@ const Home: NextPage = () => {
         const chainId = parseInt(value['chain'])
         const tokenAddress = value['tokenAddress']
         const decimal = value['decimal']
-        console.log(chainId, tokenAddress, decimal)
         if (tokenAddress == '' || decimal.toString() == '') {
           showToast('Invalid token', 'error', isDark)
           setLoading(false)
@@ -81,7 +80,7 @@ const Home: NextPage = () => {
         const slot = getBalanceSlot(address)
 
         queries.push({
-          dstChainId: 5,
+          dstChainId: chainId,
           height: blockHeight,
           slot: slot,
           to: tokenAddress,
@@ -99,6 +98,7 @@ const Home: NextPage = () => {
       try {
         const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
         const fee = await queryAPI.estimateFee(queries)
+        console.log('Queries: ', queries)
         write({ args: [queries, decimals], value: fee.toBigInt() })
         return resolve()
       } catch (error) {
