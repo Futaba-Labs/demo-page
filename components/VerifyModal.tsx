@@ -58,7 +58,7 @@ const VerifyModal: NextPage<Props> = ({ isOpen, onOpenChange, onClose }) => {
           <>
             <ModalHeader className='flex flex-col place-items-center'>
               <Image height={100} width={150} src={'/images/futaba_512.png'} alt='Default Image' />
-              <h2 className='text-2xl font-semibold mb-4'>Comming soon 🌱</h2>
+              <h2 className='text-2xl font-semibold mb-4'>Coming soon 🌱</h2>
             </ModalHeader>
           </>
         )}
