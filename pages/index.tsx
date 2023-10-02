@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import { Button, Divider, Link } from '@nextui-org/react'
+import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimal, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
@@ -13,6 +14,7 @@ import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+
 import type { NextPage } from 'next'
 
 export interface QueryForm {
@@ -145,12 +147,13 @@ const Home: NextPage = () => {
         const result = name.match(/\d+/)
         if (result) {
           const index = result[0]
-
-          const decimal = await getTokenDecimal(
+          let decimal = 18
+          const d = await getTokenDecimal(
             parseInt(value['queries'][index]['chain']),
             value['queries'][index]['tokenAddress'],
           )
-          if (!decimal) return
+          if (!d) return
+          decimal = d
           setValue(`queries.${index}.decimal`, decimal)
         }
       }
@@ -184,12 +187,7 @@ const Home: NextPage = () => {
         </p>
         <p className='text-lg font-normal mb-1'>
           If you do not have a token, please mint it{' '}
-          <Link
-            href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
-            isExternal
-            showAnchorIcon
-            className='text-lg font-normal mb-1'
-          >
+          <Link href='/faucet' className='text-lg font-normal mb-1' as={NextLink}>
             here
           </Link>
           {'.'}
@@ -197,6 +195,10 @@ const Home: NextPage = () => {
         <p className='text-lg font-normal mb-1'>{'Step3: Click the "Send Query" button to send the query.'}</p>
         <p className='text-lg font-normal mb-1'>
           {'Step4: You can check the query result on the "Your Transactions".'}
+        </p>
+        <p className='text-lg font-normal mb-1'>
+          Step5: Checking the Explorer from the response transaction, you can see that new tokens have been minted for
+          the total of the queries.
         </p>
       </div>
       <div>

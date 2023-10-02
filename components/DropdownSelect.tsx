@@ -27,7 +27,9 @@ const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue,
           variant='flat'
         >
           {keys.map((key) => (
-            <DropdownItem key={key}>{key}</DropdownItem>
+            <DropdownItem key={key} className='text-black dark:text-white'>
+              {key}
+            </DropdownItem>
           ))}
         </DropdownMenu>
       </Dropdown>

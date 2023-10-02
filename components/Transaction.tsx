@@ -13,7 +13,7 @@ import {
 import { NextPage } from 'next/types'
 import { useState, useMemo } from 'react'
 import { QueryData as QueryData } from 'types'
-import { convertChainIdToName } from 'utils'
+import { convertChainIdToName, getExploerUrl } from 'utils'
 
 interface Props {
   queryData: QueryData[]
@@ -49,16 +49,6 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
         return { text: 'Failed', color: 'danger' }
       default:
         return { text: 'Request Pending', color: 'default' }
-    }
-  }
-
-  const getExploerUrl = (chainId: number) => {
-    switch (chainId) {
-      case 80001:
-        return 'https://mumbai.polygonscan.com/tx/'
-
-      default:
-        return 'https://mumbai.polygonscan.com/tx/'
     }
   }
 

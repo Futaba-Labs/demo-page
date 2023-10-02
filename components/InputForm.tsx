@@ -28,7 +28,7 @@ const InputForm: NextPage<Props> = ({ setChain, registerToken, registerDecimal, 
 
   return (
     <>
-      <div className='flex w-4/5'>
+      <div className='flex w-3/5'>
         <div className='mr-4'>
           <DropdownSelect
             selected={selected}
@@ -38,17 +38,7 @@ const InputForm: NextPage<Props> = ({ setChain, registerToken, registerDecimal, 
           />
         </div>
 
-        <div className='flex flex-row w-full gap-4 mr-4'>
-          <div className='flex flex-col w-full gap-2 basis-3/4'>
-            <Input placeholder={'Token Address'} fullWidth={true} {...registerToken} />
-            {index === 0 && (
-              <p className='text-default-500 text-xs'>
-                Enter an address and the decimal will be automatically entered.
-              </p>
-            )}
-          </div>
-          <Input placeholder={'Decimal'} {...registerDecimal} type={'number'} className='basis-1/4' />
-        </div>
+        <Input placeholder={'Token Address'} fullWidth={true} {...registerToken} className='mr-4' />
 
         <Button onClick={onClick} color={'danger'} variant='flat'>
           <Delete primaryColor='red' />

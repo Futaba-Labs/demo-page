@@ -1,20 +1,26 @@
-import { BigNumber, Wallet, ethers } from "ethers"
+import { Wallet, ethers } from "ethers"
 import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
 import { ERC20_ABI } from "./constants"
 
-export const getTokenDecimal = async (chainId: number, token: string) => {
-  const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
+const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
+
+export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
-  if (!provider) return
+  if (!provider) throw new Error("Invalid chainId")
   const wallet = new Wallet(PRIVATE_KEY, provider)
+  return wallet
+}
+
+export const getTokenDecimal = async (chainId: number, token: string) => {
+  const wallet = getWallet(chainId)
 
   const erc20 = new ethers.Contract(
     token,
     ERC20_ABI,
     wallet
   )
-  let decimal = 0
+  let decimal = 18
   try {
     decimal = await erc20.decimals()
   } catch (error) {
@@ -31,13 +37,13 @@ export const getLatestBlockNumber = async (chainId: number) => {
   return blockNumber
 }
 
-export const getBalanceSlot = (token: string) => {
+export const getBalanceSlot = (sender: string) => {
   return keccak256(concat([
     // Mappings' keys in Solidity must all be word-aligned (32 bytes)
-    hexZeroPad(token, 32),
+    hexZeroPad(sender, 32),
 
     // Similarly with the slot-index into the Solidity variable layout
-    hexZeroPad(BigNumber.from(0).toHexString(), 32),
+    hexZeroPad("0x00000000000000000000000000000000000000000000000000000000000000c9", 32),
   ]));
 }
 
@@ -116,3 +122,38 @@ export const converUnixToDate = (time: number) => {
   const date = new Date(time * 1000);
   return date
 }
+
+export const getExploerUrl = (chainId: number) => {
+  switch (chainId) {
+    case 5:
+      return 'https://goerli.etherscan.io/tx/'
+    case 420:
+      return 'https://goerli-optimism.etherscan.io/tx/'
+    case 80001:
+      return 'https://mumbai.polygonscan.com/tx/'
+    case 421613:
+      return "https://goerli.arbiscan.io/tx/"
+    default:
+      return 'https://mumbai.polygonscan.com/tx/'
+  }
+}
+
+export const setLocalStorege = (key: string, item: string) => {
+  const w = typeof window !== 'undefined' ? window : null
+  if (w) {
+    if (w.localStorage) {
+      w.localStorage.setItem(key, item)
+    }
+  }
+}
+
+export const getLocalStorege = (key: string) => {
+  const w = typeof window !== 'undefined' ? window : null
+  if (w) {
+    if (w.localStorage) {
+      const data = w.localStorage.getItem(key)
+      return data
+    }
+  }
+}
+
