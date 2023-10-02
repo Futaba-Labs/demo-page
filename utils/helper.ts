@@ -1,4 +1,4 @@
-import { BigNumber, Wallet, ethers } from "ethers"
+import { Wallet, ethers } from "ethers"
 import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
 import { ERC20_ABI } from "./constants"
@@ -14,7 +14,7 @@ export const getTokenDecimal = async (chainId: number, token: string) => {
     ERC20_ABI,
     wallet
   )
-  let decimal = 0
+  let decimal = 18
   try {
     decimal = await erc20.decimals()
   } catch (error) {
@@ -31,13 +31,13 @@ export const getLatestBlockNumber = async (chainId: number) => {
   return blockNumber
 }
 
-export const getBalanceSlot = (token: string) => {
+export const getBalanceSlot = (sender: string) => {
   return keccak256(concat([
     // Mappings' keys in Solidity must all be word-aligned (32 bytes)
-    hexZeroPad(token, 32),
+    hexZeroPad(sender, 32),
 
     // Similarly with the slot-index into the Solidity variable layout
-    hexZeroPad(BigNumber.from(0).toHexString(), 32),
+    hexZeroPad("0x00000000000000000000000000000000000000000000000000000000000000c9", 32),
   ]));
 }
 

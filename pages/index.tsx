@@ -145,12 +145,13 @@ const Home: NextPage = () => {
         const result = name.match(/\d+/)
         if (result) {
           const index = result[0]
-
-          const decimal = await getTokenDecimal(
+          let decimal = 18
+          const d = await getTokenDecimal(
             parseInt(value['queries'][index]['chain']),
             value['queries'][index]['tokenAddress'],
           )
-          if (!decimal) return
+          if (!d) return
+          decimal = d
           setValue(`queries.${index}.decimal`, decimal)
         }
       }
