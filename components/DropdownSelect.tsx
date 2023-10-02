@@ -13,7 +13,7 @@ const DropdownSelect: NextPage<Props> = ({ selected, setSelected, selectedValue,
     <>
       <Dropdown className=''>
         <DropdownTrigger>
-          <Button className='px-10' color='success' variant='flat'>
+          <Button className='px-6' color='success' variant='flat'>
             {selectedValue}
           </Button>
         </DropdownTrigger>
