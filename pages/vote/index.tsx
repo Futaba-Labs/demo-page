@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useContractRead } from 'wagmi'
 import { Button, Card, Link, Skeleton } from '@nextui-org/react'
+import NextLink from 'next/link'
 import Notice from 'components/Notice'
 import Proposal from 'components/Proposal'
 import { ProposalData } from 'types'
@@ -53,12 +54,7 @@ const Vote: NextPage = () => {
         <p className='text-lg font-normal mb-1'>
           {'You can mint a sample NFT '}
           <span>
-            <Link
-              href='https://goerli.etherscan.io/address/0xb75824D76C9c8E580b38F713FCFD5951C5616606#writeContract'
-              isExternal
-              showAnchorIcon
-              className='text-lg font-normal mb-1'
-            >
+            <Link href='/faucet' className='text-lg font-normal mb-1' as={NextLink}>
               here
             </Link>
           </span>

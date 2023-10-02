@@ -5,18 +5,18 @@ import { useEffect, useState } from 'react'
 import { Button, Link } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
-import { showToast } from 'utils/helper'
-import { QueryRequest } from 'types'
+import { getLocalStorege, setLocalStorege, showToast } from 'utils/helper'
+import { QueryCache } from 'types'
 import CacheResult from 'components/CacheResult'
 import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
 
 const FORM_NAME = 'cache'
+const STORAGE_KEY = 'cache'
 
 const Cache: NextPage = () => {
   const [loading, setLoading] = useState(false)
-  const [queries, setQueries] = useState<QueryRequest[]>([])
-  const [results, setResults] = useState<string[]>([])
+  const [queries, setQueries] = useState<QueryCache[]>([])
   const { register, control, setValue } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -35,7 +35,7 @@ const Cache: NextPage = () => {
   })
 
   const getCache = async () => {
-    const requests: QueryRequest[] = []
+    const requests: QueryCache[] = []
     control._formValues[FORM_NAME].forEach((query: any) => {
       if (query.height < 0) {
         setLoading(false)
@@ -47,6 +47,7 @@ const Cache: NextPage = () => {
         to: query.contractAddress,
         height: query.height,
         slot: query.slot,
+        result: '',
       })
     })
 
@@ -66,12 +67,24 @@ const Cache: NextPage = () => {
 
   useEffect(() => {
     if (data) {
-      const result = data as string[]
-      setResults(result)
+      const results = data as string[]
+      const queryCache = [...queries]
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i]
+        const request = queryCache[i]
+        request.result = result
+      }
+
+      setQueries(queryCache)
+
+      setLocalStorege(STORAGE_KEY, JSON.stringify(queryCache))
     }
   }, [data])
 
   useEffect(() => {
+    const data = getLocalStorege(STORAGE_KEY)
+    if (data) setQueries(JSON.parse(data))
+
     append({ chain: '', contractAddress: '', height: 0, slot: '' })
     return () => {
       remove(0)
@@ -145,7 +158,7 @@ const Cache: NextPage = () => {
           </Button>
         </div>
         <div style={{ padding: '16px' }}></div>
-        <CacheResult page={10} queries={queries} results={results} />
+        <CacheResult page={10} queries={queries} />
       </div>
     </>
   )

@@ -15,6 +15,14 @@ export interface QueryRequest {
   to: string
 }
 
+export interface QueryCache {
+  dstChainId: number
+  height: number
+  slot: string
+  to: string
+  result: string
+}
+
 export interface Voter {
   hasVoted: boolean
   vote: boolean
@@ -39,4 +47,5 @@ export type Deployment = {
   balance: string
   custom: string
   voting: string
+  testToken: string
 }

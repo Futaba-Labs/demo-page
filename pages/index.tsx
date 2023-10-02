@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import { Button, Divider, Link } from '@nextui-org/react'
+import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
 import { getBalanceSlot, getLatestBlockNumber, getTokenDecimal, showToast } from 'utils/helper'
 import Transaction from 'components/Transaction'
@@ -13,6 +14,7 @@ import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+
 import type { NextPage } from 'next'
 
 export interface QueryForm {
@@ -185,12 +187,7 @@ const Home: NextPage = () => {
         </p>
         <p className='text-lg font-normal mb-1'>
           If you do not have a token, please mint it{' '}
-          <Link
-            href='https://staging.aave.com/faucet/?marketName=proto_goerli_v3'
-            isExternal
-            showAnchorIcon
-            className='text-lg font-normal mb-1'
-          >
+          <Link href='/faucet' className='text-lg font-normal mb-1' as={NextLink}>
             here
           </Link>
           {'.'}
