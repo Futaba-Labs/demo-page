@@ -119,7 +119,7 @@ const Header = () => {
           <ConnectButton showBalance={false} />
           <div className='flex gap-1'>
             <Button isIconOnly variant='light'>
-              <Link href='https://twitter.com/FutabaOmni' color='foreground'>
+              <Link href='https://twitter.com/FutabaOmni' color='foreground' isExternal>
                 <FaTwitter />
               </Link>
             </Button>
