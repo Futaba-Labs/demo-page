@@ -2,10 +2,10 @@
 <g clip-path="url(#clip0_4_13)">
 <rect width="1470" height="2683" fill="white"/>
 <g filter="url(#filter0_f_4_13)">
-<path d="M-430 878C859.309 878 1470.5 485.798 1470.5 -45.5C1470.5 -576.798 291.735 -502.85 -140 -45.5C-399.487 229.382 -1719.31 878 -430 878Z" fill="url(#paint0_radial_4_13)"/>
+<path d="M-962.536 478.76C326.773 478.76 937.964 86.5581 937.964 -444.74C937.964 -976.038 -240.8 -902.09 -672.536 -444.74C-932.023 -169.857 -2251.84 478.76 -962.536 478.76Z" fill="url(#paint0_radial_4_13)"/>
 </g>
 <g filter="url(#filter1_f_4_13)">
-<ellipse cx="372.124" cy="479.32" rx="311.19" ry="91.4884" transform="rotate(-7.11344 372.124 479.32)" fill="#00FFFF"/>
+<ellipse cx="320.124" cy="296.32" rx="311.19" ry="91.4884" transform="rotate(-7.11344 320.124 296.32)" fill="#00FFFF"/>
 </g>
 <g filter="url(#filter2_f_4_13)">
 <ellipse cx="808.836" cy="2239.15" rx="737.098" ry="439.177" transform="rotate(-7.31983 808.836 2239.15)" fill="#FFE198"/>
@@ -21,12 +21,12 @@
 </g>
 </g>
 <defs>
-<filter id="filter0_f_4_13" x="-1486.46" y="-916.76" width="3456.96" height="2294.76" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_f_4_13" x="-2019" y="-1316" width="3456.96" height="2294.76" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="250" result="effect1_foregroundBlur_4_13"/>
 </filter>
-<filter id="filter1_f_4_13" x="-236.882" y="80.6702" width="1218.01" height="797.3" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter1_f_4_13" x="-288.882" y="-102.33" width="1218.01" height="797.3" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="150" result="effect1_foregroundBlur_4_13"/>
@@ -51,7 +51,7 @@
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="200" result="effect1_foregroundBlur_4_13"/>
 </filter>
-<radialGradient id="paint0_radial_4_13" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(242.018 -130) rotate(90) scale(1008 1912.8)">
+<radialGradient id="paint0_radial_4_13" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(-290.518 -529.24) rotate(90) scale(1008 1912.8)">
 <stop offset="0.273884" stop-color="#DEFFFD"/>
 <stop offset="0.508333" stop-color="#00FF75"/>
 <stop offset="0.878125" stop-color="#B9FF91"/>

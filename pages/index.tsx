@@ -2,11 +2,29 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { ChainKey, ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
-import { Button, Divider, Link } from '@nextui-org/react'
+import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
+import {
+  Button,
+  Divider,
+  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Image,
+} from '@nextui-org/react'
 import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
-import { getBalanceSlot, getLatestBlockNumber, getTokenDecimal, showToast } from 'utils/helper'
+import {
+  convertChainIdToName,
+  convertChainNameToId,
+  getBalanceSlot,
+  getLatestBlockNumber,
+  getTokenDecimal,
+  showToast,
+} from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
@@ -217,7 +235,9 @@ const Home: NextPage = () => {
         </p>
       </div>
 
-      {/* <Table aria-label='Example static collection table'>
+      <h2 className='text-2xl font-semibold my-4'>Sample data</h2>
+
+      <Table aria-label='Sample token data' className='w-3/5'>
         <TableHeader>
           <TableColumn>Chain</TableColumn>
           <TableColumn>Token Address</TableColumn>
@@ -227,15 +247,21 @@ const Home: NextPage = () => {
             const chainId = convertChainNameToId(chain)
             if (!chainId) return <></>
             const chainKey = getChainKey(chainId as ChainId)
+            const imageURL = '/images/chains/' + chainId.toString() + '.svg'
             return (
               <TableRow key={i}>
-                <TableCell>{chain}</TableCell>
+                <TableCell>
+                  <div className='flex items-center'>
+                    <Image src={imageURL} width={25} height={25} alt={chainId.toString()} />
+                    <p className='ml-1'>{convertChainIdToName(chainId)}</p>
+                  </div>
+                </TableCell>
                 <TableCell>{testnetDeployment[chainKey]?.testToken}</TableCell>
               </TableRow>
             )
           })}
         </TableBody>
-      </Table> */}
+      </Table>
       <div>
         {fields.map((field, i) => (
           <div key={i}>
