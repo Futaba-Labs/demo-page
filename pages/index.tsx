@@ -2,17 +2,35 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
-import { Button, Divider, Link } from '@nextui-org/react'
+import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
+import {
+  Button,
+  Divider,
+  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Image,
+} from '@nextui-org/react'
 import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
-import { getBalanceSlot, getLatestBlockNumber, getTokenDecimal, showToast } from 'utils/helper'
+import {
+  convertChainIdToName,
+  convertChainNameToId,
+  getBalanceSlot,
+  getLatestBlockNumber,
+  getTokenDecimal,
+  showToast,
+} from 'utils/helper'
 import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
-import { QueryRequest } from 'types'
-import { BALANCE_QUERY_ABI } from 'utils'
+import { Deployment, QueryRequest } from 'types'
+import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
 import { useDeployment } from 'hooks'
 
 import type { NextPage } from 'next'
@@ -40,6 +58,8 @@ const Home: NextPage = () => {
   const { chain } = useNetwork()
 
   const deployment = useDeployment()
+  const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
+  const chains = ['Goerli', 'Arbitrum Goerli', 'Optimism Goerli']
 
   const { data, isSuccess, write, isError } = useContractWrite({
     address: deployment.balance as `0x${string}`,
@@ -214,6 +234,34 @@ const Home: NextPage = () => {
           the total of the queries.
         </p>
       </div>
+
+      <h2 className='text-2xl font-semibold my-4'>Sample data</h2>
+
+      <Table aria-label='Sample token data' className='w-3/5'>
+        <TableHeader>
+          <TableColumn>Chain</TableColumn>
+          <TableColumn>Token Address</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {chains.map((chain, i) => {
+            const chainId = convertChainNameToId(chain)
+            if (!chainId) return <></>
+            const chainKey = getChainKey(chainId as ChainId)
+            const imageURL = '/images/chains/' + chainId.toString() + '.svg'
+            return (
+              <TableRow key={i}>
+                <TableCell>
+                  <div className='flex items-center'>
+                    <Image src={imageURL} width={25} height={25} alt={chainId.toString()} />
+                    <p className='ml-1'>{convertChainIdToName(chainId)}</p>
+                  </div>
+                </TableCell>
+                <TableCell>{testnetDeployment[chainKey]?.testToken}</TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
       <div>
         {fields.map((field, i) => (
           <div key={i}>

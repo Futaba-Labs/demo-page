@@ -10,6 +10,18 @@ body {
     Helvetica Neue, sans-serif;
 }
 
+.light {
+  background-image: url('/images/light_gradient.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.dark {
+  background-image: url('/images/dark_gradient.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 a {
   color: inherit;
   text-decoration: none;
