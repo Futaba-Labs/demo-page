@@ -15,6 +15,10 @@ const config = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'light-gradient': "url('/images/light_gradient.svg')",
+        'dark-gradient': "url('/images/dark_gradient.svg')"
+      },
       colors: {
         white: "#FFFFFF",
         black: "#000000",

@@ -2,7 +2,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
+import { ChainKey, ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import { Button, Divider, Link } from '@nextui-org/react'
 import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
@@ -11,8 +11,8 @@ import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
-import { QueryRequest } from 'types'
-import { BALANCE_QUERY_ABI } from 'utils'
+import { Deployment, QueryRequest } from 'types'
+import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
 import { useDeployment } from 'hooks'
 
 import type { NextPage } from 'next'
@@ -40,6 +40,8 @@ const Home: NextPage = () => {
   const { chain } = useNetwork()
 
   const deployment = useDeployment()
+  const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
+  const chains = ['Goerli', 'Arbitrum Goerli', 'Optimism Goerli']
 
   const { data, isSuccess, write, isError } = useContractWrite({
     address: deployment.balance as `0x${string}`,
@@ -214,6 +216,26 @@ const Home: NextPage = () => {
           the total of the queries.
         </p>
       </div>
+
+      {/* <Table aria-label='Example static collection table'>
+        <TableHeader>
+          <TableColumn>Chain</TableColumn>
+          <TableColumn>Token Address</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {chains.map((chain, i) => {
+            const chainId = convertChainNameToId(chain)
+            if (!chainId) return <></>
+            const chainKey = getChainKey(chainId as ChainId)
+            return (
+              <TableRow key={i}>
+                <TableCell>{chain}</TableCell>
+                <TableCell>{testnetDeployment[chainKey]?.testToken}</TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table> */}
       <div>
         {fields.map((field, i) => (
           <div key={i}>

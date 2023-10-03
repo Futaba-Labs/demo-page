@@ -59,7 +59,13 @@ const Header = () => {
 
   return (
     <>
-      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} isBordered maxWidth='full' height='5rem'>
+      <Navbar
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        maxWidth='full'
+        height='5rem'
+        className='rounded-full mt-4 drop-shadow-xl'
+      >
         <NavbarContent className='lg:hidden' justify='start'>
           <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
         </NavbarContent>

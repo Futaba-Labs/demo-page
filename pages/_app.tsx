@@ -35,7 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <NextUIProvider>
       <NextThemesProvider attribute='class' defaultTheme={'light'}>
-        <main className='text-foreground bg-background'>
+        <main className='text-foreground bg-light-gradient dark:bg-dark-gradient'>
           <WagmiConfig config={config}>
             <Layout {...pageProps}>
               <Component {...pageProps} />
