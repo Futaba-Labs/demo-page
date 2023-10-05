@@ -30,6 +30,7 @@ import { polygonMumbai } from 'viem/chains'
 import { configureChains } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { usePageTheme } from 'hooks'
+import { env } from 'utils'
 import VerifyModal from './VerifyModal'
 
 interface LayoutProps {
@@ -180,7 +181,7 @@ const { chains } = configureChains(
   [polygonMumbai],
   [
     infuraProvider({
-      apiKey: process.env.NEXT_PUBLIC_RPC_KEY !== undefined ? process.env.NEXT_PUBLIC_RPC_KEY : '',
+      apiKey: env.RPC_API_KEY_MAP['mumbai'],
     }),
   ],
 )

@@ -2,13 +2,12 @@ import { Wallet, ethers } from "ethers"
 import { ToastOptions, toast } from "react-toastify"
 import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
 import { ERC20_ABI } from "./constants"
-
-const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY !== undefined ? process.env.NEXT_PUBLIC_PRIVATE_KEY : ""
+import { env } from "./constants"
 
 export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
   if (!provider) throw new Error("Invalid chainId")
-  const wallet = new Wallet(PRIVATE_KEY, provider)
+  const wallet = new Wallet(env.PRIVATE_KEY, provider)
   return wallet
 }
 
@@ -50,13 +49,13 @@ export const getBalanceSlot = (sender: string) => {
 const getProvider = (chainId: number) => {
   switch (chainId) {
     case 5:
-      return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ETHEREUM_GOERLI_API_KEY}`)
+      return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["goerli"]}`)
     case 420:
-      return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_GOERLI_API_KEY}`)
+      return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["optimism-goerli"]}`)
     case 80001:
-      return new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TESTNET_API_KEY}`)
+      return new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["mumbai"]}`)
     case 421613:
-      return new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_GOERLI_API_KEY}`)
+      return new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["arbitrum-goerli"]}`)
     default:
       return
   }
