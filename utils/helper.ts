@@ -157,3 +157,31 @@ export const getLocalStorege = (key: string) => {
     }
   }
 }
+
+export const calculateTimeDifference = (craetedAt: Date) => {
+  const now = new Date()
+  const timeZoneOffset = now.getTimezoneOffset()
+  const adjustedTime = new Date(now.getTime() + timeZoneOffset * 60 * 1000)
+  const adjustedCreatedAt = new Date(craetedAt.getTime() + craetedAt.getTimezoneOffset() * 60 * 1000)
+  const differenceInMilliseconds = Math.abs(adjustedTime.getTime() - adjustedCreatedAt.getTime())
+  const differenceInSeconds = Math.floor(differenceInMilliseconds / 1000)
+  const differenceInMinutes = Math.floor(differenceInSeconds / 60)
+  const differenceInHours = Math.floor(differenceInMinutes / 60)
+  const differenceInDays = Math.floor(differenceInHours / 24)
+  const differenceInYears = Math.floor(differenceInDays / 365)
+
+  if (differenceInMinutes < 1) {
+    return 'just now'
+  } else if (differenceInMinutes < 60) {
+    return `${differenceInMinutes} mins ago`
+  } else if (differenceInHours < 24) {
+    const remainingMinutes = differenceInMinutes % 60
+    return `${differenceInHours} hours ${remainingMinutes} mins ago`
+  } else if (differenceInDays < 365) {
+    const remainingHours = differenceInHours % 24
+    return `${differenceInDays} days ${remainingHours} hours ago`
+  } else {
+    const remainingDays = differenceInDays % 365
+    return `${differenceInYears} years ${remainingDays} days ago`
+  }
+}

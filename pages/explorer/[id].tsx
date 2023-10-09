@@ -10,14 +10,22 @@ import {
   TableHeader,
   TableRow,
   Image,
+  Chip,
+  Skeleton,
+  Spinner,
 } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import { useTransaction } from 'hooks/useTransaction'
 import { QueryData, QueryResult, Transaction } from 'types'
-import { Rpc, convertChainIdToName, getExploerUrl, getProvider, omitText } from 'utils'
+import { Rpc, calculateTimeDifference, convertChainIdToName, getExploerUrl, getProvider, omitText } from 'utils'
 import { useGateway, useSupabase } from 'hooks'
 import CopySnippet from 'components/CopySnippet'
+
+interface ChipParam {
+  text: string
+  color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
+}
 
 const TransactionDetail: NextPage = () => {
   const { fetchTransactionsByQueryId, transactions } = useTransaction()
@@ -28,6 +36,19 @@ const TransactionDetail: NextPage = () => {
   const { id } = router.query
   const supabase = useSupabase()
   const gateway = useGateway()
+
+  const convertStatus = (status: number): ChipParam => {
+    switch (status) {
+      case 0:
+        return { text: 'Request Pending...', color: 'secondary' }
+      case 1:
+        return { text: 'Delivered', color: 'success' }
+      case 3:
+        return { text: 'Failed', color: 'danger' }
+      default:
+        return { text: 'Request Pending', color: 'default' }
+    }
+  }
 
   const fetchReqTransaction = async (tx: QueryData, rpc: Rpc) => {
     const reqTx = await rpc.getExplorerTransaction(tx.transactionHash)
@@ -108,66 +129,154 @@ const TransactionDetail: NextPage = () => {
     }
   }, [queries])
 
+  if (transactions[0] === undefined) {
+    return <></>
+  }
+
+  const q = transactions[0]
+  const { text: status, color } = convertStatus(q.status)
+
   return (
     <>
       <div>
         <h2 className='text-3xl font-semibold my-6'>Transaction</h2>
         <Card className='w-full mb-5'>
           <CardBody>
-            <div className='flex justify-between'>
-              <p className='font-semibold'>Query Id: {id}</p>
-              <div className='flex'>
-                <p>Status</p>
-                <p className='ml-2'>Delivered</p>
-              </div>
+            <div className='flex justify-between items-center'>
+              <p className='text-green-500 font-medium'>
+                Query Id {id} on {convertChainIdToName(q.from)}
+              </p>
+              <Chip color={color} size='lg'>
+                <span className='text-white'>{status}</span>
+              </Chip>
             </div>
           </CardBody>
         </Card>
         <div className='flex gap-10'>
           <Card className='w-1/2'>
             <CardBody>
-              <p>Request Transaction</p>
-              <div className='flex flex-col'>
-                <div>
-                  <p className='text-lg font-normal'>Transaction hash</p>
-                  <p>{reqTransaction?.hash}</p>
+              <p className='font-medium text-xl text-green-500 mb-2'>Request Transaction</p>
+              {reqTransaction ? (
+                <div className='flex flex-col gap-3'>
+                  <div>
+                    <p>Transaction hash</p>
+                    <CopySnippet
+                      displayedText={omitText(reqTransaction.hash, 15, 15)}
+                      copyText={reqTransaction.hash}
+                      link={getExploerUrl(q.from) + 'tx/' + reqTransaction.hash}
+                    />
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Block number</p>
+                    <p className='text-small'>{reqTransaction.blockNumber}</p>
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Age</p>
+                    <p className='text-small'>{calculateTimeDifference(new Date(reqTransaction.timestamp * 1000))}</p>
+                  </div>
+                  <div className=''>
+                    <p>Sender</p>
+                    <CopySnippet
+                      displayedText={reqTransaction.sender}
+                      copyText={reqTransaction.sender}
+                      link={getExploerUrl(q.from) + 'address/' + reqTransaction.sender}
+                    />
+                  </div>
                 </div>
-                <div className=''>
-                  <p>Block number</p>
-                  <p>{reqTransaction?.blockNumber}</p>
+              ) : (
+                <div className='flex flex-col gap-3'>
+                  <div className='flex flex-col gap-2'>
+                    <p>Transaction hash</p>
+                    <Skeleton className='w-3/5 rounded-lg'>
+                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Block number</p>
+                    <Skeleton className='w-2/5 rounded-lg'>
+                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Age</p>
+                    <Skeleton className='w-2/5 rounded-lg'>
+                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Sender</p>
+                    <Skeleton className='w-3/5 rounded-lg'>
+                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
                 </div>
-                <div className=''>
-                  <p>Age</p>
-                  <p>{reqTransaction?.timestamp}</p>
-                </div>
-                <div className=''>
-                  <p>Sender</p>
-                  <p>{reqTransaction?.sender}</p>
-                </div>
-              </div>
+              )}
             </CardBody>
           </Card>
           <Card className='w-1/2'>
             <CardBody>
-              <p>Response Transaction</p>
-              <div className='flex flex-col'>
-                <div className=''>
-                  <p>Transaction hash</p>
-                  <p>0x0</p>
+              <p className='font-medium text-xl text-green-500 mb-2'>Response Transaction</p>
+              {resTransaction ? (
+                <div className='flex flex-col gap-3'>
+                  <div>
+                    <p>Transaction hash</p>
+                    <CopySnippet
+                      displayedText={omitText(resTransaction.hash, 15, 15)}
+                      copyText={resTransaction.hash}
+                      link={getExploerUrl(q.from) + 'tx/' + resTransaction.hash}
+                    />
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Block number</p>
+                    <p className='text-small'>{resTransaction.blockNumber}</p>
+                  </div>
+                  <div className='flex flex-col gap-2'>
+                    <p>Age</p>
+                    <p className='text-small'>{calculateTimeDifference(new Date(resTransaction.timestamp * 1000))}</p>
+                  </div>
+                  <div className=''>
+                    <p>Sender</p>
+                    <CopySnippet
+                      displayedText={resTransaction.sender}
+                      copyText={resTransaction.sender}
+                      link={getExploerUrl(q.from) + 'address/' + resTransaction.sender}
+                    />
+                  </div>
                 </div>
-                <div className=''>
-                  <p>Block number</p>
-                  <p>100</p>
+              ) : (
+                <div className='flex flex-col gap-3'>
+                  <div className='flex flex-col gap-2'>
+                    <p>Transaction hash</p>
+                    <Skeleton className='w-3/5 rounded-lg'>
+                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Block number</p>
+                    <Skeleton className='w-2/5 rounded-lg'>
+                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Age</p>
+                    <Skeleton className='w-2/5 rounded-lg'>
+                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <p>Sender</p>
+                    <Skeleton className='w-3/5 rounded-lg'>
+                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+                    </Skeleton>
+                  </div>
                 </div>
-                <div className=''>
-                  <p>Age</p>
-                  <p>10 mins ago</p>
-                </div>
-                <div className=''>
-                  <p>Sender</p>
-                  <p>0x0</p>
-                </div>
-              </div>
+              )}
             </CardBody>
           </Card>
         </div>
@@ -180,7 +289,7 @@ const TransactionDetail: NextPage = () => {
             <TableColumn>Slot</TableColumn>
             <TableColumn>Value</TableColumn>
           </TableHeader>
-          <TableBody emptyContent={'No queries to display.'}>
+          <TableBody emptyContent={<Spinner label='Loading...' color='success' />}>
             {queries.map((query, index) => {
               const imageURL = '/images/chains/' + query.dstChainId.toString() + '.svg'
               const alt = 'chain_' + query.dstChainId.toString()
