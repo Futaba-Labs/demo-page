@@ -46,7 +46,7 @@ export const getBalanceSlot = (sender: string) => {
   ]));
 }
 
-const getProvider = (chainId: number) => {
+export const getProvider = (chainId: number) => {
   switch (chainId) {
     case 5:
       return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["goerli"]}`)
@@ -113,7 +113,9 @@ export const convertChainIdToName = (chainId: number) => {
   }
 }
 
-export const omitText = (text: string, start: number, end: number) => {
+export const omitText = (text: string | undefined, start: number, end: number) => {
+  if (!text) return ""
+  if (text.length < start + end) return text
   return text.substring(0, start) + '...' + text.substring(text.length - end, text.length)
 }
 
@@ -125,15 +127,15 @@ export const converUnixToDate = (time: number) => {
 export const getExploerUrl = (chainId: number) => {
   switch (chainId) {
     case 5:
-      return 'https://goerli.etherscan.io/tx/'
+      return 'https://goerli.etherscan.io/'
     case 420:
-      return 'https://goerli-optimism.etherscan.io/tx/'
+      return 'https://goerli-optimism.etherscan.io/'
     case 80001:
-      return 'https://mumbai.polygonscan.com/tx/'
+      return 'https://mumbai.polygonscan.com/'
     case 421613:
-      return "https://goerli.arbiscan.io/tx/"
+      return "https://goerli.arbiscan.io/"
     default:
-      return 'https://mumbai.polygonscan.com/tx/'
+      return 'https://mumbai.polygonscan.com/'
   }
 }
 
@@ -155,4 +157,3 @@ export const getLocalStorege = (key: string) => {
     }
   }
 }
-

@@ -20,6 +20,7 @@ export const useTransaction = () => {
             status: d['status'],
             sender: d['sender'],
             from: d['from'],
+            packet: d['packet'],
             createdAt: d['createdAt'],
           }
           transactionData.push(transaction)
@@ -46,6 +47,34 @@ export const useTransaction = () => {
             status: d['status'],
             sender: d['sender'],
             from: d['from'],
+            packet: d['packet'],
+            createdAt: d['createdAt'],
+          }
+          transactionData.push(transaction)
+        }
+        setTransactions(transactionData)
+      }
+    }
+  }
+
+  const fetchTransactionsByQueryId = async (queryId: string) => {
+    if (supabase) {
+      const { data } = await supabase
+        .from('QueryData')
+        .select()
+        .eq('id', queryId)
+        .order('createdAt', { ascending: false })
+      const transactionData: QueryData[] = []
+      if (data) {
+        for (const d of data) {
+          const transaction: QueryData = {
+            transactionHash: d['transactionHash'],
+            executedHash: d['executedHash'],
+            id: d['id'],
+            status: d['status'],
+            sender: d['sender'],
+            from: d['from'],
+            packet: d['packet'],
             createdAt: d['createdAt'],
           }
           transactionData.push(transaction)
@@ -77,5 +106,5 @@ export const useTransaction = () => {
     subscribeTransactions()
   }, [supabase])
 
-  return { transactions, allTransactions, fetchAllTransactions, fetchTransactionsBySender }
+  return { transactions, allTransactions, fetchAllTransactions, fetchTransactionsBySender, fetchTransactionsByQueryId }
 }

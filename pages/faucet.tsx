@@ -159,7 +159,7 @@ const Faucet: NextPage = () => {
                       isExternal
                       isBlock
                       showAnchorIcon
-                      href={getExploerUrl(chainId) + transaction.hash}
+                      href={getExploerUrl(chainId) + 'tx/' + transaction.hash}
                       color='success'
                     >
                       {transaction.hash}
