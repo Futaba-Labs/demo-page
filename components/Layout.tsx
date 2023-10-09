@@ -30,6 +30,7 @@ import { polygonMumbai } from 'viem/chains'
 import { configureChains } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { usePageTheme } from 'hooks'
+import { env } from 'utils'
 import VerifyModal from './VerifyModal'
 
 interface LayoutProps {
@@ -119,7 +120,7 @@ const Header = () => {
           <ConnectButton showBalance={false} />
           <div className='flex gap-1'>
             <Button isIconOnly variant='light'>
-              <Link href='https://twitter.com/FutabaOmni' color='foreground'>
+              <Link href='https://twitter.com/FutabaOmni' color='foreground' isExternal>
                 <FaTwitter />
               </Link>
             </Button>
@@ -180,7 +181,7 @@ const { chains } = configureChains(
   [polygonMumbai],
   [
     infuraProvider({
-      apiKey: process.env.NEXT_PUBLIC_RPC_KEY !== undefined ? process.env.NEXT_PUBLIC_RPC_KEY : '',
+      apiKey: env.RPC_API_KEY_MAP['mumbai'],
     }),
   ],
 )

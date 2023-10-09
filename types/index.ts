@@ -4,8 +4,16 @@ export interface QueryData {
   id: string
   status: number
   sender: string
-  from: number,
+  from: number
+  packet: string
   createdAt: Date
+}
+
+export interface Transaction {
+  hash: string
+  blockNumber: number
+  timestamp: number
+  sender: string
 }
 
 export interface QueryRequest {
@@ -15,12 +23,12 @@ export interface QueryRequest {
   to: string
 }
 
-export interface QueryCache {
+export interface QueryResult {
   dstChainId: number
   height: number
   slot: string
   to: string
-  result: string
+  result?: string
 }
 
 export interface Voter {

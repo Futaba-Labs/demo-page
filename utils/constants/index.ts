@@ -9,6 +9,7 @@ import ERC721_ABI from "./abi/erc721.abi.json"
 export { CUSTOM_QUERY_ABI, BALANCE_QUERY_ABI, VOTING_ABI, ERC20_ABI, LIGHT_CLIENT_ABI, GATEWAY_ABI, ERC721_ABI }
 
 export * from "./deployment"
+export * from "./env"
 
 export const mainColor = "#1F8506"
 

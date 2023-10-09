@@ -1,10 +1,10 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Image } from '@nextui-org/react'
 import { NextPage } from 'next'
-import { QueryCache } from 'types'
+import { QueryResult } from 'types'
 import { convertChainIdToName, omitText } from 'utils/helper'
 
 type Props = {
-  queries: QueryCache[]
+  queries: QueryResult[]
   page: number
 }
 

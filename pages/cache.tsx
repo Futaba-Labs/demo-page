@@ -6,7 +6,7 @@ import { Button, Link } from '@nextui-org/react'
 import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { getLocalStorege, setLocalStorege, showToast } from 'utils/helper'
-import { QueryCache } from 'types'
+import { QueryResult } from 'types'
 import CacheResult from 'components/CacheResult'
 import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
@@ -16,7 +16,7 @@ const STORAGE_KEY = 'cache'
 
 const Cache: NextPage = () => {
   const [loading, setLoading] = useState(false)
-  const [queries, setQueries] = useState<QueryCache[]>([])
+  const [queries, setQueries] = useState<QueryResult[]>([])
   const { register, control, setValue } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -35,7 +35,7 @@ const Cache: NextPage = () => {
   })
 
   const getCache = async () => {
-    const requests: QueryCache[] = []
+    const requests: QueryResult[] = []
     control._formValues[FORM_NAME].forEach((query: any) => {
       if (query.height < 0) {
         setLoading(false)

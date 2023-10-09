@@ -10,10 +10,11 @@ import {
   TableRow,
   Image,
 } from '@nextui-org/react'
+import { useRouter } from 'next/router'
 import { NextPage } from 'next/types'
 import { useState, useMemo } from 'react'
 import { QueryData as QueryData } from 'types'
-import { convertChainIdToName, getExploerUrl } from 'utils'
+import { convertChainIdToName, getExploerUrl, omitText } from 'utils'
 
 interface Props {
   queryData: QueryData[]
@@ -25,6 +26,7 @@ interface ChipParam {
 }
 const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPerPage }) => {
   const [page, setPage] = useState(1)
+  const router = useRouter()
 
   const pages = Math.ceil(queries.length / rowsPerPage)
 
@@ -34,10 +36,6 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
 
     return queries.slice(start, end)
   }, [page, queries])
-
-  const omitText = (text?: string) => {
-    return text ? text.substring(0, 10) + '...' : ''
-  }
 
   const convertStatus = (status: number): ChipParam => {
     switch (status) {
@@ -96,6 +94,9 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
               />
             </div>
           }
+          onRowAction={(key) => router.push(`/explorer/${key.toString()}`)}
+          color='default'
+          selectionMode='single'
           aria-label='Example static collection table'
           className='mb-10'
         >
@@ -110,26 +111,26 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
           <TableBody>
             {items.map((query) => {
               const { text: status, color } = convertStatus(query.status)
-              const resTxHash = omitText(query.executedHash)
+              const resTxHash = omitText(query.executedHash, 5, 5)
               const imageURL = '/images/chains/' + query.from.toString() + '.svg'
               return (
-                <TableRow key={query.transactionHash}>
+                <TableRow key={query.id}>
                   <TableCell>
                     <div className='flex items-center'>
                       <Image src={imageURL} width={25} height={25} />
                       <p className='ml-1'>{convertChainIdToName(query.from)}</p>
                     </div>
                   </TableCell>
-                  <TableCell>{omitText(query.sender)}</TableCell>
+                  <TableCell>{omitText(query.sender, 5, 5)}</TableCell>
                   <TableCell>
                     <Link
                       isExternal
                       isBlock
                       showAnchorIcon
-                      href={getExploerUrl(query.from) + query.transactionHash}
+                      href={getExploerUrl(query.from) + 'tx/' + query.transactionHash}
                       color='success'
                     >
-                      {omitText(query.transactionHash)}
+                      {omitText(query.transactionHash, 5, 5)}
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -138,7 +139,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
                         isExternal
                         isBlock
                         showAnchorIcon
-                        href={getExploerUrl(query.from) + query.executedHash}
+                        href={getExploerUrl(query.from) + 'tx/' + query.executedHash}
                         color='success'
                       >
                         {resTxHash}
