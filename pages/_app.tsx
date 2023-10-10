@@ -7,6 +7,7 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { polygonMumbai } from 'wagmi/chains'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import { Analytics } from '@vercel/analytics/react'
 import Layout from 'components/Layout'
 import { env } from 'utils'
 import type { AppProps } from 'next/app'
@@ -40,6 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <WagmiConfig config={config}>
             <Layout {...pageProps}>
               <Component {...pageProps} />
+              <Analytics />
             </Layout>
           </WagmiConfig>
         </main>
