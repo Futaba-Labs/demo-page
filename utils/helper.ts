@@ -1,12 +1,12 @@
-import { Wallet, ethers } from "ethers"
-import { ToastOptions, toast } from "react-toastify"
-import { concat, hexZeroPad, keccak256 } from "ethers/lib/utils.js"
-import { ERC20_ABI } from "./constants"
-import { env } from "./constants"
+import { Wallet, ethers } from 'ethers'
+import { ToastOptions, toast } from 'react-toastify'
+import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils.js'
+import { ERC20_ABI } from './constants'
+import { env } from './constants'
 
 export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
-  if (!provider) throw new Error("Invalid chainId")
+  if (!provider) throw new Error('Invalid chainId')
   const wallet = new Wallet(env.PRIVATE_KEY, provider)
   return wallet
 }
@@ -14,11 +14,7 @@ export const getWallet = (chainId: number) => {
 export const getTokenDecimal = async (chainId: number, token: string) => {
   const wallet = getWallet(chainId)
 
-  const erc20 = new ethers.Contract(
-    token,
-    ERC20_ABI,
-    wallet
-  )
+  const erc20 = new ethers.Contract(token, ERC20_ABI, wallet)
   let decimal = 18
   try {
     decimal = await erc20.decimals()
@@ -37,34 +33,44 @@ export const getLatestBlockNumber = async (chainId: number) => {
 }
 
 export const getBalanceSlot = (sender: string) => {
-  return keccak256(concat([
-    // Mappings' keys in Solidity must all be word-aligned (32 bytes)
-    hexZeroPad(sender, 32),
+  return keccak256(
+    concat([
+      // Mappings' keys in Solidity must all be word-aligned (32 bytes)
+      hexZeroPad(sender, 32),
 
-    // Similarly with the slot-index into the Solidity variable layout
-    hexZeroPad("0x00000000000000000000000000000000000000000000000000000000000000c9", 32),
-  ]));
+      // Similarly with the slot-index into the Solidity variable layout
+      hexZeroPad('0x00000000000000000000000000000000000000000000000000000000000000c9', 32),
+    ]),
+  )
 }
 
 export const getProvider = (chainId: number) => {
   switch (chainId) {
     case 5:
-      return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["goerli"]}`)
+      return new ethers.providers.JsonRpcProvider(
+        `https://eth-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['goerli']}`,
+      )
     case 420:
-      return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["optimism-goerli"]}`)
+      return new ethers.providers.JsonRpcProvider(
+        `https://opt-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['optimism-goerli']}`,
+      )
     case 80001:
-      return new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["mumbai"]}`)
+      return new ethers.providers.JsonRpcProvider(
+        `https://polygon-mumbai.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['mumbai']}`,
+      )
     case 421613:
-      return new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP["arbitrum-goerli"]}`)
+      return new ethers.providers.JsonRpcProvider(
+        `https://arb-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['arbitrum-goerli']}`,
+      )
     default:
       return
   }
 }
 
 export const showToast = (message: string, type: string, isDark = false) => {
-  const theme = isDark ? "dark" : "light"
+  const theme = isDark ? 'dark' : 'light'
   const toastOpt: ToastOptions = {
-    position: "bottom-right",
+    position: 'bottom-right',
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
@@ -74,10 +80,10 @@ export const showToast = (message: string, type: string, isDark = false) => {
     theme,
   }
   switch (type) {
-    case "success":
+    case 'success':
       toast.success(message, toastOpt)
       break
-    case "error":
+    case 'error':
       toast.error(message, toastOpt)
       break
   }
@@ -85,13 +91,13 @@ export const showToast = (message: string, type: string, isDark = false) => {
 
 export const convertChainNameToId = (chainName: string) => {
   switch (chainName) {
-    case "Goerli":
+    case 'Goerli':
       return 5
-    case "Optimism Goerli":
+    case 'Optimism Goerli':
       return 420
-    case "Mumbai":
+    case 'Mumbai':
       return 80001
-    case "Arbitrum Goerli":
+    case 'Arbitrum Goerli':
       return 421613
     default:
       return
@@ -101,26 +107,26 @@ export const convertChainNameToId = (chainName: string) => {
 export const convertChainIdToName = (chainId: number) => {
   switch (chainId) {
     case 5:
-      return "Goerli"
+      return 'Goerli'
     case 420:
-      return "Optimism Goerli"
+      return 'Optimism Goerli'
     case 80001:
-      return "Mumbai"
+      return 'Mumbai'
     case 421613:
-      return "Arbitrum Goerli"
+      return 'Arbitrum Goerli'
     default:
       return
   }
 }
 
 export const omitText = (text: string | undefined, start: number, end: number) => {
-  if (!text) return ""
+  if (!text) return ''
   if (text.length < start + end) return text
   return text.substring(0, start) + '...' + text.substring(text.length - end, text.length)
 }
 
 export const converUnixToDate = (time: number) => {
-  const date = new Date(time * 1000);
+  const date = new Date(time * 1000)
   return date
 }
 
@@ -133,7 +139,7 @@ export const getExploerUrl = (chainId: number) => {
     case 80001:
       return 'https://mumbai.polygonscan.com/'
     case 421613:
-      return "https://goerli.arbiscan.io/"
+      return 'https://goerli.arbiscan.io/'
     default:
       return 'https://mumbai.polygonscan.com/'
   }

@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
   Image,
+  Spinner,
 } from '@nextui-org/react'
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types'
@@ -160,7 +161,9 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
           </TableBody>
         </Table>
       ) : (
-        <div></div>
+        <div className='flex justify-center items-center h-screen'>
+          <Spinner size='lg' color='success' />
+        </div>
       )}
     </>
   )
