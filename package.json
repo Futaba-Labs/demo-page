@@ -15,6 +15,7 @@
     "@gelatonetwork/relay-sdk": "^4.0.0",
     "@react-aria/ssr": "^3.6.0",
     "@react-stately/data": "^3.10.2",
+    "@vercel/analytics": "^1.1.0",
     "cryptocurrency-icons": "^0.18.1",
     "framer-motion": "^10.16.4",
     "next": "13.4.5",
