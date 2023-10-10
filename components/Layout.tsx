@@ -16,7 +16,7 @@ import {
   darkTheme as rainbowDarkTheme,
   lightTheme as rainbowLightTheme,
 } from '@rainbow-me/rainbowkit'
-import { Image } from '@nextui-org/react'
+import Image from 'next/image'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
@@ -31,7 +31,6 @@ import { configureChains } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { usePageTheme } from 'hooks'
 import { env } from 'utils'
-import VerifyModal from './VerifyModal'
 
 interface LayoutProps {
   children?: React.ReactNode
@@ -221,7 +220,7 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
 
         <main>{children}</main>
 
-        <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+        {/* <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} /> */}
         <ToastContainer
           position='bottom-right'
           autoClose={5000}

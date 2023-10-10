@@ -9,11 +9,14 @@ import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { showToast } from 'utils/helper'
-import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import { CUSTOM_QUERY_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+
+import dynamic from 'next/dynamic'
+
+const Transaction = dynamic(() => import('components/Transaction'))
 
 const FORM_NAME = 'custom_queries'
 
@@ -204,11 +207,13 @@ const Custom: NextPage = () => {
           </Button>
         </div>
       </div>
-      <div>
-        <div style={{ padding: '24px' }}></div>
-        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
-        <Transaction queryData={transactions} rowsPerPage={5} />
-      </div>
+      {transactions.length > 0 && (
+        <div>
+          <div style={{ padding: '24px' }}></div>
+          <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
+          <Transaction queryData={transactions} rowsPerPage={5} />
+        </div>
+      )}
     </>
   )
 }

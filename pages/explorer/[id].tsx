@@ -1,30 +1,54 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import {
-  Card,
-  CardBody,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Image,
-  Chip,
-  Skeleton,
-  Spinner,
-} from '@nextui-org/react'
+import { Card, CardBody, Chip, Skeleton, Spinner } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import { useTransaction } from 'hooks/useTransaction'
 import { QueryData, QueryResult, Transaction } from 'types'
-import { Rpc, calculateTimeDifference, convertChainIdToName, getExploerUrl, getProvider, omitText } from 'utils'
+import { Rpc, convertChainIdToName, getProvider, omitText } from 'utils'
 import { useGateway, useSupabase } from 'hooks'
-import CopySnippet from 'components/CopySnippet'
+import dynamic from 'next/dynamic'
+
+const TransactionCard = dynamic(() => import('components/TransactionCard'))
+const QueryTable = dynamic(() => import('components/QueryTable'))
 
 interface ChipParam {
   text: string
   color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
+}
+
+const SkeletonCard = () => {
+  return (
+    <div className='flex flex-col gap-3'>
+      <div className='flex flex-col gap-2'>
+        <p>Transaction hash</p>
+        <Skeleton className='w-3/5 rounded-lg'>
+          <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+        </Skeleton>
+      </div>
+
+      <div className='flex flex-col gap-2'>
+        <p>Block number</p>
+        <Skeleton className='w-2/5 rounded-lg'>
+          <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+        </Skeleton>
+      </div>
+
+      <div className='flex flex-col gap-2'>
+        <p>Age</p>
+        <Skeleton className='w-2/5 rounded-lg'>
+          <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
+        </Skeleton>
+      </div>
+
+      <div className='flex flex-col gap-2'>
+        <p>Sender</p>
+        <Skeleton className='w-3/5 rounded-lg'>
+          <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
+        </Skeleton>
+      </div>
+    </div>
+  )
 }
 
 const TransactionDetail: NextPage = () => {
@@ -160,168 +184,18 @@ const TransactionDetail: NextPage = () => {
           <Card className='w-1/2'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Request Transaction</p>
-              {reqTransaction ? (
-                <div className='flex flex-col gap-3'>
-                  <div>
-                    <p>Transaction hash</p>
-                    <CopySnippet
-                      displayedText={omitText(reqTransaction.hash, 15, 15)}
-                      copyText={reqTransaction.hash}
-                      link={getExploerUrl(q.from) + 'tx/' + reqTransaction.hash}
-                    />
-                  </div>
-                  <div className='flex flex-col gap-2'>
-                    <p>Block number</p>
-                    <p className='text-small'>{reqTransaction.blockNumber}</p>
-                  </div>
-                  <div className='flex flex-col gap-2'>
-                    <p>Age</p>
-                    <p className='text-small'>{calculateTimeDifference(new Date(reqTransaction.timestamp * 1000))}</p>
-                  </div>
-                  <div className=''>
-                    <p>Sender</p>
-                    <CopySnippet
-                      displayedText={omitText(reqTransaction.sender, 15, 15)}
-                      copyText={reqTransaction.sender}
-                      link={getExploerUrl(q.from) + 'address/' + reqTransaction.sender}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className='flex flex-col gap-3'>
-                  <div className='flex flex-col gap-2'>
-                    <p>Transaction hash</p>
-                    <Skeleton className='w-3/5 rounded-lg'>
-                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Block number</p>
-                    <Skeleton className='w-2/5 rounded-lg'>
-                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Age</p>
-                    <Skeleton className='w-2/5 rounded-lg'>
-                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Sender</p>
-                    <Skeleton className='w-3/5 rounded-lg'>
-                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-                </div>
-              )}
+              {reqTransaction ? <TransactionCard transaction={reqTransaction} chainId={q.from} /> : <SkeletonCard />}
             </CardBody>
           </Card>
           <Card className='w-1/2'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Response Transaction</p>
-              {resTransaction ? (
-                <div className='flex flex-col gap-3'>
-                  <div>
-                    <p>Transaction hash</p>
-                    <CopySnippet
-                      displayedText={omitText(resTransaction.hash, 15, 15)}
-                      copyText={resTransaction.hash}
-                      link={getExploerUrl(q.from) + 'tx/' + resTransaction.hash}
-                    />
-                  </div>
-                  <div className='flex flex-col gap-2'>
-                    <p>Block number</p>
-                    <p className='text-small'>{resTransaction.blockNumber}</p>
-                  </div>
-                  <div className='flex flex-col gap-2'>
-                    <p>Age</p>
-                    <p className='text-small'>{calculateTimeDifference(new Date(resTransaction.timestamp * 1000))}</p>
-                  </div>
-                  <div className=''>
-                    <p>Sender</p>
-                    <CopySnippet
-                      displayedText={omitText(resTransaction.sender, 15, 15)}
-                      copyText={resTransaction.sender}
-                      link={getExploerUrl(q.from) + 'address/' + resTransaction.sender}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className='flex flex-col gap-3'>
-                  <div className='flex flex-col gap-2'>
-                    <p>Transaction hash</p>
-                    <Skeleton className='w-3/5 rounded-lg'>
-                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Block number</p>
-                    <Skeleton className='w-2/5 rounded-lg'>
-                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Age</p>
-                    <Skeleton className='w-2/5 rounded-lg'>
-                      <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <p>Sender</p>
-                    <Skeleton className='w-3/5 rounded-lg'>
-                      <div className='h-5 w-3/5 rounded-lg bg-default-200'></div>
-                    </Skeleton>
-                  </div>
-                </div>
-              )}
+              {resTransaction ? <TransactionCard transaction={resTransaction} chainId={q.from} /> : <SkeletonCard />}
             </CardBody>
           </Card>
         </div>
         <h2 className='text-3xl font-semibold my-6'>Query</h2>
-        <Table aria-label='Example static collection table' className='mb-10'>
-          <TableHeader>
-            <TableColumn>Chain</TableColumn>
-            <TableColumn>Contract</TableColumn>
-            <TableColumn>Height</TableColumn>
-            <TableColumn>Slot</TableColumn>
-            <TableColumn>Value</TableColumn>
-          </TableHeader>
-          <TableBody emptyContent={<Spinner label='Loading...' color='success' />}>
-            {queries.map((query, index) => {
-              const imageURL = '/images/chains/' + query.dstChainId.toString() + '.svg'
-              const alt = 'chain_' + query.dstChainId.toString()
-              return (
-                <TableRow key={index}>
-                  <TableCell>
-                    <div className='flex items-center'>
-                      <Image src={imageURL} width={25} height={25} alt={alt} />
-                      <p className='ml-1'>{convertChainIdToName(query.dstChainId)}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <CopySnippet
-                      displayedText={omitText(query.to, 5, 5)}
-                      copyText={query.to}
-                      link={getExploerUrl(query.dstChainId) + 'address/' + query.to}
-                    />
-                  </TableCell>
-                  <TableCell>{query.height.toString()}</TableCell>
-                  <TableCell>
-                    <CopySnippet displayedText={omitText(query.slot, 5, 5)} copyText={query.slot} />
-                  </TableCell>
-                  <TableCell>{query.result}</TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+        {queries.length > 0 && <QueryTable queries={queries} />}
       </div>
     </>
   )
