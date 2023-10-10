@@ -129,8 +129,12 @@ const TransactionDetail: NextPage = () => {
     }
   }, [queries])
 
-  if (transactions[0] === undefined) {
-    return <></>
+  if (transactions[0] === undefined || !id) {
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <Spinner size='lg' color='success' />
+      </div>
+    )
   }
 
   const q = transactions[0]
@@ -144,7 +148,7 @@ const TransactionDetail: NextPage = () => {
           <CardBody>
             <div className='flex justify-between items-center'>
               <p className='text-green-500 font-medium'>
-                Query Id {id} on {convertChainIdToName(q.from)}
+                Query Id {omitText(id as string, 15, 15)} on {convertChainIdToName(q.from)}
               </p>
               <Chip color={color} size='lg'>
                 <span className='text-white'>{status}</span>
@@ -177,7 +181,7 @@ const TransactionDetail: NextPage = () => {
                   <div className=''>
                     <p>Sender</p>
                     <CopySnippet
-                      displayedText={reqTransaction.sender}
+                      displayedText={omitText(reqTransaction.sender, 15, 15)}
                       copyText={reqTransaction.sender}
                       link={getExploerUrl(q.from) + 'address/' + reqTransaction.sender}
                     />
@@ -240,7 +244,7 @@ const TransactionDetail: NextPage = () => {
                   <div className=''>
                     <p>Sender</p>
                     <CopySnippet
-                      displayedText={resTransaction.sender}
+                      displayedText={omitText(resTransaction.sender, 15, 15)}
                       copyText={resTransaction.sender}
                       link={getExploerUrl(q.from) + 'address/' + resTransaction.sender}
                     />

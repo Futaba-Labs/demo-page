@@ -20,7 +20,7 @@ module.exports = {
         vars: 'all',
         varsIgnorePattern: '^_',
         args: 'after-used',
-        argsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
       },
     ],
     'import/order': [
@@ -30,5 +30,11 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ["tailwind.config.js", ".eslintrc.js", "postcss.config.js"]
+  'import/no-extraneous-dependencies': [
+    'error',
+    {
+      packageDir: ['./', './node_modules/@nextui-org/react'],
+    },
+  ],
+  ignorePatterns: ['tailwind.config.js', '.eslintrc.js', 'postcss.config.js', 'next.confog.js'],
 }

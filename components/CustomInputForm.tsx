@@ -2,7 +2,7 @@ import { Button, Input } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { InputHTMLAttributes, useMemo, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
-import { Delete } from 'react-iconly'
+import { FaTrashAlt } from 'react-icons/fa'
 import { convertChainNameToId } from 'utils'
 import DropdownSelect from './DropdownSelect'
 
@@ -61,7 +61,7 @@ const CustomInputForm: NextPage<Props> = ({
       <div className='flex'>
         <Input placeholder={'Storage slot'} {...registerSlot} className='mr-4' />
         <Button onClick={onClick} color={'danger'} variant='flat'>
-          <Delete primaryColor='red' />
+          <FaTrashAlt color='red' />
         </Button>
       </div>
     </div>

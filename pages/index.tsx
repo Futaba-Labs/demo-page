@@ -3,18 +3,6 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
-import {
-  Button,
-  Divider,
-  Link,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Image,
-} from '@nextui-org/react'
 import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
 import {
@@ -23,6 +11,7 @@ import {
   getBalanceSlot,
   getLatestBlockNumber,
   getTokenDecimal,
+  omitText,
   showToast,
 } from 'utils/helper'
 import Transaction from 'components/Transaction'
@@ -33,7 +22,20 @@ import { Deployment, QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
 import { useDeployment } from 'hooks'
 
+import CopySnippet from 'components/CopySnippet'
 import type { NextPage } from 'next'
+import {
+  Divider,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+  Link,
+  Image,
+} from '@nextui-org/react'
 
 export interface QueryForm {
   chain: string
@@ -45,7 +47,7 @@ const Home: NextPage = () => {
   const { register, control, setValue, watch } = useForm()
 
   const isDark = false
-  const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
+  const { transactions, fetchTransactionsBySender } = useTransaction()
   const supabase = useSupabase()
   const addRecentTransaction = useAddRecentTransaction()
 
@@ -137,7 +139,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     fetchTxns()
-  }, [supabase, allTransactions])
+  }, [supabase])
 
   useEffect(() => {
     if (data) {
@@ -237,7 +239,7 @@ const Home: NextPage = () => {
 
       <h2 className='text-2xl font-semibold my-4'>Sample data</h2>
 
-      <Table aria-label='Sample token data' className='w-3/5'>
+      <Table aria-label='Sample token data' className='w-fit'>
         <TableHeader>
           <TableColumn>Chain</TableColumn>
           <TableColumn>Token Address</TableColumn>
@@ -256,7 +258,12 @@ const Home: NextPage = () => {
                     <p className='ml-1'>{convertChainIdToName(chainId)}</p>
                   </div>
                 </TableCell>
-                <TableCell>{testnetDeployment[chainKey]?.testToken}</TableCell>
+                <TableCell>
+                  <CopySnippet
+                    displayedText={omitText(testnetDeployment[chainKey]?.testToken, 15, 15)}
+                    copyText={testnetDeployment[chainKey]?.testToken as string}
+                  />
+                </TableCell>
               </TableRow>
             )
           })}
