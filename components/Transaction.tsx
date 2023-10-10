@@ -8,9 +8,9 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Image,
   Spinner,
 } from '@nextui-org/react'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types'
 import { useState, useMemo } from 'react'
@@ -114,11 +114,12 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
               const { text: status, color } = convertStatus(query.status)
               const resTxHash = omitText(query.executedHash, 5, 5)
               const imageURL = '/images/chains/' + query.from.toString() + '.svg'
+              const alt = query.from.toString()
               return (
                 <TableRow key={query.id}>
                   <TableCell>
                     <div className='flex items-center'>
-                      <Image src={imageURL} width={25} height={25} />
+                      <Image src={imageURL} width={25} height={25} alt={alt} />
                       <p className='ml-1'>{convertChainIdToName(query.from)}</p>
                     </div>
                   </TableCell>

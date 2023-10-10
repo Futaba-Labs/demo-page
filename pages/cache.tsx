@@ -7,9 +7,11 @@ import Notice from 'components/Notice'
 import CustomInputForm from 'components/CustomInputForm'
 import { getLocalStorege, setLocalStorege, showToast } from 'utils/helper'
 import { QueryResult } from 'types'
-import CacheResult from 'components/CacheResult'
 import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
+
+import dynamic from 'next/dynamic'
+const CacheResult = dynamic(() => import('components/CacheResult'))
 
 const FORM_NAME = 'cache'
 const STORAGE_KEY = 'cache'

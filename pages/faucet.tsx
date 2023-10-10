@@ -1,15 +1,5 @@
-import {
-  Button,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Image,
-  Link,
-} from '@nextui-org/react'
+import { Button, Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Link } from '@nextui-org/react'
+import Image from 'next/image'
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { ContractTransaction, ethers } from 'ethers'

@@ -9,7 +9,7 @@ type Props = {
 
 const CopySnippet: NextPage<Props> = ({ displayedText, copyText, link }) => {
   return (
-    <Snippet hideSymbol={true} variant='flat' className='bg-white p-0' codeString={copyText}>
+    <Snippet hideSymbol={true} variant='flat' className='bg-transparent p-0' codeString={copyText}>
       {link ? (
         <Link href={link} isExternal>
           <p className='font-sans text-small'>{displayedText}</p>

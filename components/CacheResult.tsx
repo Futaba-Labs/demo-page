@@ -1,4 +1,5 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Image } from '@nextui-org/react'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import Image from 'next/image'
 import { NextPage } from 'next'
 import { QueryResult } from 'types'
 import { convertChainIdToName, omitText } from 'utils/helper'
@@ -28,7 +29,7 @@ const CacheResult: NextPage<Props> = ({ queries, page }) => {
                 <TableRow key={index}>
                   <TableCell>
                     <div className='flex items-center'>
-                      <Image src={imageURL} width={25} height={25} />
+                      <Image src={imageURL} width={25} height={25} alt={query.dstChainId.toString()} />
                       <p className='ml-1'>{convertChainIdToName(query.dstChainId)}</p>
                     </div>
                   </TableCell>

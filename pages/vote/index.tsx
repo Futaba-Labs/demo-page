@@ -5,10 +5,13 @@ import { useContractRead } from 'wagmi'
 import { Button, Card, Link, Skeleton } from '@nextui-org/react'
 import NextLink from 'next/link'
 import Notice from 'components/Notice'
-import Proposal from 'components/Proposal'
 import { ProposalData } from 'types'
 import { VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+
+import dynamic from 'next/dynamic'
+
+const Proposal = dynamic(() => import('components/Proposal'))
 
 const Vote: NextPage = () => {
   const [proposals, setProposals] = useState<ProposalData[]>([])

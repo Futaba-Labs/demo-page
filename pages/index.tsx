@@ -14,14 +14,12 @@ import {
   omitText,
   showToast,
 } from 'utils/helper'
-import Transaction from 'components/Transaction'
 import { useTransaction } from 'hooks/useTransaction'
 import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { Deployment, QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
 import { useDeployment } from 'hooks'
-
 import CopySnippet from 'components/CopySnippet'
 import type { NextPage } from 'next'
 import {
@@ -34,8 +32,11 @@ import {
   TableCell,
   Button,
   Link,
-  Image,
 } from '@nextui-org/react'
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
+
+const Transaction = dynamic(() => import('components/Transaction'))
 
 export interface QueryForm {
   chain: string
@@ -138,7 +139,9 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    fetchTxns()
+    if (supabase) {
+      fetchTxns()
+    }
   }, [supabase])
 
   useEffect(() => {
@@ -308,8 +311,12 @@ const Home: NextPage = () => {
       </div>
       <div>
         <div style={{ padding: '24px' }}></div>
-        <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
-        <Transaction queryData={transactions} rowsPerPage={5} />
+        {transactions.length > 0 && (
+          <div>
+            <h2 className='text-3xl font-semibold mb-4'>Your Transactions</h2>
+            <Transaction queryData={transactions} rowsPerPage={5} />
+          </div>
+        )}
       </div>
     </>
   )

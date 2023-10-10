@@ -1,6 +1,6 @@
 import { Modal, ModalHeader, ModalContent, Button, ModalBody } from '@nextui-org/react'
 import { NextPage } from 'next'
-import { Image } from '@nextui-org/react'
+import Image from 'next/image'
 import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useMemo } from 'react'
 import { useConnectModal, useChainModal } from '@rainbow-me/rainbowkit'
