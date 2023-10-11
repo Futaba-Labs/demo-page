@@ -11,13 +11,13 @@ type Props = {
 
 const QueryTable: NextPage<Props> = ({ queries }) => {
   return (
-    <Table aria-label='Example static collection table' className='mb-10'>
+    <Table aria-label='Example static collection table' className='mb-10' layout='fixed'>
       <TableHeader>
         <TableColumn>Chain</TableColumn>
         <TableColumn>Contract</TableColumn>
         <TableColumn>Height</TableColumn>
         <TableColumn>Slot</TableColumn>
-        <TableColumn>Value</TableColumn>
+        <TableColumn className='w-2/5'>Value</TableColumn>
       </TableHeader>
       <TableBody emptyContent={<Spinner label='Loading...' color='success' />}>
         {queries.map((query, index) => {
@@ -42,7 +42,9 @@ const QueryTable: NextPage<Props> = ({ queries }) => {
               <TableCell>
                 <CopySnippet displayedText={omitText(query.slot, 5, 5)} copyText={query.slot} />
               </TableCell>
-              <TableCell>{query.result}</TableCell>
+              <TableCell>
+                <p className='break-words whitespace-pre-wrap'>{query.result}</p>
+              </TableCell>
             </TableRow>
           )
         })}
