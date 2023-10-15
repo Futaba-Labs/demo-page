@@ -1,5 +1,5 @@
 export * from './useLightClient'
-export * from './useSupabaseClient'
+export * from '../utils/supabase'
 export * from './useTransaction'
 export * from './useDeployment'
 export * from './useGateway'

@@ -6,8 +6,9 @@ import { ethers } from 'ethers'
 import { useTransaction } from 'hooks/useTransaction'
 import { QueryData, QueryResult, Transaction } from 'types'
 import { Rpc, convertChainIdToName, getProvider, omitText } from 'utils'
-import { useGateway, useSupabase } from 'hooks'
+import { useGateway } from 'hooks'
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const TransactionCard = dynamic(() => import('components/TransactionCard'))
 const QueryTable = dynamic(() => import('components/QueryTable'))
@@ -58,7 +59,7 @@ const TransactionDetail: NextPage = () => {
   const [queries, setQueries] = useState<QueryResult[]>([])
   const router = useRouter()
   const { id } = router.query
-  const supabase = useSupabase()
+  const supabase = createSupabase()
   const gateway = useGateway()
 
   const convertStatus = (status: number): ChipParam => {

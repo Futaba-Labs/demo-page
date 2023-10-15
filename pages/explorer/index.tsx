@@ -1,15 +1,15 @@
 import { NextPage } from 'next'
 import { useTransaction } from 'hooks/useTransaction'
 import { useEffect } from 'react'
-import { useSupabase } from 'hooks'
 import { Spinner } from '@nextui-org/react'
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const Transaction = dynamic(() => import('components/Transaction'))
 
 const Explorer: NextPage = () => {
   const { allTransactions, fetchAllTransactions } = useTransaction()
-  const supabase = useSupabase()
+  const supabase = createSupabase()
 
   useEffect(() => {
     fetchAllTransactions()

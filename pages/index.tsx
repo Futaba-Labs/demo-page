@@ -15,7 +15,6 @@ import {
   showToast,
 } from 'utils/helper'
 import { useTransaction } from 'hooks/useTransaction'
-import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { Deployment, QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
@@ -35,6 +34,7 @@ import {
 } from '@nextui-org/react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const Transaction = dynamic(() => import('components/Transaction'))
 
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
 
   const isDark = false
   const { transactions, fetchTransactionsBySender } = useTransaction()
-  const supabase = useSupabase()
+  const supabase = createSupabase()
   const addRecentTransaction = useAddRecentTransaction()
 
   const { fields, append, remove } = useFieldArray({

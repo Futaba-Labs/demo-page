@@ -10,11 +10,11 @@ import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
 import { showToast } from 'utils/helper'
 import { useTransaction } from 'hooks/useTransaction'
-import { useSupabase } from 'hooks/useSupabaseClient'
 import { CUSTOM_QUERY_ABI } from 'utils'
 import { useDeployment } from 'hooks'
 
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const Transaction = dynamic(() => import('components/Transaction'))
 
@@ -41,7 +41,7 @@ const Custom: NextPage = () => {
 
   const { address, isConnected, isDisconnected } = useAccount()
 
-  const supabase = useSupabase()
+  const supabase = createSupabase()
 
   const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
 
