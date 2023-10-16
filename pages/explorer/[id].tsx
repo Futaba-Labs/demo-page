@@ -181,14 +181,14 @@ const TransactionDetail: NextPage = () => {
             </div>
           </CardBody>
         </Card>
-        <div className='flex gap-10'>
-          <Card className='w-1/2'>
+        <div className='flex flex-wrap md:flex-nowrap gap-10'>
+          <Card className='w-full'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Request Transaction</p>
               {reqTransaction ? <TransactionCard transaction={reqTransaction} chainId={q.from} /> : <SkeletonCard />}
             </CardBody>
           </Card>
-          <Card className='w-1/2'>
+          <Card className='w-full'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Response Transaction</p>
               {resTransaction ? <TransactionCard transaction={resTransaction} chainId={q.from} /> : <SkeletonCard />}

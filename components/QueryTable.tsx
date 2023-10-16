@@ -11,7 +11,7 @@ type Props = {
 
 const QueryTable: NextPage<Props> = ({ queries }) => {
   return (
-    <Table aria-label='Example static collection table' className='mb-10' layout='fixed'>
+    <Table aria-label='Example static collection table' className='mb-10' layout='auto'>
       <TableHeader>
         <TableColumn>Chain</TableColumn>
         <TableColumn>Contract</TableColumn>
