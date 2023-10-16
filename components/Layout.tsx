@@ -66,9 +66,6 @@ const Header = () => {
         height='5rem'
         className='rounded-full mt-4 drop-shadow-xl'
       >
-        <NavbarContent className='lg:hidden' justify='start'>
-          <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
-        </NavbarContent>
         <NavbarBrand>
           <Link href='/' as={NextLink}>
             {theme === 'light' ? (
@@ -116,25 +113,32 @@ const Header = () => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify='end'>
-          <ConnectButton showBalance={false} />
-          <div className='flex gap-1'>
-            <Button isIconOnly variant='light'>
+          <ConnectButton
+            showBalance={false}
+            accountStatus={{
+              smallScreen: 'avatar',
+              largeScreen: 'full',
+            }}
+          />
+          <div className='flex gap-1 items-center'>
+            <Button isIconOnly variant='light' className='hidden lg:flex'>
               <Link href='https://twitter.com/FutabaOmni' color='foreground' isExternal>
                 <FaTwitter />
               </Link>
             </Button>
             {theme === 'light' ? (
-              <Button isIconOnly variant='light' onClick={() => setTheme('dark')}>
+              <Button isIconOnly variant='light' onClick={() => setTheme('dark')} className='hidden lg:flex'>
                 <BsMoon />
               </Button>
             ) : (
-              <Button isIconOnly variant='light' onClick={() => setTheme('light')}>
+              <Button isIconOnly variant='light' onClick={() => setTheme('light')} className='hidden lg:flex'>
                 <BsSun />
               </Button>
             )}
+            <NavbarMenuToggle className='lg:hidden' aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
           </div>
         </NavbarContent>
-        <NavbarMenu>
+        <NavbarMenu className='mt-4'>
           <NavbarItem>
             <Link href='/faucet' as={NextLink}>
               Faucet
@@ -169,6 +173,22 @@ const Header = () => {
             <Link href='https://futaba.gitbook.io/docs/guide/futaba-demo' isExternal showAnchorIcon>
               Docs
             </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link href='https://twitter.com/FutabaOmni' isExternal showAnchorIcon>
+              Twitter
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            {theme === 'light' ? (
+              <Button isIconOnly variant='light' onClick={() => setTheme('dark')}>
+                <BsMoon />
+              </Button>
+            ) : (
+              <Button isIconOnly variant='light' onClick={() => setTheme('light')}>
+                <BsSun />
+              </Button>
+            )}
           </NavbarMenuItem>
         </NavbarMenu>
       </Navbar>

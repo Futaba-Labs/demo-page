@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { QueryData } from 'types'
-import { useSupabase } from './useSupabaseClient'
+import createSupabase from 'utils/supabase'
 
 export const useTransaction = () => {
   const [transactions, setTransactions] = useState<QueryData[]>([])
   const [allTransactions, setAllTransactions] = useState<QueryData[]>([])
-  const supabase = useSupabase()
+  const supabase = createSupabase()
 
   const fetchAllTransactions = async () => {
     if (supabase) {

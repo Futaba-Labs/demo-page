@@ -15,7 +15,6 @@ import {
   showToast,
 } from 'utils/helper'
 import { useTransaction } from 'hooks/useTransaction'
-import { useSupabase } from 'hooks/useSupabaseClient'
 import Notice from 'components/Notice'
 import { Deployment, QueryRequest } from 'types'
 import { BALANCE_QUERY_ABI, DEPLOYMENT } from 'utils'
@@ -35,6 +34,7 @@ import {
 } from '@nextui-org/react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const Transaction = dynamic(() => import('components/Transaction'))
 
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
 
   const isDark = false
   const { transactions, fetchTransactionsBySender } = useTransaction()
-  const supabase = useSupabase()
+  const supabase = createSupabase()
   const addRecentTransaction = useAddRecentTransaction()
 
   const { fields, append, remove } = useFieldArray({
@@ -242,36 +242,45 @@ const Home: NextPage = () => {
 
       <h2 className='text-2xl font-semibold my-4'>Sample data</h2>
 
-      <Table aria-label='Sample token data' className='w-fit'>
-        <TableHeader>
-          <TableColumn>Chain</TableColumn>
-          <TableColumn>Token Address</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {chains.map((chain, i) => {
-            const chainId = convertChainNameToId(chain)
-            if (!chainId) return <></>
-            const chainKey = getChainKey(chainId as ChainId)
-            const imageURL = '/images/chains/' + chainId.toString() + '.svg'
-            return (
-              <TableRow key={i}>
-                <TableCell>
-                  <div className='flex items-center'>
-                    <Image src={imageURL} width={25} height={25} alt={chainId.toString()} />
-                    <p className='ml-1'>{convertChainIdToName(chainId)}</p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <CopySnippet
-                    displayedText={omitText(testnetDeployment[chainKey]?.testToken, 15, 15)}
-                    copyText={testnetDeployment[chainKey]?.testToken as string}
-                  />
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+      <div className='w-full'>
+        <Table aria-label='Sample token data' className='md:w-fit'>
+          <TableHeader>
+            <TableColumn>Chain</TableColumn>
+            <TableColumn>Token Address</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {chains.map((chain, i) => {
+              const chainId = convertChainNameToId(chain)
+              if (!chainId) return <></>
+              const chainKey = getChainKey(chainId as ChainId)
+              const imageURL = '/images/chains/' + chainId.toString() + '.svg'
+              return (
+                <TableRow key={i}>
+                  <TableCell>
+                    <div className='flex items-center'>
+                      <Image
+                        src={imageURL}
+                        width={25}
+                        height={25}
+                        alt={chainId.toString()}
+                        className='hidden md:block'
+                      />
+                      <p className='ml-1'>{convertChainIdToName(chainId)}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <CopySnippet
+                      displayedText={omitText(testnetDeployment[chainKey]?.testToken, 10, 10)}
+                      copyText={testnetDeployment[chainKey]?.testToken as string}
+                    />
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
       <div>
         {fields.map((field, i) => (
           <div key={i}>

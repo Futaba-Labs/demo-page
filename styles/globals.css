@@ -31,10 +31,10 @@ a {
   box-sizing: border-box;
 }
 
-main,
+/* main,
 nav {
   padding: 0 5rem;
-}
+} */
 
 @media (prefers-color-scheme: dark) {
   html {

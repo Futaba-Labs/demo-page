@@ -25,7 +25,7 @@ const TransactionCard: NextPage<Props> = ({ transaction, chainId }) => {
         <p className='text-small'>{transaction.blockNumber}</p>
       </div>
       <div className='flex flex-col gap-2'>
-        <p>Age</p>
+        <p>Timestamp</p>
         <p className='text-small'>{calculateTimeDifference(new Date(transaction.timestamp * 1000))}</p>
       </div>
       <div className=''>

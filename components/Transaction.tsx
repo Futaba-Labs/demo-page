@@ -106,7 +106,7 @@ const Transaction: NextPage<Props> = ({ queryData: queries, rowsPerPage: rowsPer
             <TableColumn>Sender</TableColumn>
             <TableColumn>Request Transaction</TableColumn>
             <TableColumn>Response Transaction</TableColumn>
-            <TableColumn>Age</TableColumn>
+            <TableColumn>Timestamp</TableColumn>
             <TableColumn>Deliver Status</TableColumn>
           </TableHeader>
           <TableBody>

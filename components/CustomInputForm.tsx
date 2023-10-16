@@ -37,7 +37,7 @@ const CustomInputForm: NextPage<Props> = ({
   }, [selected])
 
   return (
-    <div className='flex flex-col w-2/3'>
+    <div className='flex flex-wrap flex-col w-full md:flex-nowrap md:w-2/3 gap-4'>
       <div className='flex flex-row mb-4 gap-4'>
         <div>
           <DropdownSelect

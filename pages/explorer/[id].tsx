@@ -6,8 +6,9 @@ import { ethers } from 'ethers'
 import { useTransaction } from 'hooks/useTransaction'
 import { QueryData, QueryResult, Transaction } from 'types'
 import { Rpc, convertChainIdToName, getProvider, omitText } from 'utils'
-import { useGateway, useSupabase } from 'hooks'
+import { useGateway } from 'hooks'
 import dynamic from 'next/dynamic'
+import createSupabase from 'utils/supabase'
 
 const TransactionCard = dynamic(() => import('components/TransactionCard'))
 const QueryTable = dynamic(() => import('components/QueryTable'))
@@ -58,7 +59,7 @@ const TransactionDetail: NextPage = () => {
   const [queries, setQueries] = useState<QueryResult[]>([])
   const router = useRouter()
   const { id } = router.query
-  const supabase = useSupabase()
+  const supabase = createSupabase()
   const gateway = useGateway()
 
   const convertStatus = (status: number): ChipParam => {
@@ -180,14 +181,14 @@ const TransactionDetail: NextPage = () => {
             </div>
           </CardBody>
         </Card>
-        <div className='flex gap-10'>
-          <Card className='w-1/2'>
+        <div className='flex flex-wrap md:flex-nowrap gap-10'>
+          <Card className='w-full'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Request Transaction</p>
               {reqTransaction ? <TransactionCard transaction={reqTransaction} chainId={q.from} /> : <SkeletonCard />}
             </CardBody>
           </Card>
-          <Card className='w-1/2'>
+          <Card className='w-full'>
             <CardBody>
               <p className='font-medium text-xl text-green-500 mb-2'>Response Transaction</p>
               {resTransaction ? <TransactionCard transaction={resTransaction} chainId={q.from} /> : <SkeletonCard />}
