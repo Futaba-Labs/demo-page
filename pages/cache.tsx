@@ -19,7 +19,7 @@ const STORAGE_KEY = 'cache'
 const Cache: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [queries, setQueries] = useState<QueryResult[]>([])
-  const { register, control, setValue } = useForm()
+  const { register, control, setValue, handleSubmit } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
     name: FORM_NAME,
@@ -121,44 +121,44 @@ const Cache: NextPage = () => {
           </span>
           {'.'}
         </p>
-
-        {fields.map((field, i) => (
-          <div key={i}>
-            <div style={{ padding: '20px' }}></div>
-            <CustomInputForm
-              formName={FORM_NAME}
-              index={i}
-              setChain={setValue}
-              registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
-              registerHeight={register(`${FORM_NAME}.${i}.height`)}
-              registerSlot={register(`${FORM_NAME}.${i}.slot`)}
-              onClick={() => remove(i)}
-            />
+        <form onSubmit={handleSubmit(getCache)}>
+          {fields.map((field, i) => (
+            <div key={i}>
+              <div style={{ padding: '20px' }}></div>
+              <CustomInputForm
+                formName={FORM_NAME}
+                index={i}
+                setChain={setValue}
+                registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
+                registerHeight={register(`${FORM_NAME}.${i}.height`)}
+                registerSlot={register(`${FORM_NAME}.${i}.slot`)}
+                onClick={() => remove(i)}
+              />
+            </div>
+          ))}
+          <div style={{ padding: '16px' }}></div>
+          <div className='flex'>
+            <Button
+              onClick={() => append({ chain: '', tokenAddress: '' })}
+              disabled={fields.length > 11}
+              color='success'
+              variant='flat'
+              className='mr-4'
+            >
+              Add Query
+            </Button>
+            <Button
+              type='submit'
+              isLoading={loading}
+              disabled={fields.length === 0 || isDisconnected}
+              color='success'
+              variant='flat'
+            >
+              {loading ? 'Querying' : 'Get Cache'}
+            </Button>
           </div>
-        ))}
-        <div style={{ padding: '16px' }}></div>
-        <div className='flex'>
-          <Button
-            onClick={() => append({ chain: '', tokenAddress: '' })}
-            disabled={fields.length > 11}
-            color='success'
-            variant='flat'
-            className='mr-4'
-          >
-            Add Query
-          </Button>
-          <Button
-            onClick={() => {
-              getCache()
-            }}
-            isLoading={loading}
-            disabled={fields.length === 0 || isDisconnected}
-            color='success'
-            variant='flat'
-          >
-            {loading ? 'Querying' : 'Get Cache'}
-          </Button>
-        </div>
+        </form>
+
         <div style={{ padding: '16px' }}></div>
         <CacheResult page={10} queries={queries} />
       </div>

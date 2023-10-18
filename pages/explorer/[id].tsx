@@ -36,7 +36,7 @@ const SkeletonCard = () => {
       </div>
 
       <div className='flex flex-col gap-2'>
-        <p>Age</p>
+        <p>Timestamp</p>
         <Skeleton className='w-2/5 rounded-lg'>
           <div className='h-5 w-2/5 rounded-lg bg-default-200'></div>
         </Skeleton>

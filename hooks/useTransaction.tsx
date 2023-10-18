@@ -95,15 +95,85 @@ export const useTransaction = () => {
             schema: 'public',
             table: 'QueryData',
           },
-          fetchAllTransactions,
+          (payload) => {
+            const data = payload.new as QueryData
+            const transaction: QueryData = {
+              transactionHash: data.transactionHash,
+              executedHash: data.executedHash,
+              id: data.id,
+              status: data.status,
+              sender: data.sender,
+              from: data.from,
+              packet: data.packet,
+              createdAt: data.createdAt,
+            }
+
+            if (payload.eventType === 'INSERT') {
+              setAllTransactions((prev) => [transaction, ...prev])
+            } else if (payload.eventType === 'UPDATE') {
+              setAllTransactions((prev) => {
+                const index = prev.findIndex((t) => t.id === transaction.id)
+                if (index !== -1) {
+                  prev[index] = transaction
+                }
+                return [...prev]
+              })
+            }
+          },
         )
         .subscribe()
     }
   }
 
-  useEffect(() => {
-    subscribeTransactions()
-  }, [supabase])
+  const subscribeTransactionsBySender = async (sender: string) => {
+    if (supabase) {
+      supabase
+        .channel('any')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'QueryData',
+            filter: `sender=eq.${sender}`,
+          },
+          (payload) => {
+            const data = payload.new as QueryData
+            const transaction: QueryData = {
+              transactionHash: data.transactionHash,
+              executedHash: data.executedHash,
+              id: data.id,
+              status: data.status,
+              sender: data.sender,
+              from: data.from,
+              packet: data.packet,
+              createdAt: data.createdAt,
+            }
 
-  return { transactions, allTransactions, fetchAllTransactions, fetchTransactionsBySender, fetchTransactionsByQueryId }
+            if (payload.eventType === 'INSERT') {
+              setTransactions((prev) => [transaction, ...prev])
+            } else if (payload.eventType === 'UPDATE') {
+              setTransactions((prev) => {
+                const index = prev.findIndex((t) => t.id === transaction.id)
+                if (index !== -1) {
+                  prev[index] = transaction
+                }
+                return [...prev]
+              })
+            }
+          },
+        )
+        .subscribe()
+    }
+  }
+
+  return {
+    transactions,
+    allTransactions,
+    fetchAllTransactions,
+    fetchTransactionsBySender,
+    fetchTransactionsByQueryId,
+    subscribeTransactions,
+    subscribeTransactionsBySender,
+  }
 }
