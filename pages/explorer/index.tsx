@@ -8,11 +8,12 @@ import createSupabase from 'utils/supabase'
 const Transaction = dynamic(() => import('components/Transaction'))
 
 const Explorer: NextPage = () => {
-  const { allTransactions, fetchAllTransactions } = useTransaction()
+  const { allTransactions, fetchAllTransactions, subscribeTransactions } = useTransaction()
   const supabase = createSupabase()
 
   useEffect(() => {
     fetchAllTransactions()
+    subscribeTransactions()
   }, [supabase])
 
   return (

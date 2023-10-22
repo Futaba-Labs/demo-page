@@ -22,7 +22,7 @@ const FORM_NAME = 'custom_queries'
 
 const Custom: NextPage = () => {
   const [loading, setLoading] = useState(false)
-  const { register, control, setValue } = useForm()
+  const { register, control, setValue, handleSubmit } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
     name: FORM_NAME,
@@ -33,7 +33,7 @@ const Custom: NextPage = () => {
   const addRecentTransaction = useAddRecentTransaction()
   const deployment = useDeployment()
 
-  const { data, isSuccess, write } = useContractWrite({
+  const { data, isSuccess, write, isError } = useContractWrite({
     address: deployment.custom as `0x${string}`,
     abi: CUSTOM_QUERY_ABI,
     functionName: 'query',
@@ -82,6 +82,7 @@ const Custom: NextPage = () => {
 
       try {
         if (isConnected) {
+          console.log(queries)
           const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
           const fee = await queryAPI.estimateFee(queries)
           write({ args: [queries], value: fee.mul(120).div(100).toBigInt() })
@@ -122,11 +123,17 @@ const Custom: NextPage = () => {
   }, [supabase, allTransactions])
 
   useEffect(() => {
-    append({ chain: '', contractAddress: '', height: 0, slot: '' })
+    append({ chain: '', contractAddress: '', height: '', slot: '' })
     return () => {
       remove(0)
     }
   }, [])
+
+  useEffect(() => {
+    if (isError) {
+      setLoading(false)
+    }
+  }, [isError])
 
   return (
     <>
@@ -169,43 +176,44 @@ const Custom: NextPage = () => {
           {'.'}
         </p>
 
-        {fields.map((field, i) => (
-          <div key={i}>
-            <div style={{ padding: '20px' }}></div>
-            <CustomInputForm
-              formName={FORM_NAME}
-              index={i}
-              setChain={setValue}
-              registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
-              registerHeight={register(`${FORM_NAME}.${i}.height`)}
-              registerSlot={register(`${FORM_NAME}.${i}.slot`)}
-              onClick={() => remove(i)}
-            />
+        <form onSubmit={handleSubmit(sendQuery)}>
+          {fields.map((field, i) => (
+            <div key={i}>
+              <div style={{ padding: '20px' }}></div>
+              <CustomInputForm
+                formName={FORM_NAME}
+                index={i}
+                setChain={setValue}
+                registerAddress={register(`${FORM_NAME}.${i}.contractAddress`)}
+                registerHeight={register(`${FORM_NAME}.${i}.height`)}
+                registerSlot={register(`${FORM_NAME}.${i}.slot`)}
+                onClick={() => remove(i)}
+              />
+            </div>
+          ))}
+          <div style={{ padding: '16px' }}></div>
+          <div className='flex'>
+            <Button
+              onClick={() => append({ chain: '', contractAddress: '', height: '', slot: '' })}
+              disabled={fields.length > 11}
+              color='success'
+              variant='flat'
+              className='mr-4'
+            >
+              Add Query
+            </Button>
+            <Button
+              type='submit'
+              isLoading={loading}
+              disabled={fields.length === 0 || isDisconnected}
+              color='success'
+              variant='flat'
+            >
+              {/* <input type='submit' /> */}
+              {loading ? 'Sending' : 'Send Query'}
+            </Button>
           </div>
-        ))}
-        <div style={{ padding: '16px' }}></div>
-        <div className='flex'>
-          <Button
-            onClick={() => append({ chain: '', tokenAddress: '' })}
-            disabled={fields.length > 11}
-            color='success'
-            variant='flat'
-            className='mr-4'
-          >
-            Add Query
-          </Button>
-          <Button
-            onClick={() => {
-              sendQuery()
-            }}
-            isLoading={loading}
-            disabled={fields.length === 0 || isDisconnected}
-            color='success'
-            variant='flat'
-          >
-            {loading ? 'Sending' : 'Send Query'}
-          </Button>
-        </div>
+        </form>
       </div>
       {transactions.length > 0 && (
         <div>

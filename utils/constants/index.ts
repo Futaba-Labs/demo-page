@@ -14,3 +14,9 @@ export * from './env'
 export const mainColor = '#1F8506'
 
 export const NFT_ADDRESS = '0xb75824D76C9c8E580b38F713FCFD5951C5616606'
+
+export const CHAINS = [
+  { label: "Goerli", value: "5" },
+  { label: "Optimism Goerli", value: "420" },
+  { label: "Arbitrum Goelri", value: "421613" },
+]

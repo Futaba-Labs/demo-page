@@ -45,10 +45,10 @@ export interface QueryForm {
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
-  const { register, control, setValue, watch } = useForm()
+  const { register, control, setValue, watch, handleSubmit } = useForm()
 
   const isDark = false
-  const { transactions, fetchTransactionsBySender } = useTransaction()
+  const { transactions, fetchTransactionsBySender, subscribeTransactionsBySender } = useTransaction()
   const supabase = createSupabase()
   const addRecentTransaction = useAddRecentTransaction()
 
@@ -132,15 +132,10 @@ const Home: NextPage = () => {
     })
   }
 
-  const fetchTxns = async () => {
-    if (address) {
-      fetchTransactionsBySender(address)
-    }
-  }
-
   useEffect(() => {
-    if (supabase) {
-      fetchTxns()
+    if (supabase && address) {
+      fetchTransactionsBySender(address)
+      subscribeTransactionsBySender(address)
     }
   }, [supabase])
 
@@ -281,7 +276,7 @@ const Home: NextPage = () => {
         </Table>
       </div>
 
-      <div>
+      <form onSubmit={handleSubmit(sendQuery)}>
         {fields.map((field, i) => (
           <div key={i}>
             <div style={{ padding: '16px' }}></div>
@@ -306,9 +301,7 @@ const Home: NextPage = () => {
             Add Query
           </Button>
           <Button
-            onClick={() => {
-              sendQuery()
-            }}
+            type='submit'
             isLoading={loading}
             disabled={fields.length === 0 || isDisconnected}
             color='success'
@@ -317,7 +310,7 @@ const Home: NextPage = () => {
             {loading ? 'Sending' : 'Send Query'}
           </Button>
         </div>
-      </div>
+      </form>
       <div>
         <div style={{ padding: '24px' }}></div>
         {transactions.length > 0 && (

@@ -13,8 +13,9 @@
     "analyze-bundle": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@react-stately/data": "^3.10.2",
+    "@hookform/error-message": "^2.0.1",
     "@nextui-org/react": "^2.1.13",
+    "@react-stately/data": "^3.10.2",
     "@vercel/analytics": "^1.1.0",
     "framer-motion": "^10.16.4",
     "next": "13.4.5",
@@ -26,7 +27,7 @@
     "viem": "^1.0.2"
   },
   "devDependencies": {
-    "@futaba-lab/sdk": "^0.1.10",
+    "@futaba-lab/sdk": "^0.1.11",
     "@next/bundle-analyzer": "^13.5.4",
     "@rainbow-me/rainbowkit": "^1.0.1",
     "@supabase/supabase-js": "^2.7.1",
