@@ -1536,10 +1536,10 @@
   dependencies:
     tslib "^2.4.0"
 
-"@futaba-lab/sdk@^0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@futaba-lab/sdk/-/sdk-0.1.10.tgz#df413f47d9dc24dd1e6f5b452bcff8818227f810"
-  integrity sha512-jufa0rIur6qqs99porMa8JIPnPkmjBtxltAaPjdAEqJ1biR24GNP4oMqsCKbVoXNbAvrXsF+LaRJdj9FtU/8lw==
+"@futaba-lab/sdk@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@futaba-lab/sdk/-/sdk-0.1.11.tgz#e555ea27cb26d9e51080f31855e7e167e61f5d79"
+  integrity sha512-NK1ZdrfSi7Fwtp5yqb7E6IL5ZsVFVJy1SDj7nsPAP+jyuPSAJGxNqbK+1WwzUXyl4lhAiyJZ6+fsmTwXPwif5w==
   dependencies:
     "@gelatonetwork/relay-sdk" "^4.0.0"
     ethers "^5.7.2"
