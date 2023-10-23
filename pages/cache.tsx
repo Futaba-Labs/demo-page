@@ -161,6 +161,7 @@ const Cache: NextPage = () => {
 
         <div style={{ padding: '16px' }}></div>
         <CacheResult page={10} queries={queries} />
+        <div style={{ padding: '16px' }}></div>
       </div>
     </>
   )

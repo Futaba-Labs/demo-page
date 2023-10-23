@@ -272,7 +272,7 @@ const Home: NextPage = () => {
         <div className='flex'>
           <Button
             onClick={() => append({ chain: '', tokenAddress: '', decimal: 18 })}
-            disabled={fields.length > 11}
+            disabled={fields.length > 2}
             color='success'
             variant='flat'
             className='mr-4'
