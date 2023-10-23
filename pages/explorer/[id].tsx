@@ -76,13 +76,15 @@ const TransactionDetail: NextPage = () => {
   }
 
   const fetchReqTransaction = async (tx: QueryData, rpc: Rpc) => {
-    const reqTx = await rpc.getExplorerTransaction(tx.transactionHash)
-    setReqTransaction({
-      hash: tx.transactionHash,
-      blockNumber: reqTx.blockNumber,
-      timestamp: reqTx.timestamp,
-      sender: reqTx.sender,
-    })
+    if (!reqTransaction) {
+      const reqTx = await rpc.getExplorerTransaction(tx.transactionHash)
+      setReqTransaction({
+        hash: tx.transactionHash,
+        blockNumber: reqTx.blockNumber,
+        timestamp: reqTx.timestamp,
+        sender: reqTx.sender,
+      })
+    }
   }
 
   const fetchResTransaction = async (tx: QueryData, rpc: Rpc) => {
@@ -143,12 +145,8 @@ const TransactionDetail: NextPage = () => {
       const provider = getProvider(tx.from)
       if (provider) {
         const rpc = new Rpc(provider)
-        if (tx.status === 0) {
-          fetchReqTransaction(tx, rpc)
-          fetchResTransaction(tx, rpc)
-        } else {
-          fetchResTransaction(tx, rpc)
-        }
+        fetchReqTransaction(tx, rpc)
+        fetchResTransaction(tx, rpc)
       }
     }
   }, [transactions])
