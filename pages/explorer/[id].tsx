@@ -53,7 +53,7 @@ const SkeletonCard = () => {
 }
 
 const TransactionDetail: NextPage = () => {
-  const { fetchTransactionsByQueryId, transactions } = useTransaction()
+  const { fetchTransactionsByQueryId, transactions, subscribeTransactionsByQueryId } = useTransaction()
   const [reqTransaction, setReqTransaction] = useState<Transaction>()
   const [resTransaction, setResTransaction] = useState<Transaction>()
   const [queries, setQueries] = useState<QueryResult[]>([])
@@ -102,6 +102,8 @@ const TransactionDetail: NextPage = () => {
       })
     }
 
+    const newQueries: QueryResult[] = []
+
     if (tx.executedHash) {
       const resTx = await rpc.getExplorerTransaction(tx.executedHash)
       setResTransaction({
@@ -112,12 +114,15 @@ const TransactionDetail: NextPage = () => {
       })
       const results = await rpc.getSaveQueryEvent(gateway as `0x${string}`, id as string)
 
-      const newQueries: QueryResult[] = []
       for (let i = 0; i < q.length; i++) {
         const query = q[i]
         newQueries.push({ ...query, result: results[i] })
       }
+    }
+    if (newQueries.length > 0) {
       setQueries(newQueries)
+    } else {
+      setQueries(q)
     }
   }
 
@@ -128,6 +133,7 @@ const TransactionDetail: NextPage = () => {
   useEffect(() => {
     if (id) {
       fetchTransactionByQueryId(id.toString())
+      subscribeTransactionsByQueryId(id.toString())
     }
   }, [supabase, id])
 
@@ -137,8 +143,12 @@ const TransactionDetail: NextPage = () => {
       const provider = getProvider(tx.from)
       if (provider) {
         const rpc = new Rpc(provider)
-        fetchReqTransaction(tx, rpc)
-        fetchResTransaction(tx, rpc)
+        if (tx.status === 0) {
+          fetchReqTransaction(tx, rpc)
+          fetchResTransaction(tx, rpc)
+        } else {
+          fetchResTransaction(tx, rpc)
+        }
       }
     }
   }, [transactions])
