@@ -1,6 +1,6 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
 import NextLink from 'next/link'
@@ -10,7 +10,6 @@ import {
   convertChainNameToId,
   getBalanceSlot,
   getLatestBlockNumber,
-  getTokenDecimal,
   omitText,
   showToast,
 } from 'utils/helper'
@@ -161,27 +160,7 @@ const Home: NextPage = () => {
   }, [isError])
 
   useEffect(() => {
-    watch(async (value, { name, type }) => {
-      if (!name) return
-      if (type === 'change' && name.includes('queries')) {
-        const result = name.match(/\d+/)
-        if (result) {
-          const index = result[0]
-          let decimal = 18
-          const d = await getTokenDecimal(
-            parseInt(value['queries'][index]['chain']),
-            value['queries'][index]['tokenAddress'],
-          )
-          if (!d) return
-          decimal = d
-          setValue(`queries.${index}.decimal`, decimal)
-        }
-      }
-    })
-  }, [watch])
-
-  useEffect(() => {
-    append({ chain: '', tokenAddress: '', decimal: 0 })
+    append({ chain: '', tokenAddress: '', decimal: 18 })
     return () => {
       remove(0)
     }
@@ -292,7 +271,7 @@ const Home: NextPage = () => {
         <div style={{ padding: '16px' }}></div>
         <div className='flex'>
           <Button
-            onClick={() => append({ chain: '', tokenAddress: '' })}
+            onClick={() => append({ chain: '', tokenAddress: '', decimal: 18 })}
             disabled={fields.length > 11}
             color='success'
             variant='flat'
