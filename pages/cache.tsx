@@ -140,7 +140,7 @@ const Cache: NextPage = () => {
           <div className='flex'>
             <Button
               onClick={() => append({ chain: '', tokenAddress: '' })}
-              disabled={fields.length > 11}
+              disabled={fields.length > 9}
               color='success'
               variant='flat'
               className='mr-4'
