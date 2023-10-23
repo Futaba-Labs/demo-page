@@ -1,6 +1,6 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
 import NextLink from 'next/link'

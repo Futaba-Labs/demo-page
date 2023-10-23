@@ -83,7 +83,9 @@ const TransactionDetail: NextPage = () => {
       timestamp: reqTx.timestamp,
       sender: reqTx.sender,
     })
+  }
 
+  const fetchResTransaction = async (tx: QueryData, rpc: Rpc) => {
     const decodedPayload = ethers.utils.defaultAbiCoder.decode(
       ['address', 'tuple(uint32, address, uint256, bytes32)[]', 'bytes', 'address'],
       tx.packet,
@@ -99,10 +101,7 @@ const TransactionDetail: NextPage = () => {
         slot: dq[3],
       })
     }
-    setQueries(q)
-  }
 
-  const fetchResTransaction = async (tx: QueryData, rpc: Rpc) => {
     if (tx.executedHash) {
       const resTx = await rpc.getExplorerTransaction(tx.executedHash)
       setResTransaction({
@@ -114,8 +113,8 @@ const TransactionDetail: NextPage = () => {
       const results = await rpc.getSaveQueryEvent(gateway as `0x${string}`, id as string)
 
       const newQueries: QueryResult[] = []
-      for (let i = 0; i < queries.length; i++) {
-        const query = queries[i]
+      for (let i = 0; i < q.length; i++) {
+        const query = q[i]
         newQueries.push({ ...query, result: results[i] })
       }
       setQueries(newQueries)
@@ -139,20 +138,10 @@ const TransactionDetail: NextPage = () => {
       if (provider) {
         const rpc = new Rpc(provider)
         fetchReqTransaction(tx, rpc)
-      }
-    }
-  }, [transactions])
-
-  useEffect(() => {
-    if (id && transactions.length > 0 && queries.length > 0) {
-      const tx = transactions[0]
-      const provider = getProvider(tx.from)
-      if (provider) {
-        const rpc = new Rpc(provider)
         fetchResTransaction(tx, rpc)
       }
     }
-  }, [queries])
+  }, [transactions])
 
   if (transactions[0] === undefined || !id) {
     return (
