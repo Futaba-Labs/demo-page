@@ -4,19 +4,19 @@ import '@rainbow-me/rainbowkit/styles.css'
 
 import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { polygonMumbai } from 'wagmi/chains'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { Analytics } from '@vercel/analytics/react'
 import Layout from 'components/Layout'
 import { env } from 'utils'
 import type { AppProps } from 'next/app'
+import { infuraProvider } from 'wagmi/providers/infura'
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai],
   [
-    alchemyProvider({
-      apiKey: env.RPC_API_KEY_MAP['mumbai'],
+    infuraProvider({
+      apiKey: env.RPC_API_KEY,
     }),
   ],
 )

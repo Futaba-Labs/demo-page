@@ -200,7 +200,7 @@ const { chains } = configureChains(
   [polygonMumbai],
   [
     infuraProvider({
-      apiKey: env.RPC_API_KEY_MAP['mumbai'],
+      apiKey: env.RPC_API_KEY,
     }),
   ],
 )
@@ -218,6 +218,7 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
       <RainbowKitProvider
         showRecentTransactions={true}
         chains={chains}
+        locale='en-US'
         theme={
           pageTheme === 'light'
             ? rainbowLightTheme({
