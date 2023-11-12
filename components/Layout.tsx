@@ -218,6 +218,7 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
       <RainbowKitProvider
         showRecentTransactions={true}
         chains={chains}
+        locale='en-US'
         theme={
           pageTheme === 'light'
             ? rainbowLightTheme({
