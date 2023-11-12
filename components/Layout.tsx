@@ -200,7 +200,7 @@ const { chains } = configureChains(
   [polygonMumbai],
   [
     infuraProvider({
-      apiKey: env.RPC_API_KEY_MAP['mumbai'],
+      apiKey: env.RPC_API_KEY,
     }),
   ],
 )

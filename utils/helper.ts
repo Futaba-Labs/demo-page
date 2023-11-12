@@ -45,22 +45,23 @@ export const getBalanceSlot = (sender: string) => {
 }
 
 export const getProvider = (chainId: number) => {
+  const apiKey = env.RPC_API_KEY
   switch (chainId) {
     case 5:
       return new ethers.providers.JsonRpcProvider(
-        `https://eth-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['goerli']}`,
+        `https://goerli.infura.io/v3/${apiKey}`,
       )
     case 420:
       return new ethers.providers.JsonRpcProvider(
-        `https://opt-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['optimism-goerli']}`,
+        `https://optimism-goerli.infura.io/v3/${apiKey}`,
       )
     case 80001:
       return new ethers.providers.JsonRpcProvider(
-        `https://polygon-mumbai.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['mumbai']}`,
+        `https://polygon-mumbai.infura.io/v3/${apiKey}`,
       )
     case 421613:
       return new ethers.providers.JsonRpcProvider(
-        `https://arb-goerli.g.alchemy.com/v2/${env.RPC_API_KEY_MAP['arbitrum-goerli']}`,
+        `https://arbitrum-goerli.infura.io/v3/${apiKey}`,
       )
     default:
       return
