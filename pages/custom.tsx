@@ -43,7 +43,7 @@ const Custom: NextPage = () => {
 
   const supabase = createSupabase()
 
-  const { transactions, allTransactions, fetchTransactionsBySender } = useTransaction()
+  const { transactions, fetchTransactionsBySender, subscribeTransactionsBySender } = useTransaction()
 
   const sendQuery = async () => {
     const queries: QueryRequest[] = []
@@ -112,15 +112,12 @@ const Custom: NextPage = () => {
     setLoading(false)
   }, [data])
 
-  const fetchTxns = async () => {
-    if (address) {
-      fetchTransactionsBySender(address)
-    }
-  }
-
   useEffect(() => {
-    fetchTxns()
-  }, [supabase, allTransactions])
+    if (supabase && address) {
+      fetchTransactionsBySender(address)
+      subscribeTransactionsBySender(address)
+    }
+  }, [supabase])
 
   useEffect(() => {
     append({ chain: '', contractAddress: '', height: '', slot: '' })
