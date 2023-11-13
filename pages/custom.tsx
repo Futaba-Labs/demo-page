@@ -43,7 +43,7 @@ const Custom: NextPage = () => {
 
   const supabase = createSupabase()
 
-  const { transactions, allTransactions, fetchTransactionsBySender, subscribeTransactionsBySender } = useTransaction()
+  const { transactions, fetchTransactionsBySender, subscribeTransactionsBySender } = useTransaction()
 
   const sendQuery = async () => {
     const queries: QueryRequest[] = []
