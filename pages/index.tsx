@@ -118,7 +118,7 @@ const Home: NextPage = () => {
       }
 
       try {
-        const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
+        const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chain?.id as number)
         const fee = await queryAPI.estimateFee(queries)
         console.log('Queries: ', queries)
         write({ args: [queries, decimals], value: fee.toBigInt() })
