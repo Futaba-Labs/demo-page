@@ -18,6 +18,7 @@ import Layout from 'components/Layout'
 import { env } from 'utils'
 import type { AppProps } from 'next/app'
 import { infuraProvider } from 'wagmi/providers/infura'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai],
@@ -57,6 +58,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Layout {...pageProps}>
               <Component {...pageProps} />
               <Analytics />
+              <SpeedInsights />
             </Layout>
           </WagmiConfig>
         </main>

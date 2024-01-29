@@ -36,9 +36,9 @@ export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>
       testToken: '0x30D3C07CEB71553CABe5FA4d29fe4Ce2Aead38e5',
     },
     [ChainKey.MUMBAI]: {
-      balance: "0x39E947ACb7E59307E4332DFa8f61bCB3412414A9",
-      custom: "0xf3b80949c84eA7f3dbB28f6a7314acf4aB749eB2",
-      voting: "0x4bC3d9EF20BAD65155f48CDd4a9c4D9bea4c8CBa",
+      balance: "0xA20c1fA80FFCb4e7bb9ACEC26028Ac1a1492Ec83",
+      custom: "0x0A15BF261A3C45D9288c0BDe8E7543b03bc99e20",
+      voting: "0x60fc298716FAA62Cd26045769A3B07dD8961a0cd",
       testToken: '',
     },
     [ChainKey.ARBITRUM_GOERLI]: {
@@ -62,9 +62,9 @@ export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>
       testToken: '0x30D3C07CEB71553CABe5FA4d29fe4Ce2Aead38e5',
     },
     [ChainKey.MUMBAI]: {
-      balance: '0x980C6C355CFBb16420e8Af169F7a3F1310090E10',
-      custom: '0xbc1bbd63D6cff2DC985F1DE0b166aA39F8a86E3C',
-      voting: '0x462D421c1a174AF3f76C6072123Afb6aA7202F25',
+      balance: "0xA20c1fA80FFCb4e7bb9ACEC26028Ac1a1492Ec83",
+      custom: "0x0A15BF261A3C45D9288c0BDe8E7543b03bc99e20",
+      voting: "0x60fc298716FAA62Cd26045769A3B07dD8961a0cd",
       testToken: '',
     },
     [ChainKey.ARBITRUM_GOERLI]: {
