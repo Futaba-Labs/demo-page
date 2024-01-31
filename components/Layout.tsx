@@ -231,9 +231,9 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
         coolMode
       >
         <Head>
-          <title>Futaba Demo</title>
+          <title>Futaba Testnet</title>
           <meta name='description' content='Demo page to try Futaba in action' />
-          <meta property='og:title' content='Futaba Demo' />
+          <meta property='og:title' content='Futaba Testnet' />
           <meta property='og:description' content={'Demo page to try Futaba in action'} />
           <meta property='og:image' content={'/images/futaba_ogp.png'} />
         </Head>

@@ -172,7 +172,7 @@ const Home: NextPage = () => {
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
-        <h1 className='text-4xl font-semibold my-4'>Futaba Demo 🌱</h1>
+        <h1 className='text-4xl font-semibold my-4'>Futaba Testnet 🌱</h1>
         <p className='text-2xl font-medium mb-3'>{"On this page you can experience Futaba's query. Let's try it 🚀"}</p>
         <p>
           {'You can find detailed usage instructions in '}
