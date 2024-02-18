@@ -1,11 +1,12 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { use, useEffect, useState } from 'react'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainId, ChainKey, ChainStage, FutabaQueryAPI, getChainKey } from '@futaba-lab/sdk'
 import NextLink from 'next/link'
 import InputForm from 'components/InputForm'
 import {
+  checkSufficientBalance,
   convertChainIdToName,
   convertChainNameToId,
   getBalanceSlot,
@@ -34,6 +35,8 @@ import {
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import createSupabase from 'utils/supabase'
+import { createPublicClient, http } from 'viem'
+import { polygonMumbai } from 'viem/chains'
 
 const Transaction = dynamic(() => import('components/Transaction'))
 
@@ -43,7 +46,8 @@ export interface QueryForm {
 }
 
 const Home: NextPage = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false),
+    [showButton, setShowButton] = useState(false)
   const { register, control, setValue, watch, handleSubmit } = useForm()
 
   const isDark = false
@@ -56,15 +60,19 @@ const Home: NextPage = () => {
     name: 'queries',
   })
 
-  const { address, isConnected, isDisconnected } = useAccount()
+  const { address, isConnected } = useAccount()
   const { chain } = useNetwork()
 
   const deployment = useDeployment()
+  let balanceQuery = '0x'
+  if (deployment) {
+    balanceQuery = deployment.balance
+  }
   const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
   const chains = ['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']
 
-  const { data, isSuccess, write, isError } = useContractWrite({
-    address: deployment.balance as `0x${string}`,
+  const { data, isSuccess, write, isError, error } = useContractWrite({
+    address: balanceQuery as `0x${string}`,
     abi: BALANCE_QUERY_ABI,
     functionName: 'sendQuery',
   })
@@ -89,14 +97,14 @@ const Home: NextPage = () => {
         if (tokenAddress == '' || decimal.toString() == '') {
           showToast('Invalid token', 'error', isDark)
           setLoading(false)
-          return reject('Invalid token')
+          return
         }
 
         const blockHeight = await getLatestBlockNumber(chainId)
         if (!blockHeight) {
           showToast('Failed', 'error', isDark)
           setLoading(false)
-          return reject("Can't get block height")
+          return
         }
 
         const slot = getBalanceSlot(address)
@@ -114,19 +122,24 @@ const Home: NextPage = () => {
       if (queries.length == 0) {
         showToast('No queries', 'error', isDark)
         setLoading(false)
-        return reject('No queries')
+        return
       }
 
       try {
-        const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chain?.id as number)
-        const fee = await queryAPI.estimateFee(queries)
-        console.log('Queries: ', queries)
+        const [sufficient, fee] = await checkSufficientBalance(chain.id as number, queries, address)
+
+        if (!sufficient) {
+          showToast('Insufficient balance', 'error', isDark)
+          setLoading(false)
+          return
+        }
+
         write({ args: [queries, decimals], value: fee.toBigInt() })
         return resolve()
       } catch (error) {
         showToast('Transaction Failed', 'error', isDark)
         setLoading(false)
-        return reject(error)
+        return
       }
     })
   }
@@ -155,6 +168,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
+      showToast('Transaction Failed', 'error', isDark)
       setLoading(false)
     }
   }, [isError])
@@ -165,6 +179,14 @@ const Home: NextPage = () => {
       remove(0)
     }
   }, [])
+
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
 
   return (
     <>
@@ -279,15 +301,12 @@ const Home: NextPage = () => {
           >
             Add Query
           </Button>
-          <Button
-            type='submit'
-            isLoading={loading}
-            disabled={fields.length === 0 || isDisconnected}
-            color='success'
-            variant='flat'
-          >
-            {loading ? 'Sending' : 'Send Query'}
-          </Button>
+          {!showButton && <ConnectButton />}
+          {showButton && (
+            <Button type='submit' isLoading={loading} disabled={fields.length === 0} color='success' variant='flat'>
+              {loading ? 'Sending' : 'Send Query'}
+            </Button>
+          )}
         </div>
       </form>
       <div>

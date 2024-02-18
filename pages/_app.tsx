@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import { NextUIProvider } from '@nextui-org/react'
 import '@rainbow-me/rainbowkit/styles.css'
 
-import { connectorsForWallets, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { Chain, connectorsForWallets, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import {
   coin98Wallet,
   injectedWallet,

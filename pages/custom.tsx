@@ -2,13 +2,13 @@ import { NextPage } from 'next'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import { Button, Link } from '@nextui-org/react'
 import CustomInputForm from 'components/CustomInputForm'
 import Notice from 'components/Notice'
 import { QueryRequest } from 'types'
-import { showToast } from 'utils/helper'
+import { checkSufficientBalance, showToast } from 'utils/helper'
 import { useTransaction } from 'hooks/useTransaction'
 import { CUSTOM_QUERY_ABI } from 'utils'
 import { useDeployment } from 'hooks'
@@ -21,7 +21,8 @@ const Transaction = dynamic(() => import('components/Transaction'))
 const FORM_NAME = 'custom_queries'
 
 const Custom: NextPage = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false),
+    [showButton, setShowButton] = useState(false)
   const { register, control, setValue, handleSubmit } = useForm()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -33,13 +34,18 @@ const Custom: NextPage = () => {
   const addRecentTransaction = useAddRecentTransaction()
   const deployment = useDeployment()
 
+  let custom = '0x'
+  if (deployment) {
+    custom = deployment.custom
+  }
+
   const { data, isSuccess, write, isError } = useContractWrite({
-    address: deployment.custom as `0x${string}`,
+    address: custom as `0x${string}`,
     abi: CUSTOM_QUERY_ABI,
     functionName: 'query',
   })
 
-  const { address, isConnected, isDisconnected } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const supabase = createSupabase()
 
@@ -81,10 +87,15 @@ const Custom: NextPage = () => {
       }
 
       try {
-        if (isConnected) {
-          console.log(queries)
-          const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
-          const fee = await queryAPI.estimateFee(queries)
+        if (isConnected && chain && address) {
+          const [sufficient, fee] = await checkSufficientBalance(chain.id as number, queries, address)
+
+          if (!sufficient) {
+            showToast('Insufficient balance', 'error', false)
+            setLoading(false)
+            return
+          }
+
           write({ args: [queries], value: fee.mul(120).div(100).toBigInt() })
           return resolve()
         }
@@ -128,9 +139,18 @@ const Custom: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
+      showToast('Transaction Failed', 'error', false)
       setLoading(false)
     }
   }, [isError])
+
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
 
   return (
     <>
@@ -199,16 +219,13 @@ const Custom: NextPage = () => {
             >
               Add Query
             </Button>
-            <Button
-              type='submit'
-              isLoading={loading}
-              disabled={fields.length === 0 || isDisconnected}
-              color='success'
-              variant='flat'
-            >
-              {/* <input type='submit' /> */}
-              {loading ? 'Sending' : 'Send Query'}
-            </Button>
+            {showButton ? (
+              <Button type='submit' isLoading={loading} disabled={fields.length === 0} color='success' variant='flat'>
+                {loading ? 'Sending' : 'Send Query'}
+              </Button>
+            ) : (
+              <ConnectButton />
+            )}
           </div>
         </form>
       </div>

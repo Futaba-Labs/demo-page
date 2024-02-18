@@ -3,6 +3,9 @@ import { ToastOptions, toast } from 'react-toastify'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils.js'
 import { ERC20_ABI } from './constants'
 import { env } from './constants'
+import { ChainStage, FutabaQueryAPI, QueryRequest } from '@futaba-lab/sdk'
+import { createPublicClient, http } from 'viem'
+import { polygonMumbai } from 'viem/chains'
 
 export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
@@ -211,4 +214,24 @@ export const calculateTimeDifference = (craetedAt: Date) => {
     const remainingDays = differenceInDays % 365
     return `${differenceInYears} years ${remainingDays} days ago`
   }
+}
+
+export const checkSufficientBalance = async (chainId: number, queries: QueryRequest[], address: `0x${string}`) => {
+  const publicClient = createPublicClient({
+    chain: polygonMumbai,
+    transport: http(),
+  })
+
+  const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chainId)
+  const fee = await queryAPI.estimateFee(queries)
+
+  const balance = await publicClient.getBalance({
+    address,
+    blockTag: 'latest',
+  })
+
+  console.log('balance', balance)
+  console.log('fee', fee.toBigInt())
+
+  return [balance > fee.toBigInt(), fee]
 }

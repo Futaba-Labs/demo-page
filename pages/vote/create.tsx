@@ -1,8 +1,8 @@
 import { Button, Input, Spacer, Textarea } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-import { useContractWrite, useNetwork } from 'wagmi'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
 import { showToast } from 'utils/helper'
@@ -22,13 +22,17 @@ const Create: NextPage = () => {
     [description, setDescription] = useState(''),
     [expirationTime, setExpirationTime] = useState(0),
     [height, setHeight] = useState(0),
-    [loading, setLoading] = useState(false)
+    [loading, setLoading] = useState(false),
+    [showButton, setShowButton] = useState(false)
 
   const { register, handleSubmit, watch, setValue } = useForm<Inputs>()
 
   const addRecentTransaction = useAddRecentTransaction()
 
   const router = useRouter()
+
+  const { chain } = useNetwork()
+  const { isConnected } = useAccount()
 
   const deployment = useDeployment()
 
@@ -77,6 +81,14 @@ const Create: NextPage = () => {
     }
   }, [isError])
 
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
+
   return (
     <>
       <form onSubmit={handleSubmit(createProposal)}>
@@ -122,9 +134,13 @@ const Create: NextPage = () => {
           />
         </div>
         <div style={{ padding: '16px' }}></div>
-        <Button type='submit' color='success' variant='flat' isLoading={loading}>
-          {loading ? 'Creating' : 'Create'}
-        </Button>
+        {showButton ? (
+          <Button type='submit' color='success' variant='flat' isLoading={loading}>
+            {loading ? 'Creating' : 'Create'}
+          </Button>
+        ) : (
+          <ConnectButton />
+        )}
       </form>
     </>
   )
