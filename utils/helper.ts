@@ -51,6 +51,10 @@ export const getProvider = (chainId: number) => {
       return new ethers.providers.JsonRpcProvider(
         `https://goerli.infura.io/v3/${apiKey}`,
       )
+    case 11155111:
+      return new ethers.providers.JsonRpcProvider(
+        `https://sepolia.infura.io/v3/${apiKey}`,
+      )
     case 420:
       return new ethers.providers.JsonRpcProvider(
         `https://optimism-goerli.infura.io/v3/${apiKey}`,
@@ -62,6 +66,10 @@ export const getProvider = (chainId: number) => {
     case 421613:
       return new ethers.providers.JsonRpcProvider(
         `https://arbitrum-goerli.infura.io/v3/${apiKey}`,
+      )
+    case 421614:
+      return new ethers.providers.JsonRpcProvider(
+        `https://arbitrum-sepolia.infura.io/v3/${apiKey}`,
       )
     default:
       return
@@ -94,12 +102,16 @@ export const convertChainNameToId = (chainName: string) => {
   switch (chainName) {
     case 'Goerli':
       return 5
+    case 'Sepolia':
+      return 11155111
     case 'Optimism Goerli':
       return 420
     case 'Mumbai':
       return 80001
     case 'Arbitrum Goerli':
       return 421613
+    case 'Arbitrum Sepolia':
+      return 421614
     default:
       return
   }
@@ -109,12 +121,16 @@ export const convertChainIdToName = (chainId: number) => {
   switch (chainId) {
     case 5:
       return 'Goerli'
+    case 11155111:
+      return "Sepolia"
     case 420:
       return 'Optimism Goerli'
     case 80001:
       return 'Mumbai'
     case 421613:
       return 'Arbitrum Goerli'
+    case 421614:
+      return 'Arbitrum Sepolia'
     default:
       return
   }
@@ -135,12 +151,16 @@ export const getExploerUrl = (chainId: number) => {
   switch (chainId) {
     case 5:
       return 'https://goerli.etherscan.io/'
+    case 11155111:
+      return 'https://sepolia.etherscan.io/'
     case 420:
       return 'https://goerli-optimism.etherscan.io/'
     case 80001:
       return 'https://mumbai.polygonscan.com/'
     case 421613:
       return 'https://goerli.arbiscan.io/'
+    case 421614:
+      return 'https://sepolia.arbiscan.io/'
     default:
       return 'https://mumbai.polygonscan.com/'
   }

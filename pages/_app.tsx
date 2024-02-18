@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <WagmiConfig config={config}>
             <Layout {...pageProps}>
               <Component {...pageProps} />
-              <SpeedInsights />
+              {/* <SpeedInsights /> */}
               <Analytics />
             </Layout>
           </WagmiConfig>
