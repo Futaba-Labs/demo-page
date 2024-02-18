@@ -19,5 +19,4 @@ export const CHAINS = [
   { label: "Goerli", value: "5" },
   { label: "Optimism Goerli", value: "420" },
   { label: "Arbitrum Goelri", value: "421613" },
-  { label: "Arbitrum Sepolia", value: "421614" },
 ]

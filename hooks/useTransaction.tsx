@@ -138,6 +138,7 @@ export const useTransaction = () => {
             filter: `sender=eq.${sender}`,
           },
           (payload) => {
+            console.log('payload', payload)
             const data = payload.new as QueryData
             const transaction: QueryData = {
               transactionHash: data.transactionHash,
