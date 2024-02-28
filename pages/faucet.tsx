@@ -37,29 +37,34 @@ const Faucet: NextPage = () => {
 
     return new Promise<void>((resolve, reject) => {
       try {
-        const goerliWallet = getWallet(5)
-        const arbitrumGoerliWallet = getWallet(421613)
-        const optimismGoerliWallet = getWallet(420)
+        const address = data.address
+        const sepoliaWallet = getWallet(11155111)
+        const arbitrumSepoliaWallet = getWallet(421614)
+        const optimismSepoliaWallet = getWallet(11155420)
 
-        const sampleNFT = new ethers.Contract(NFT_ADDRESS, ERC721_ABI, goerliWallet)
-        const sampleTokenGoerli = new ethers.Contract(deployment[ChainKey.GOERLI]!.testToken, ERC20_ABI, goerliWallet)
-        const sampleTokenArbitrum = new ethers.Contract(
-          deployment[ChainKey.ARBITRUM_GOERLI]!.testToken,
+        const sampleNFT = new ethers.Contract(NFT_ADDRESS, ERC721_ABI, sepoliaWallet)
+        const sampleTokenSepolia = new ethers.Contract(
+          deployment[ChainKey.SEPOLIA]!.testToken,
           ERC20_ABI,
-          arbitrumGoerliWallet,
+          sepoliaWallet,
+        )
+        const sampleTokenArbitrum = new ethers.Contract(
+          deployment[ChainKey.ARBITRUM_SEPOLIA]!.testToken,
+          ERC20_ABI,
+          arbitrumSepoliaWallet,
         )
         const sampleTokenOptimism = new ethers.Contract(
-          deployment[ChainKey.OPTIMISM_GOERLI]!.testToken,
+          deployment[ChainKey.OPTIMISM_SEPOLIA]!.testToken,
           ERC20_ABI,
-          optimismGoerliWallet,
+          optimismSepoliaWallet,
         )
 
-        goerliWallet.getTransactionCount().then((nonce) => {
+        sepoliaWallet.getTransactionCount().then((nonce) => {
           Promise.all([
-            sampleNFT.safeMint(address, { nonce: nonce }),
-            sampleTokenGoerli.mintTo(address, parseUnits('100'), { nonce: nonce + 1 }),
-            sampleTokenArbitrum.mintTo(address, parseUnits('100')),
-            sampleTokenOptimism.mintTo(address, parseUnits('100')),
+            sampleNFT.safeMint(address, { nonce: nonce, gasLimit: 1000000 }),
+            sampleTokenSepolia.mintTo(address, parseUnits('100'), { nonce: nonce + 1, gasLimit: 1000000 }),
+            sampleTokenArbitrum.mintTo(address, parseUnits('100'), { gasLimit: 1000000 }),
+            sampleTokenOptimism.mintTo(address, parseUnits('100'), { gasLimit: 1000000 }),
           ])
             .then((res: ContractTransaction[]) => {
               const txs: Transaction[] = []
@@ -71,13 +76,12 @@ const Faucet: NextPage = () => {
               setTransactions(txs)
               setLocalStorege(storageKey, JSON.stringify(txs))
               setLoading(false)
+              return
             })
             .catch((err) => {
               console.log(err)
               showToast('error', 'Error')
               setLoading(false)
-              reject()
-              return
             })
         })
 
@@ -85,7 +89,6 @@ const Faucet: NextPage = () => {
       } catch (error) {
         showToast('error', 'Error')
         setLoading(false)
-        reject()
         return
       }
     })
@@ -108,7 +111,7 @@ const Faucet: NextPage = () => {
       </p>
       <p className='text-lg font-normal mb-8'>
         {
-          'The ERC20 token is minted as a token for Goerli, Arbiturm Goerli and Optimism Goerli respectively. No transaction is required.'
+          'The ERC20 token is minted as a token for Sepolia, Arbiturm Sepolia and Optimism Sepolia respectively. No transaction is required.'
         }
       </p>
       <div className='flex w-2/3 mb-6'>

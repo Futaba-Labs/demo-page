@@ -10,16 +10,10 @@ import { Analytics } from '@vercel/analytics/react'
 import Layout from 'components/Layout'
 import { env } from 'utils'
 import type { AppProps } from 'next/app'
-import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
-const { chains, publicClient } = configureChains(
-  [polygonMumbai],
-  [
-    infuraProvider({
-      apiKey: env.RPC_API_KEY,
-    }),
-  ],
-)
+const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
 
 const { connectors } = getDefaultWallets({
   appName: 'Futaba demo app',
@@ -41,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <WagmiConfig config={config}>
             <Layout {...pageProps}>
               <Component {...pageProps} />
+              {/* <SpeedInsights /> */}
               <Analytics />
             </Layout>
           </WagmiConfig>

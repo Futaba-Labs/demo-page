@@ -53,6 +53,24 @@ export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>
       voting: '',
       testToken: '0x73969C83706a2aED1D5CB242CA365EdFe679DFE3',
     },
+    [ChainKey.ARBITRUM_SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x0Ea06D21B4163E9C60063e562cBd1739aE7B7015',
+    },
+    [ChainKey.OPTIMISM_SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x21370CaE272802491CB4115EF4e188Ac3721d992',
+    },
+    [ChainKey.SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x91D1a12c16d2Ff1c072069a9d9c90d2c0299B244',
+    },
   },
   [ChainStage.DEVNET]: {
     [ChainKey.GOERLI]: {
@@ -78,6 +96,24 @@ export const DEPLOYMENT: Record<ChainStage, Partial<Record<ChainKey, Deployment>
       custom: '',
       voting: '',
       testToken: '0x73969C83706a2aED1D5CB242CA365EdFe679DFE3',
+    },
+    [ChainKey.ARBITRUM_SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x0Ea06D21B4163E9C60063e562cBd1739aE7B7015',
+    },
+    [ChainKey.OPTIMISM_SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x21370CaE272802491CB4115EF4e188Ac3721d992',
+    },
+    [ChainKey.SEPOLIA]: {
+      balance: '',
+      custom: '',
+      voting: '',
+      testToken: '0x91D1a12c16d2Ff1c072069a9d9c90d2c0299B244',
     },
   },
 }
