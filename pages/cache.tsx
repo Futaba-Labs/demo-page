@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { useAccount, useContractRead } from 'wagmi'
+import { useAccount, useContractRead, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { Button, Link } from '@nextui-org/react'
 import Notice from 'components/Notice'
@@ -11,13 +11,15 @@ import { GATEWAY_ABI } from 'utils'
 import { useGateway } from 'hooks'
 
 import dynamic from 'next/dynamic'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 const CacheResult = dynamic(() => import('components/CacheResult'))
 
 const FORM_NAME = 'cache'
 const STORAGE_KEY = 'cache'
 
 const Cache: NextPage = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false),
+    [showButton, setShowButton] = useState(false)
   const [queries, setQueries] = useState<QueryResult[]>([])
   const { register, control, setValue, handleSubmit } = useForm()
   const { fields, append, remove } = useFieldArray({
@@ -25,9 +27,15 @@ const Cache: NextPage = () => {
     name: FORM_NAME,
   })
 
-  const { isDisconnected } = useAccount()
+  const { isConnected } = useAccount()
+  const { chain } = useNetwork()
 
-  const gateway = useGateway()
+  let gateway = '0x'
+  const gatewayAddress = useGateway()
+
+  if (gatewayAddress) {
+    gateway = gatewayAddress
+  }
 
   const { data, refetch } = useContractRead({
     address: gateway as `0x${string}`,
@@ -93,6 +101,14 @@ const Cache: NextPage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
+
   return (
     <>
       <div>
@@ -140,27 +156,26 @@ const Cache: NextPage = () => {
           <div className='flex'>
             <Button
               onClick={() => append({ chain: '', tokenAddress: '' })}
-              disabled={fields.length > 11}
+              disabled={fields.length > 9}
               color='success'
               variant='flat'
               className='mr-4'
             >
               Add Query
             </Button>
-            <Button
-              type='submit'
-              isLoading={loading}
-              disabled={fields.length === 0 || isDisconnected}
-              color='success'
-              variant='flat'
-            >
-              {loading ? 'Querying' : 'Get Cache'}
-            </Button>
+            {showButton ? (
+              <Button type='submit' isLoading={loading} disabled={fields.length === 0} color='success' variant='flat'>
+                {loading ? 'Querying' : 'Get Cache'}
+              </Button>
+            ) : (
+              <ConnectButton />
+            )}
           </div>
         </form>
 
         <div style={{ padding: '16px' }}></div>
         <CacheResult page={10} queries={queries} />
+        <div style={{ padding: '16px' }}></div>
       </div>
     </>
   )

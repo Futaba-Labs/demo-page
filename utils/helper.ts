@@ -3,6 +3,9 @@ import { ToastOptions, toast } from 'react-toastify'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils.js'
 import { ERC20_ABI } from './constants'
 import { env } from './constants'
+import { ChainStage, FutabaQueryAPI, QueryRequest } from '@futaba-lab/sdk'
+import { createPublicClient, http } from 'viem'
+import { polygonMumbai } from 'viem/chains'
 
 export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
@@ -48,6 +51,10 @@ export const getProvider = (chainId: number) => {
   switch (chainId) {
     case 5:
       return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${env.API_KEY_MAP["goerli"]}`);
+    case 11155111:
+      return new ethers.providers.JsonRpcProvider(
+        `https://eth-sepolia.g.alchemy.com/v2/${env.API_KEY_MAP["sepolia"]}`,
+      )
     case 420:
       return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${env.API_KEY_MAP["optimism-goerli"]}`);
     case 80001:
@@ -91,19 +98,18 @@ export const convertChainNameToId = (chainName: string) => {
   switch (chainName) {
     case 'Goerli':
       return 5
+    case 'Sepolia':
+      return 11155111
     case 'Optimism Goerli':
       return 420
     case 'Mumbai':
       return 80001
     case 'Arbitrum Goerli':
       return 421613
-<<<<<<< Updated upstream
-=======
     case 'Arbitrum Sepolia':
       return 421614
     case 'Optimism Sepolia':
       return 11155420
->>>>>>> Stashed changes
     default:
       return
   }
@@ -113,19 +119,18 @@ export const convertChainIdToName = (chainId: number) => {
   switch (chainId) {
     case 5:
       return 'Goerli'
+    case 11155111:
+      return "Sepolia"
     case 420:
       return 'Optimism Goerli'
     case 80001:
       return 'Mumbai'
     case 421613:
       return 'Arbitrum Goerli'
-<<<<<<< Updated upstream
-=======
     case 421614:
       return 'Arbitrum Sepolia'
     case 11155420:
       return 'Optimism Sepolia'
->>>>>>> Stashed changes
     default:
       return
   }
@@ -146,19 +151,18 @@ export const getExploerUrl = (chainId: number) => {
   switch (chainId) {
     case 5:
       return 'https://goerli.etherscan.io/'
+    case 11155111:
+      return 'https://sepolia.etherscan.io/'
     case 420:
       return 'https://goerli-optimism.etherscan.io/'
     case 80001:
       return 'https://mumbai.polygonscan.com/'
     case 421613:
       return 'https://goerli.arbiscan.io/'
-<<<<<<< Updated upstream
-=======
     case 421614:
       return 'https://sepolia.arbiscan.io/'
     case 11155420:
       return 'https://sepolia-optimism.etherscan.io/'
->>>>>>> Stashed changes
     default:
       return 'https://mumbai.polygonscan.com/'
   }
@@ -209,4 +213,24 @@ export const calculateTimeDifference = (craetedAt: Date) => {
     const remainingDays = differenceInDays % 365
     return `${differenceInYears} years ${remainingDays} days ago`
   }
+}
+
+export const checkSufficientBalance = async (chainId: number, queries: QueryRequest[], address: `0x${string}`) => {
+  const publicClient = createPublicClient({
+    chain: polygonMumbai,
+    transport: http(),
+  })
+
+  const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chainId)
+  const fee = await queryAPI.estimateFee(queries)
+
+  const balance = await publicClient.getBalance({
+    address,
+    blockTag: 'latest',
+  })
+
+  console.log('balance', balance)
+  console.log('fee', fee.toBigInt())
+
+  return [balance > fee.toBigInt(), fee]
 }

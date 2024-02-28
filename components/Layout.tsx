@@ -8,7 +8,6 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
   Link,
-  useDisclosure,
   Button,
 } from '@nextui-org/react'
 import {
@@ -119,6 +118,7 @@ const Header = () => {
               smallScreen: 'avatar',
               largeScreen: 'full',
             }}
+            chainStatus='full'
           />
           <div className='flex gap-1 items-center'>
             <Button isIconOnly variant='light' className='hidden lg:flex'>
@@ -206,16 +206,12 @@ const { chains } = configureChains(
 )
 
 const Layout: NextPage = ({ children }: LayoutProps) => {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const { pageTheme } = usePageTheme()
-
-  useEffect(() => {
-    onOpen()
-  }, [onOpen])
 
   return (
     <>
       <RainbowKitProvider
+        initialChain={80001}
         showRecentTransactions={true}
         chains={chains}
         locale='en-US'
@@ -231,9 +227,9 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
         coolMode
       >
         <Head>
-          <title>Futaba Demo</title>
+          <title>Futaba Testnet</title>
           <meta name='description' content='Demo page to try Futaba in action' />
-          <meta property='og:title' content='Futaba Demo' />
+          <meta property='og:title' content='Futaba Testnet' />
           <meta property='og:description' content={'Demo page to try Futaba in action'} />
           <meta property='og:image' content={'/images/futaba_ogp.png'} />
         </Head>
@@ -241,7 +237,6 @@ const Layout: NextPage = ({ children }: LayoutProps) => {
 
         <main>{children}</main>
 
-        {/* <VerifyModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} /> */}
         <ToastContainer
           position='bottom-right'
           autoClose={5000}

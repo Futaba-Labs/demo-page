@@ -7,11 +7,11 @@ import { BigNumber } from 'ethers'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import Notice from 'components/Notice'
 import { ProposalData, QueryRequest } from 'types'
-import { converUnixToDate, showToast } from 'utils/helper'
+import { checkSufficientBalance, converUnixToDate, showToast } from 'utils/helper'
 import { NFT_ADDRESS, VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
 import { FutabaQueryAPI, ChainStage, ChainId } from '@futaba-lab/sdk'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 
 const VoteDetail: NextPage = () => {
   const [proposal, setProposal] = useState<ProposalData>(),
@@ -19,6 +19,7 @@ const VoteDetail: NextPage = () => {
     [loadingYes, setLoadingYes] = useState(false),
     [loadingNo, setLoadingNo] = useState(false),
     [hasVoted, setHasVoted] = useState(false),
+    [showButton, setShowButton] = useState(false),
     [voteCount, setVoteCount] = useState<{ yes: number; no: number }>({ yes: 0, no: 0 }),
     router = useRouter(),
     { id } = router.query,
@@ -71,18 +72,21 @@ const VoteDetail: NextPage = () => {
       setLoadingNo(true)
     }
     try {
-      const queryAPI = new FutabaQueryAPI(ChainStage.TESTNET, chain?.id as number)
-      const fee = await queryAPI.estimateFee(queries)
+      if (!chain || !address) return
+      const [sufficient, fee] = await checkSufficientBalance(chain.id as number, queries, address)
+
+      if (!sufficient) {
+        showToast('Insufficient balance', 'error', false)
+        stopLoading()
+        return
+      }
       if (vote) {
         voteYes({ value: fee.toBigInt() })
       } else {
         voteNo({ value: fee.toBigInt() })
       }
     } catch (error) {
-      setLoadingYes(false)
-      setLoadingNo(false)
-
-      showToast('error', 'Transaction Failed')
+      failProcess()
     }
   }
 
@@ -96,9 +100,7 @@ const VoteDetail: NextPage = () => {
 
   useEffect(() => {
     if (isErrorYes || isErrorNo) {
-      setLoadingYes(false)
-      setLoadingNo(false)
-      showToast('error', 'Transaction Failed')
+      failProcess()
     }
   }, [isErrorYes, isErrorNo])
 
@@ -125,8 +127,7 @@ const VoteDetail: NextPage = () => {
         confirmations: 5,
       })
     }
-    setLoadingYes(false)
-    setLoadingNo(false)
+    stopLoading()
   }, [yesTx, noTx])
 
   useEffect(() => {
@@ -148,6 +149,24 @@ const VoteDetail: NextPage = () => {
       router.push('/')
     }
   })
+
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
+
+  const failProcess = () => {
+    stopLoading()
+    showToast('error', 'Transaction Failed')
+  }
+
+  const stopLoading = () => {
+    setLoadingYes(false)
+    setLoadingNo(false)
+  }
 
   return (
     <>
@@ -197,27 +216,32 @@ const VoteDetail: NextPage = () => {
               {converUnixToDate(parseInt(proposal.expirationTime.toString())).getTime() < Date.now() || hasVoted ? (
                 <></>
               ) : (
-                <div className='flex w-full gap-6'>
-                  <Button
-                    onPress={() => voting(true)}
-                    color='success'
-                    variant='flat'
-                    fullWidth={true}
-                    isLoading={loadingYes}
-                    isDisabled={loadingYes || loadingNo}
-                  >
-                    {loadingYes ? 'Voting' : 'Vote "Yes"'}
-                  </Button>
-                  <Button
-                    onPress={() => voting(false)}
-                    color='danger'
-                    variant='flat'
-                    fullWidth={true}
-                    isLoading={loadingNo}
-                    isDisabled={loadingYes || loadingNo}
-                  >
-                    {loadingNo ? 'Voting' : 'Vote "No"'}
-                  </Button>
+                <div>
+                  {!showButton && <ConnectButton />}
+                  {showButton && (
+                    <div className='flex w-full gap-6'>
+                      <Button
+                        onPress={() => voting(true)}
+                        color='success'
+                        variant='flat'
+                        fullWidth={true}
+                        isLoading={loadingYes}
+                        isDisabled={loadingYes || loadingNo}
+                      >
+                        {loadingYes ? 'Voting' : 'Vote "Yes"'}
+                      </Button>
+                      <Button
+                        onPress={() => voting(false)}
+                        color='danger'
+                        variant='flat'
+                        fullWidth={true}
+                        isLoading={loadingNo}
+                        isDisabled={loadingYes || loadingNo}
+                      >
+                        {loadingNo ? 'Voting' : 'Vote "No"'}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -1,26 +1,38 @@
 import { Button, Input, Spacer, Textarea } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-import { useContractWrite, useNetwork } from 'wagmi'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
 import { showToast } from 'utils/helper'
 import { VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+import { SubmitHandler, useForm } from 'react-hook-form'
+
+type Inputs = {
+  title: string
+  description: string
+  expirationTime: number
+  height: number
+}
 
 const Create: NextPage = () => {
   const [title, setTitle] = useState(''),
     [description, setDescription] = useState(''),
     [expirationTime, setExpirationTime] = useState(0),
     [height, setHeight] = useState(0),
-    [loading, setLoading] = useState(false)
+    [loading, setLoading] = useState(false),
+    [showButton, setShowButton] = useState(false)
+
+  const { register, handleSubmit, watch, setValue } = useForm<Inputs>()
 
   const addRecentTransaction = useAddRecentTransaction()
 
   const router = useRouter()
 
   const { chain } = useNetwork()
+  const { isConnected } = useAccount()
 
   const deployment = useDeployment()
 
@@ -36,11 +48,14 @@ const Create: NextPage = () => {
     setExpirationTime(Math.floor((time.getTime() - Date.now()) / 60 / 1000))
   }
 
-  const createProposal = () => {
+  const createProposal: SubmitHandler<Inputs> = (data) => {
+    console.log(data)
     setLoading(true)
 
     try {
-      write()
+      const time = new Date(data.expirationTime.toString())
+      const expirationTime = Math.floor((time.getTime() - Date.now()) / 60 / 1000)
+      write({ args: [data.title, data.description, expirationTime, data.height] })
     } catch (error) {
       setLoading(false)
       showToast('error', 'Transaction failed')
@@ -66,9 +81,17 @@ const Create: NextPage = () => {
     }
   }, [isError])
 
+  useEffect(() => {
+    if (isConnected && chain && chain.id === 80001) {
+      setShowButton(true)
+    } else {
+      setShowButton(false)
+    }
+  }, [isConnected, chain])
+
   return (
     <>
-      <div>
+      <form onSubmit={handleSubmit(createProposal)}>
         <div style={{ padding: '8px' }}></div>
         <Notice />
         <div style={{ padding: '8px' }}></div>
@@ -80,20 +103,15 @@ const Create: NextPage = () => {
 
         <div style={{ padding: '16px' }}></div>
         <div className='flex flex-row gap-4'>
-          <Input
-            label={'Title'}
-            placeholder='Proposal title'
-            fullWidth={true}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <Input label={'Title'} placeholder='Proposal title' fullWidth={true} {...register('title')} isRequired />
           <Spacer x={1} />
           <Input
             label={'Expiration date'}
             placeholder={Date.now().toString()}
             type='date'
             fullWidth={true}
-            onChange={onChangeExpirationTime}
+            {...register('expirationTime')}
+            isRequired
           />
           <Spacer x={1} />
           <Input
@@ -101,7 +119,8 @@ const Create: NextPage = () => {
             placeholder={'0'}
             type='number'
             fullWidth={true}
-            onChange={(e) => setHeight(parseInt(e.target.value))}
+            {...register('height')}
+            isRequired
           />
         </div>
         <div style={{ padding: '16px' }}></div>
@@ -110,15 +129,19 @@ const Create: NextPage = () => {
             label='Description'
             placeholder='Proposal description'
             fullWidth={true}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register('description')}
+            isRequired
           />
         </div>
         <div style={{ padding: '16px' }}></div>
-        <Button onPress={() => createProposal()} color='success' variant='flat' isLoading={loading}>
-          {loading ? 'Creating' : 'Create'}
-        </Button>
-      </div>
+        {showButton ? (
+          <Button type='submit' color='success' variant='flat' isLoading={loading}>
+            {loading ? 'Creating' : 'Create'}
+          </Button>
+        ) : (
+          <ConnectButton />
+        )}
+      </form>
     </>
   )
 }

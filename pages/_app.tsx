@@ -2,7 +2,14 @@ import '../styles/globals.css'
 import { NextUIProvider } from '@nextui-org/react'
 import '@rainbow-me/rainbowkit/styles.css'
 
-import { getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { Chain, connectorsForWallets, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import {
+  coin98Wallet,
+  injectedWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygonMumbai } from 'wagmi/chains'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
@@ -15,11 +22,19 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
 
-const { connectors } = getDefaultWallets({
-  appName: 'Futaba demo app',
-  projectId: '5573a7c23be46c0343267fb1dca563af',
-  chains,
-})
+const projectId = '5573a7c23be46c0343267fb1dca563af'
+
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Recommended',
+    wallets: [
+      metaMaskWallet({ projectId, chains }),
+      coin98Wallet({ projectId, chains }),
+      rainbowWallet({ projectId, chains }),
+      walletConnectWallet({ projectId, chains }),
+    ],
+  },
+])
 
 const config = createConfig({
   autoConnect: true,

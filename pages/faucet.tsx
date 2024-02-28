@@ -18,21 +18,26 @@ import {
   showToast,
 } from 'utils'
 import { Deployment } from 'types'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 type Transaction = {
   chain: number
   hash: string
 }
 
+type Inputs = {
+  address: string
+}
+
 const Faucet: NextPage = () => {
   const storageKey = 'faucet'
   const [transactions, setTransactions] = useState<Transaction[]>([]),
-    [loading, setLoading] = useState(false),
-    [address, setAddress] = useState('')
-
+    [loading, setLoading] = useState(false)
   const deployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
 
-  const sendTokens = async () => {
+  const { register, handleSubmit } = useForm<Inputs>()
+
+  const sendTokens: SubmitHandler<Inputs> = async (data) => {
     setLoading(true)
 
     return new Promise<void>((resolve, reject) => {
@@ -114,17 +119,18 @@ const Faucet: NextPage = () => {
           'The ERC20 token is minted as a token for Sepolia, Arbiturm Sepolia and Optimism Sepolia respectively. No transaction is required.'
         }
       </p>
-      <div className='flex w-2/3 mb-6'>
+      <form className='flex w-2/3 mb-6' onSubmit={handleSubmit(sendTokens)}>
         <Input
           placeholder='Your wallet address'
           fullWidth={true}
           className='mr-4'
-          onChange={(e) => setAddress(e.target.value)}
+          {...register('address')}
+          isRequired
         />
-        <Button onClick={() => sendTokens()} color='success' variant='flat' isLoading={loading} className='px-6'>
+        <Button type='submit' color='success' variant='flat' isLoading={loading} className='px-6'>
           {loading ? 'Sending' : 'Send me tokens'}
         </Button>
-      </div>
+      </form>
       <h2 className='text-3xl font-semibold my-10'>Your Transactions</h2>
       {transactions.length > 0 ? (
         <Table aria-label='Example table with static content'>
