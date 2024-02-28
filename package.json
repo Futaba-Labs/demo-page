@@ -28,7 +28,7 @@
     "viem": "^1.0.2"
   },
   "devDependencies": {
-    "@futaba-lab/sdk": "^0.1.15",
+    "@futaba-lab/sdk": "^0.1.16",
     "@next/bundle-analyzer": "^13.5.4",
     "@rainbow-me/rainbowkit": "^1.0.1",
     "@supabase/supabase-js": "^2.39.3",

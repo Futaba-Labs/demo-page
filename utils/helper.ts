@@ -42,38 +42,31 @@ export const getBalanceSlot = (sender: string) => {
       hexZeroPad(sender, 32),
 
       // Similarly with the slot-index into the Solidity variable layout
-      hexZeroPad('0x00000000000000000000000000000000000000000000000000000000000000c9', 32),
+      hexZeroPad('0x0000000000000000000000000000000000000000000000000000000000000097', 32),
     ]),
   )
 }
 
 export const getProvider = (chainId: number) => {
-  const apiKey = env.RPC_API_KEY
   switch (chainId) {
     case 5:
-      return new ethers.providers.JsonRpcProvider(
-        `https://goerli.infura.io/v3/${apiKey}`,
-      )
+      return new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${env.API_KEY_MAP["goerli"]}`);
     case 11155111:
       return new ethers.providers.JsonRpcProvider(
-        `https://sepolia.infura.io/v3/${apiKey}`,
+        `https://eth-sepolia.g.alchemy.com/v2/${env.API_KEY_MAP["sepolia"]}`,
       )
     case 420:
-      return new ethers.providers.JsonRpcProvider(
-        `https://optimism-goerli.infura.io/v3/${apiKey}`,
-      )
+      return new ethers.providers.JsonRpcProvider(`https://opt-goerli.g.alchemy.com/v2/${env.API_KEY_MAP["optimism-goerli"]}`);
     case 80001:
-      return new ethers.providers.JsonRpcProvider(
-        `https://polygon-mumbai.infura.io/v3/${apiKey}`,
-      )
+      return new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${env.API_KEY_MAP["mumbai"]}`);
     case 421613:
-      return new ethers.providers.JsonRpcProvider(
-        `https://arbitrum-goerli.infura.io/v3/${apiKey}`,
-      )
+      return new ethers.providers.JsonRpcProvider(`https://arb-goerli.g.alchemy.com/v2/${env.API_KEY_MAP["arbitrum-goerli"]}`);
+    case 11155111:
+      return new ethers.providers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${env.API_KEY_MAP["sepolia"]}`);
     case 421614:
-      return new ethers.providers.JsonRpcProvider(
-        `https://arbitrum-sepolia.infura.io/v3/${apiKey}`,
-      )
+      return new ethers.providers.JsonRpcProvider(`https://arb-sepolia.g.alchemy.com/v2/${env.API_KEY_MAP["arbitrum-sepolia"]}`);
+    case 11155420:
+      return new ethers.providers.JsonRpcProvider(`https://opt-sepolia.g.alchemy.com/v2/${env.API_KEY_MAP["optimism-sepolia"]}`);
     default:
       return
   }
@@ -115,6 +108,8 @@ export const convertChainNameToId = (chainName: string) => {
       return 421613
     case 'Arbitrum Sepolia':
       return 421614
+    case 'Optimism Sepolia':
+      return 11155420
     default:
       return
   }
@@ -134,6 +129,8 @@ export const convertChainIdToName = (chainId: number) => {
       return 'Arbitrum Goerli'
     case 421614:
       return 'Arbitrum Sepolia'
+    case 11155420:
+      return 'Optimism Sepolia'
     default:
       return
   }
@@ -164,6 +161,8 @@ export const getExploerUrl = (chainId: number) => {
       return 'https://goerli.arbiscan.io/'
     case 421614:
       return 'https://sepolia.arbiscan.io/'
+    case 11155420:
+      return 'https://sepolia-optimism.etherscan.io/'
     default:
       return 'https://mumbai.polygonscan.com/'
   }

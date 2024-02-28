@@ -1536,10 +1536,10 @@
   dependencies:
     tslib "^2.4.0"
 
-"@futaba-lab/sdk@^0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@futaba-lab/sdk/-/sdk-0.1.15.tgz#782ecc26bf0aff47583f5abde8fda585c88f80be"
-  integrity sha512-3NgQV9tyJY7PsDzrpC9BfnWFYP50XgoViXkTaa1TiH6EBLLm7JGiK5a3PpL81I1HTkH2BSpkJ7C65gRRvn1QBg==
+"@futaba-lab/sdk@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@futaba-lab/sdk/-/sdk-0.1.16.tgz#30c63d4538c7ca5721671dc717637518b6002c54"
+  integrity sha512-qs+ghyoaN+sNCwiWcRzOPpbAZBIHXPdV1+NyfdNKBkPMhDHnauSF9V5yUtVJRL+SRqrdObTXzxNMoYJJcPquVQ==
   dependencies:
     ethers "^5.7.2"
     typescript "^5.1.3"

@@ -69,7 +69,7 @@ const Home: NextPage = () => {
     balanceQuery = deployment.balance
   }
   const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
-  const chains = ['Goerli', 'Optimism Goerli', 'Arbitrum Goerli']
+  const chains = ['Sepolia', 'Optimism Sepolia', 'Arbitrum Sepolia']
 
   const { data, isSuccess, write, isError, error } = useContractWrite({
     address: balanceQuery as `0x${string}`,

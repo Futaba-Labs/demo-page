@@ -5,13 +5,13 @@ import { useNetwork, useContractRead, useContractWrite, useAccount } from 'wagmi
 import { useEffect, useState } from 'react'
 import { BigNumber } from 'ethers'
 import { concat, hexZeroPad, keccak256 } from 'ethers/lib/utils'
-import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { ChainStage, FutabaQueryAPI } from '@futaba-lab/sdk'
 import Notice from 'components/Notice'
 import { ProposalData, QueryRequest } from 'types'
 import { checkSufficientBalance, converUnixToDate, showToast } from 'utils/helper'
 import { NFT_ADDRESS, VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
+import { FutabaQueryAPI, ChainStage, ChainId } from '@futaba-lab/sdk'
+import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 
 const VoteDetail: NextPage = () => {
   const [proposal, setProposal] = useState<ProposalData>(),
@@ -108,7 +108,7 @@ const VoteDetail: NextPage = () => {
     if (proposal && address) {
       setQueries([
         {
-          dstChainId: 5,
+          dstChainId: ChainId.SEPOLIA,
           to: NFT_ADDRESS,
           height: 0,
           slot: keccak256(concat([hexZeroPad(address, 32), hexZeroPad(BigNumber.from(3).toHexString(), 32)])),
