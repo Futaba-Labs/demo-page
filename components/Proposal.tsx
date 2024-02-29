@@ -1,6 +1,7 @@
-import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from '@nextui-org/react'
+import { Card, CardBody, CardFooter, CardHeader, Chip, Divider, Pagination } from '@nextui-org/react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useState, useMemo, useEffect } from 'react'
 import { ProposalData } from 'types'
 import { converUnixToDate } from 'utils/helper'
 
@@ -9,11 +10,29 @@ interface ProposalProps {
 }
 
 const Proposal: NextPage<ProposalProps> = ({ proposals }) => {
+  const [page, setPage] = useState(1),
+    [items, setItems] = useState<ProposalData[]>([])
   const router = useRouter()
+
+  const pages = Math.ceil(proposals.length / 9)
+
+  useEffect(() => {
+    const start = (page - 1) * 9
+    const end = start + 9
+    setItems(proposals.slice(start, end))
+  }, [page, proposals])
+
+  // const items = useMemo(() => {
+  //   const start = (page - 1) * 9
+  //   const end = start + 9
+
+  //   return proposals.slice(start, end)
+  // }, [page, proposals])
+
   return (
     <div className='grid grid-cols-3 gap-4'>
-      {proposals.length > 0 ? (
-        proposals.map((proposal) => {
+      {items.length > 0 ? (
+        items.map((proposal) => {
           const expireTime = converUnixToDate(parseInt(proposal.expirationTime.toString()))
           return (
             <Card
@@ -32,7 +51,7 @@ const Proposal: NextPage<ProposalProps> = ({ proposals }) => {
                       </Chip>
                     ) : (
                       <Chip color='secondary' variant='shadow'>
-                        Finisihed
+                        Finished
                       </Chip>
                     )}
                   </div>
@@ -51,6 +70,18 @@ const Proposal: NextPage<ProposalProps> = ({ proposals }) => {
         })
       ) : (
         <></>
+      )}
+      {proposals.length > 9 && (
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color='success'
+          page={page}
+          total={pages}
+          onChange={(page) => setPage(page)}
+          className='col-start-2 justify-self-center'
+        />
       )}
     </div>
   )

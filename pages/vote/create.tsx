@@ -5,10 +5,11 @@ import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { ConnectButton, useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import Notice from 'components/Notice'
-import { showToast } from 'utils/helper'
+import { getLatestBlockNumber, showToast } from 'utils/helper'
 import { VOTING_ABI } from 'utils'
 import { useDeployment } from 'hooks'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { ChainId } from '@futaba-lab/sdk'
 
 type Inputs = {
   title: string
@@ -88,6 +89,18 @@ const Create: NextPage = () => {
       setShowButton(false)
     }
   }, [isConnected, chain])
+
+  const setLastestBlockHeight = async () => {
+    const latestHeight = await getLatestBlockNumber(ChainId.SEPOLIA)
+    if (latestHeight) {
+      setHeight(latestHeight)
+      setValue('height', latestHeight)
+    }
+  }
+
+  useEffect(() => {
+    setLastestBlockHeight()
+  }, [])
 
   return (
     <>
