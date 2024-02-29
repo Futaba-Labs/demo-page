@@ -13,10 +13,11 @@ type Props = {
   registerToken: UseFormRegisterReturn
   registerDecimal: UseFormRegisterReturn
   onClick: () => void
+  defaultSelectKey?: string
 } & InputHTMLAttributes<HTMLInputElement>
 
-const InputForm: NextPage<Props> = ({ setChain, registerToken, registerDecimal, index, onClick }) => {
-  const [selected, setSelected] = useState<any>(new Set(['Select Chain']))
+const InputForm: NextPage<Props> = ({ setChain, registerToken, registerDecimal, index, onClick, defaultSelectKey }) => {
+  const [selected, setSelected] = useState<any>(new Set([defaultSelectKey && 'Select Chain']))
 
   const selectedValue = useMemo(() => {
     const value = Array.from(selected).join(', ').replaceAll('_', ' ')

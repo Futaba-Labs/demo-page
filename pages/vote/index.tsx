@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useContractRead } from 'wagmi'
-import { Button, Card, Link, Skeleton } from '@nextui-org/react'
+import { Button, Card, Link, Select, Skeleton, SelectItem, Selection } from '@nextui-org/react'
 import NextLink from 'next/link'
 import Notice from 'components/Notice'
 import { ProposalData } from 'types'
@@ -12,6 +12,11 @@ import { useDeployment } from 'hooks'
 import dynamic from 'next/dynamic'
 
 const Proposal = dynamic(() => import('components/Proposal'))
+
+const selectOptions = [
+  { label: 'Expire Date', value: 'date' },
+  { label: 'Created Date', value: 'id' },
+]
 
 const Vote: NextPage = () => {
   const [proposals, setProposals] = useState<ProposalData[]>([])
@@ -42,6 +47,25 @@ const Vote: NextPage = () => {
     }
   }, [data])
 
+  const handleSort = (keys: any) => {
+    const key = keys.values().next().value
+    const p = [...proposals]
+    if (key === 'date') {
+      p.sort((a, b) => {
+        if (a.expirationTime > b.expirationTime) return -1
+        if (a.expirationTime < b.expirationTime) return 1
+        return 0
+      })
+    } else {
+      p.sort((a, b) => {
+        if (a.id > b.id) return -1
+        if (a.id < b.id) return 1
+        return 0
+      })
+    }
+    setProposals(p)
+  }
+
   return (
     <>
       <div>
@@ -68,7 +92,23 @@ const Vote: NextPage = () => {
           {'Create proposal'}
         </Button>
         <div style={{ padding: '8px' }}></div>
-        <h2 className='text-3xl font-semibold mb-4'>Proposals</h2>
+        <div className='flex justify-between mb-10'>
+          <h2 className='text-3xl font-semibold'>Proposals</h2>
+          <Select
+            label='Sort'
+            size='sm'
+            placeholder='Select an sort method'
+            className='max-w-xs'
+            onSelectionChange={(keys) => handleSort(keys)}
+          >
+            {selectOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+
         {isFetched && data ? (
           <Proposal proposals={proposals} />
         ) : (

@@ -37,8 +37,11 @@ import dynamic from 'next/dynamic'
 import createSupabase from 'utils/supabase'
 import { createPublicClient, http } from 'viem'
 import { polygonMumbai } from 'viem/chains'
+import { forEach } from 'lodash'
 
 const Transaction = dynamic(() => import('components/Transaction'))
+
+const chains = ['Sepolia', 'Optimism Sepolia', 'Arbitrum Sepolia']
 
 export interface QueryForm {
   chain: string
@@ -69,8 +72,6 @@ const Home: NextPage = () => {
     balanceQuery = deployment.balance
   }
   const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
-  const chains = ['Sepolia', 'Optimism Sepolia', 'Arbitrum Sepolia']
-
   const { data, isSuccess, write, isError, error } = useContractWrite({
     address: balanceQuery as `0x${string}`,
     abi: BALANCE_QUERY_ABI,
@@ -173,12 +174,17 @@ const Home: NextPage = () => {
     }
   }, [isError])
 
-  useEffect(() => {
-    append({ chain: '', tokenAddress: '', decimal: 18 })
-    return () => {
-      remove(0)
-    }
-  }, [])
+  // useEffect(() => {
+  //   forEach(chains, (chain, i) => {
+  //     const chainId = convertChainNameToId(chain)
+  //     const chainKey = getChainKey(chainId as ChainId)
+  //     const testToken = testnetDeployment[chainKey]?.testToken
+  //     append({ chain: chain, tokenAddress: testToken, decimal: 18 })
+  //     setValue(`queries.${i}.chain`, chainId)
+  //     setValue(`queries.${i}.tokenAddress`, testToken)
+  //     setValue(`queries.${i}.decimal`, 18)
+  //   })
+  // }, [])
 
   useEffect(() => {
     if (isConnected && chain && chain.id === 80001) {
