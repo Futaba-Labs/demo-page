@@ -28,10 +28,8 @@ const InputForm: NextPage<Props> = ({ setChain, registerToken, registerDecimal, 
   return (
     <>
       <div className='flex flex-wrap w-full md:flex-nowrap md:w-3/5 gap-4'>
-        <div className='basis-1/4'>
-          <DropdownSelect selected={selected} selectedValue={selectedValue} setSelected={setSelected} items={CHAINS} />
-        </div>
-        <Input placeholder={'Token Address'} fullWidth={true} {...registerToken} className='basis-2/4' isRequired />
+        <DropdownSelect selected={selected} selectedValue={selectedValue} setSelected={setSelected} items={CHAINS} />
+        <Input placeholder={'Token Address'} fullWidth={true} {...registerToken} className='' isRequired />
         <Button onClick={onClick} color={'danger'} variant='flat'>
           <FaTrashAlt color='red' />
         </Button>
