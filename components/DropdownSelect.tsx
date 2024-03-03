@@ -10,10 +10,10 @@ type Props = {
     label: string
     value: string
   }[]
+  defaultSelectedKey?: string
 }
 
-const DropdownSelect: NextPage<Props> = ({ setSelected, items, selectedValue }) => {
-  console.log(selectedValue)
+const DropdownSelect: NextPage<Props> = ({ setSelected, items, selectedValue, defaultSelectedKey }) => {
   return (
     <Select
       label=''
@@ -21,6 +21,7 @@ const DropdownSelect: NextPage<Props> = ({ setSelected, items, selectedValue }) 
       labelPlacement='outside'
       isRequired
       onSelectionChange={setSelected}
+      defaultSelectedKeys={defaultSelectedKey && [defaultSelectedKey]}
       startContent={
         selectedValue !== '' &&
         selectedValue !== 'Select Chain' && (

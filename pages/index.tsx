@@ -48,10 +48,27 @@ export interface QueryForm {
   tokenAddress: string
 }
 
+const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
+
+const chainInfo = chains.map((chain) => {
+  const chainId = convertChainNameToId(chain)
+  const chainKey = getChainKey(chainId as ChainId)
+  return {
+    chain: chainId?.toString(),
+    tokenAddress: testnetDeployment[chainKey]?.testToken,
+    decimal: 18,
+  }
+})
+
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false),
     [showButton, setShowButton] = useState(false)
-  const { register, control, setValue, watch, handleSubmit } = useForm()
+
+  const { register, control, setValue, watch, handleSubmit } = useForm({
+    defaultValues: {
+      queries: chainInfo,
+    },
+  })
 
   const isDark = false
   const { transactions, fetchTransactionsBySender, subscribeTransactionsBySender } = useTransaction()
@@ -71,7 +88,6 @@ const Home: NextPage = () => {
   if (deployment) {
     balanceQuery = deployment.balance
   }
-  const testnetDeployment = DEPLOYMENT[ChainStage.TESTNET] as Partial<Record<ChainKey, Deployment>>
   const { data, isSuccess, write, isError, error } = useContractWrite({
     address: balanceQuery as `0x${string}`,
     abi: BALANCE_QUERY_ABI,
@@ -173,18 +189,6 @@ const Home: NextPage = () => {
       setLoading(false)
     }
   }, [isError])
-
-  // useEffect(() => {
-  //   forEach(chains, (chain, i) => {
-  //     const chainId = convertChainNameToId(chain)
-  //     const chainKey = getChainKey(chainId as ChainId)
-  //     const testToken = testnetDeployment[chainKey]?.testToken
-  //     append({ chain: chain, tokenAddress: testToken, decimal: 18 })
-  //     setValue(`queries.${i}.chain`, chainId)
-  //     setValue(`queries.${i}.tokenAddress`, testToken)
-  //     setValue(`queries.${i}.decimal`, 18)
-  //   })
-  // }, [])
 
   useEffect(() => {
     if (isConnected && chain && chain.id === 80001) {
@@ -289,10 +293,11 @@ const Home: NextPage = () => {
             <div style={{ padding: '16px' }}></div>
             <InputForm
               index={i}
-              setChain={setValue}
+              setChain={() => {}}
               registerToken={register(`queries.${i}.tokenAddress`)}
               registerDecimal={register(`queries.${i}.decimal`)}
               onClick={() => remove(i)}
+              defaultSelectKey={field.chain}
             />
           </div>
         ))}
