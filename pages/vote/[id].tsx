@@ -90,8 +90,12 @@ const VoteDetail: NextPage = () => {
     }
   }
 
-  const getScanUrl = (height: string) => {
-    return `https://goerli.etherscan.io/block/${height}`
+  const getBlockUrl = (height: string) => {
+    return `https://sepolia.etherscan.io/block/${height}`
+  }
+
+  const getAddressUrl = (creater: string) => {
+    return `https://sepolia.etherscan.io/address/${creater}`
   }
 
   useEffect(() => {
@@ -193,7 +197,7 @@ const VoteDetail: NextPage = () => {
                     <span className='text-md font-normal mb-1'>
                       Block height:{' '}
                       <Link
-                        href={getScanUrl(proposal.height.toString())}
+                        href={getBlockUrl(proposal.height.toString())}
                         className='text-md font-normal'
                         isExternal
                         showAnchorIcon
@@ -201,6 +205,18 @@ const VoteDetail: NextPage = () => {
                         {proposal.height.toString()}
                       </Link>
                     </span>
+                    <span className='text-md font-normal mb-1'>
+                      Creater:{' '}
+                      <Link
+                        href={getAddressUrl(proposal.creator)}
+                        className='text-md font-normal'
+                        isExternal
+                        showAnchorIcon
+                      >
+                        {proposal.creator}
+                      </Link>
+                    </span>
+                    <p className='text-md font-normal mb-1'>Vote count: {proposal.voters.length}</p>
                     <p className='text-md font-normal'>
                       Expire Date:{' '}
                       {parseInt(proposal.expirationTime.toString()) !== 0

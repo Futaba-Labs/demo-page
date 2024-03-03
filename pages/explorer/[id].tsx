@@ -9,6 +9,7 @@ import { Rpc, convertChainIdToName, getProvider, omitText } from 'utils'
 import { useGateway } from 'hooks'
 import dynamic from 'next/dynamic'
 import createSupabase from 'utils/supabase'
+import Image from 'next/image'
 
 const TransactionCard = dynamic(() => import('components/TransactionCard'))
 const QueryTable = dynamic(() => import('components/QueryTable'))
@@ -161,6 +162,8 @@ const TransactionDetail: NextPage = () => {
 
   const q = transactions[0]
   const { text: status, color } = convertStatus(q.status)
+  const imageURL = '/images/chains/' + q.from.toString() + '.svg'
+  const alt = 'chain_' + q.from.toString()
 
   return (
     <>
@@ -168,10 +171,15 @@ const TransactionDetail: NextPage = () => {
         <h2 className='text-3xl font-semibold my-6'>Transaction</h2>
         <Card className='w-full mb-5'>
           <CardBody>
-            <div className='flex justify-between items-center'>
-              <p className='text-green-500 font-medium'>
-                Query Id {omitText(id as string, 15, 15)} on {convertChainIdToName(q.from)}
-              </p>
+            <div className='flex justify-between items-center flex-wrap'>
+              <div className='flex flex-col'>
+                <div className='flex items-center mb-2'>
+                  <Image src={imageURL} width={25} height={25} alt={alt} />
+                  <p className='mx-1'>{convertChainIdToName(q.from)}</p>
+                </div>
+                <p className='font-medium'>Query Id: {id}</p>
+              </div>
+
               <Chip color={color} size='lg'>
                 <span className='text-white'>{status}</span>
               </Chip>
