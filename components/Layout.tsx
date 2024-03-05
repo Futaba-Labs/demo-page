@@ -156,7 +156,7 @@ const Header = () => {
           </NavbarMenuItem>
           <NavbarMenuItem>
             <Link href='/cache' as={NextLink}>
-              Access
+              Cache
             </Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
