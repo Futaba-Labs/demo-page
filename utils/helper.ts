@@ -6,6 +6,7 @@ import { env } from './constants'
 import { ChainStage, FutabaQueryAPI, QueryRequest } from '@futaba-lab/sdk'
 import { createPublicClient, http } from 'viem'
 import { polygonMumbai } from 'viem/chains'
+import { get } from 'http'
 
 export const getWallet = (chainId: number) => {
   const provider = getProvider(chainId)
@@ -220,17 +221,14 @@ export const checkSufficientBalance = async (chainId: number, queries: QueryRequ
     chain: polygonMumbai,
     transport: http(),
   })
-
-  const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chainId)
+  const rpc = getProvider(chainId)?.connection.url
+  const queryAPI = new FutabaQueryAPI(ChainStage.DEVNET, chainId, { rpc })
   const fee = await queryAPI.estimateFee(queries)
 
   const balance = await publicClient.getBalance({
     address,
     blockTag: 'latest',
   })
-
-  console.log('balance', balance)
-  console.log('fee', fee.toBigInt())
 
   return [balance > fee.toBigInt(), fee]
 }

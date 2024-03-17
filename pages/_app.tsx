@@ -19,8 +19,9 @@ import { env } from 'utils'
 import type { AppProps } from 'next/app'
 import { publicProvider } from 'wagmi/providers/public'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { infuraProvider } from 'wagmi/providers/infura'
 
-const { chains, publicClient } = configureChains([polygonMumbai], [publicProvider()])
+const { chains, publicClient } = configureChains([polygonMumbai], [infuraProvider({ apiKey: env.RPC_API_KEY })])
 
 const projectId = '5573a7c23be46c0343267fb1dca563af'
 

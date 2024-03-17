@@ -150,7 +150,6 @@ const Home: NextPage = () => {
           setLoading(false)
           return
         }
-
         write({ args: [queries, decimals], value: fee.toBigInt() })
         return resolve()
       } catch (error) {
