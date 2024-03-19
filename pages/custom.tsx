@@ -166,7 +166,7 @@ const Custom: NextPage = () => {
           {'Click '}
           <span>
             <Link
-              href='https://docs.axiom.xyz/axiom-architecture/verifying-storage-proofs/how-do-i-find-storage-slots'
+              href='https://docs.axiom.xyz/docs/developer-resources/on-chain-data/finding-storage-slots'
               isExternal
               showAnchorIcon
               color='primary'
